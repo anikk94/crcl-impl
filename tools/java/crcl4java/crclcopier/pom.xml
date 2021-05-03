@@ -18,6 +18,7 @@
     </dependencies>
     
     <build>
+        <sourceDirectory>${project.build.directory}/generated-sources/copier</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -57,7 +58,7 @@
                         <param>--javacloner</param>
                         <param>crcl.copier.CRCLCopier.java</param>
                         <param>--output</param>
-                        <param>${project.basedir}/src/main/java/</param>
+                        <param>${project.build.directory}/generated-sources/copier</param>
                     </args>
                 </configuration>
             </plugin>

@@ -100,8 +100,9 @@ import crcl.base.StopMotionType;
 import crcl.base.TransSpeedAbsoluteType;
 import crcl.base.TransSpeedRelativeType;
 import crcl.base.TransSpeedType;
-import crcl.utils.CRCLCopier;
-import static crcl.utils.CRCLCopier.copy;
+import crcl.copier.CRCLCopier;
+import static crcl.copier.CRCLCopier.copy;
+
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;

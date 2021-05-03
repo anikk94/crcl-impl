@@ -20,15 +20,18 @@
  *  See http://www.copyright.gov/title17/92chap1.html#105
  * 
  */
-package crcl.utils;
+package crcl.copier;
 
 import crcl.base.CRCLProgramType;
 import crcl.base.CRCLStatusType;
 import crcl.base.CommandStateEnumType;
 import crcl.base.CommandStatusType;
+import crcl.base.EndCanonType;
 import crcl.base.GripperStatusType;
+import crcl.base.InitCanonType;
 import crcl.base.JointStatusType;
 import crcl.base.JointStatusesType;
+import crcl.base.MiddleCommandType;
 import crcl.base.MoveToType;
 import crcl.base.ParallelGripperStatusType;
 import crcl.base.PointType;
@@ -37,8 +40,7 @@ import crcl.base.PoseType;
 import crcl.base.TwistType;
 import crcl.base.VectorType;
 import crcl.base.WrenchType;
-import crcl.copier.CRCLCopier;
-import crcl.utils.CRCLUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -310,13 +312,13 @@ public class CRCLCopierTest {
                                     System.err.println("entry.getName().startsWith(\"crcl\") = " + entry.getName().startsWith("crcl"));
                                     System.err.println("entry = " + entry);
                                     System.err.println("name = " + name);
-                                    Logger.getLogger(CRCLPosemathTest.class
+                                    Logger.getLogger(CRCLCopierTest.class
                                             .getName()).log(Level.SEVERE, null, ex);
                                 }
                             }
                         }
                     } catch (IOException ex) {
-                        Logger.getLogger(CRCLPosemathTest.class
+                        Logger.getLogger(CRCLCopierTest.class
                                 .getName()).log(Level.SEVERE, null, ex);
                     } finally {
                         try {
@@ -324,7 +326,7 @@ public class CRCLCopierTest {
                                 is.close();
                             }
                         } catch (IOException ex) {
-                            Logger.getLogger(CRCLPosemathTest.class
+                            Logger.getLogger(CRCLCopierTest.class
                                     .getName()).log(Level.SEVERE, "classpathEntry=" + classpathEntry, ex);
                         }
                     }
@@ -336,7 +338,7 @@ public class CRCLCopierTest {
         } catch (Throwable t) {
             System.err.println("name = " + name);
             System.err.println("jar = " + jar);
-            Logger.getLogger(CRCLPosemathTest.class
+            Logger.getLogger(CRCLCopierTest.class
                     .getName()).log(Level.SEVERE, null, t);
         }
         return classes;
@@ -367,9 +369,9 @@ public class CRCLCopierTest {
                         classes.add(clss);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(CRCLPosemathTest.class
+                    Logger.getLogger(CRCLCopierTest.class
                             .getName()).log(Level.SEVERE, "clssNameToLookup={0}", clssNameToLookup);
-                    Logger.getLogger(CRCLPosemathTest.class
+                    Logger.getLogger(CRCLCopierTest.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -615,7 +617,7 @@ public class CRCLCopierTest {
                         }
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "method=" + method + ",o1=" + o1 + ",o2=" + o2, ex);
+                    Logger.getLogger(CRCLCopierTest.class.getName()).log(Level.SEVERE, "method=" + method + ",o1=" + o1 + ",o2=" + o2, ex);
                 }
             }
         }
@@ -632,7 +634,7 @@ public class CRCLCopierTest {
                 field.setAccessible(true);
                 reflectiveCheckEquals(msg + "." + field.getName(), field.get(o1), field.get(o2), recursion + 1);
             } catch (Exception ex) {
-                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "field=" + field + ",msg=" + msg + ",o1=" + o1 + ",o2=" + o2, ex);
+                Logger.getLogger(CRCLCopierTest.class.getName()).log(Level.SEVERE, "field=" + field + ",msg=" + msg + ",o1=" + o1 + ",o2=" + o2, ex);
             }
         }
     }
@@ -714,34 +716,49 @@ public class CRCLCopierTest {
         try {
             final File randomProgramFile = File.createTempFile("randomProgram", ".xml");
             CRCLProgramType randProgram = reflectiveRandomGenerate(CRCLProgramType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper")));
-            try {
 
-                String randProgramString = CRCLSocket.getUtilSocket().programToPrettyString(randProgram, true);
-//            System.out.println("randomProgramFile = " + randomProgramFile);
-                try (PrintWriter pw = new PrintWriter(randomProgramFile)) {
-                    pw.println(randProgramString);
-                }
-                CRCLProgramType readBackRandProgram = CRCLUtils.readProgramFile(randomProgramFile);
-                reflectiveCheckEquals("readBackRandProgram", randProgram, readBackRandProgram, 0);
-//            System.out.println("randProgramString = " + randProgramString);
-                CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
-                reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
-            } catch (Exception exception) {
-                System.out.println("randomProgramFile = " + randomProgramFile);
-                System.out.println("randProgram = " + randProgram);
-                System.out.println("exception.getMessage() = " + exception.getMessage());
-                try (BufferedReader br = new BufferedReader(new FileReader(randomProgramFile))) {
-                    String line = br.readLine();
-                    int count = 1;
-                    while (null != line) {
-                        System.out.printf("%04d:    %s\n", count, line);
-                        count++;
-                        line = br.readLine();
-                    }
-                }
-                exception.printStackTrace();
-                throw new RuntimeException(exception);
+            CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
+            reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
+            CRCLProgramType randProgramCopy2 = CRCLCopier.copy(randProgram);
+            reflectiveCheckEquals("randProgramCopy2", randProgram, randProgramCopy2, 0);
+
+            randProgram.setInitCanon(reflectiveRandomGenerate(InitCanonType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper"))));
+            randProgram.setEndCanon(reflectiveRandomGenerate(EndCanonType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper"))));
+            for (int i = 0; i < randProgram.getMiddleCommand().size(); i++) {
+                final MiddleCommandType midCmd = randProgram.getMiddleCommand().get(i);
+                final MiddleCommandType newMidCmdtype =
+                        reflectiveRandomGenerate(midCmd.getClass(), new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper")));
+                randProgram.getMiddleCommand().set(i, newMidCmdtype);
             }
+            reflectiveCheckEquals("randProgramCopy2Copy", randProgramCopy, randProgramCopy2, 0);
+//            try {
+//
+//                String randProgramString = CRCLSocket.getUtilSocket().programToPrettyString(randProgram, true);
+////            System.out.println("randomProgramFile = " + randomProgramFile);
+//                try (PrintWriter pw = new PrintWriter(randomProgramFile)) {
+//                    pw.println(randProgramString);
+//                }
+//                CRCLProgramType readBackRandProgram = CRCLUtils.readProgramFile(randomProgramFile);
+//                reflectiveCheckEquals("readBackRandProgram", randProgram, readBackRandProgram, 0);
+////            System.out.println("randProgramString = " + randProgramString);
+//                CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
+//                reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
+//            } catch (Exception exception) {
+//                System.out.println("randomProgramFile = " + randomProgramFile);
+//                System.out.println("randProgram = " + randProgram);
+//                System.out.println("exception.getMessage() = " + exception.getMessage());
+//                try (BufferedReader br = new BufferedReader(new FileReader(randomProgramFile))) {
+//                    String line = br.readLine();
+//                    int count = 1;
+//                    while (null != line) {
+//                        System.out.printf("%04d:    %s\n", count, line);
+//                        count++;
+//                        line = br.readLine();
+//                    }
+//                }
+//                exception.printStackTrace();
+//                throw new RuntimeException(exception);
+//            }
         } catch (IOException iOException) {
             iOException.printStackTrace();
             throw new RuntimeException(iOException);
@@ -812,17 +829,18 @@ public class CRCLCopierTest {
             final File randomStatusFile = File.createTempFile("randomStatus", ".xml");
             try {
                 CRCLStatusType randStatus = reflectiveRandomGenerate(CRCLStatusType.class, new Random(30), new TreeSet<>());
-                String randStatusString = CRCLSocket.getUtilSocket().statusToPrettyString(randStatus, true);
-
-//            System.out.println("randomStatusFile = " + randomStatusFile);
-                try (PrintWriter pw = new PrintWriter(randomStatusFile)) {
-                    pw.println(randStatusString);
-                }
-                CRCLStatusType readBackRandStatus = CRCLUtils.readStatusFile(randomStatusFile);
-                reflectiveCheckEquals("readBackRandStatus", randStatus, readBackRandStatus, 0);
-//            System.out.println("randStatusString = \n" + randStatusString);
                 CRCLStatusType randStatusCopy = CRCLCopier.copy(randStatus);
                 reflectiveCheckEquals("randStatus", randStatus, randStatusCopy, 0);
+//                String randStatusString = CRCLSocket.getUtilSocket().statusToPrettyString(randStatus, true);
+//
+////            System.out.println("randomStatusFile = " + randomStatusFile);
+//                try (PrintWriter pw = new PrintWriter(randomStatusFile)) {
+//                    pw.println(randStatusString);
+//                }
+//                CRCLStatusType readBackRandStatus = CRCLUtils.readStatusFile(randomStatusFile);
+//                reflectiveCheckEquals("readBackRandStatus", randStatus, readBackRandStatus, 0);
+//            System.out.println("randStatusString = \n" + randStatusString);
+                
             } catch (Exception exception) {
                 System.err.println("randomStatusFile = " + randomStatusFile);
                 exception.printStackTrace();
