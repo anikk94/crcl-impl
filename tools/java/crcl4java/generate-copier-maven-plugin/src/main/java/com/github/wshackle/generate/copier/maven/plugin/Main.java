@@ -355,8 +355,8 @@ public class Main {
             printHelpAndExit(options, args);
         }
 
-        List<Class> classesList = new ArrayList<>();
-//        Set<Class> excludedClasses = new TreeSet<>();
+        List<Class<?>> classesList = new ArrayList<>();
+//        Set<Class<?>> excludedClasses = new TreeSet<>();
         Set<String> excludedClassNames = new TreeSet<>();
         for (int i = 0; i < localParams.excludedclassnames.length; i++) {
             excludedClassNames.add(localParams.excludedclassnames[i]);
@@ -451,7 +451,7 @@ public class Main {
                             .replace('\\', '.')
                             .substring(0, relPath.length() - ".class".length());
                     System.out.println("className = " + className);
-                    Class clss = cl.loadClass(className);
+                    Class<?> clss = cl.loadClass(className);
                     System.out.println("clss = " + clss);
                     try {
                         addClass(cl, className, localParams, packagesSet, classesList, excludedClassNames, foundClassNames);
@@ -516,7 +516,7 @@ public class Main {
                 }
             }
         }
-        Comparator<Class> classNameComparator = new Comparator<Class>() {
+        Comparator<Class<?>> classNameComparator = new Comparator<Class<?>>() {
             @Override
             public int compare(Class o1, Class o2) {
                 if(o1 == o2) {
@@ -609,7 +609,7 @@ public class Main {
 //            }
 //            System.exit(1);
 //        }
-        List<Class> newClasses = new ArrayList<Class>();
+        List<Class<?>> newClasses = new ArrayList<Class<?>>();
         logString("Before adding extras : classesList.size() = " + classesList.size());
         if (localParams.extraclassnames.length > 0) {
             for (int i = 0; i < localParams.extraclassnames.length; i++) {
@@ -732,13 +732,13 @@ public class Main {
             logString("newClasses = " + newClasses);
         }
         classesList.addAll(newClasses);
-        List<Class> newOrderClasses = new ArrayList<>();
+        List<Class<?>> newOrderClasses = new ArrayList<>();
         for (Class clss : classesList) {
             if (newOrderClasses.contains(clss)) {
                 continue;
             }
             Class superClass = clss.getSuperclass();
-            Stack<Class> stack = new Stack<>();
+            Stack<Class<?>> stack = new Stack<>();
             while (null != superClass
                     && !newOrderClasses.contains(superClass)
                     && !superClass.equals(java.lang.Object.class)) {
@@ -790,7 +790,7 @@ public class Main {
         main_completed = true;
     }
 
-    private static void addClass(URLClassLoader cl, String className, LocalParams localParams, Set<String> packagesSet, List<Class> classesList, Set<String> excludedClassNames, Set<String> foundClassNames) throws ClassNotFoundException {
+    private static void addClass(URLClassLoader cl, String className, LocalParams localParams, Set<String> packagesSet, List<Class<?>> classesList, Set<String> excludedClassNames, Set<String> foundClassNames) throws ClassNotFoundException {
         Class clss = cl.loadClass(className);
 //                        if (null != nativesClassMap
 //                                && null != nativesNameMap

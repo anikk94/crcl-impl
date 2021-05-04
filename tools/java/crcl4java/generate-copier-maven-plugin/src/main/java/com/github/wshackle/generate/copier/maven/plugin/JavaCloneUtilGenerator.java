@@ -50,7 +50,7 @@ public class JavaCloneUtilGenerator {
     public void generateCloneUtil(JavaCloneUtilOptions options) throws IOException, MojoExecutionException {
         String classname = options.classname;
         File dir = options.dir;
-        List<Class> classes = options.classes;
+        List<Class<?>> classes = options.classes;
 
         Set<String> nocopyclassnamesSet = options.nocopyclassnamesSet;
         String logString = options.logString;
@@ -160,7 +160,7 @@ public class JavaCloneUtilGenerator {
 //            pw.println("    }");
 //            pw.println();
 //
-//            pw.println("    private final static Set<Class> noCopyClasses = new HashSet<>(Arrays.asList(");
+//            pw.println("    private final static Set<Class<?>> noCopyClasses = new HashSet<>(Arrays.asList(");
 //            Iterator<String> nocopyClassNamesIterator = nocopyclassnamesSet.iterator();
 //            while (nocopyClassNamesIterator.hasNext()) {
 //                String nocopyclasssname = nocopyClassNamesIterator.next();
@@ -197,7 +197,7 @@ public class JavaCloneUtilGenerator {
                 if (clzzi.isInterface()) {
                     continue;
                 }
-                List<Class> assigableClasses = new ArrayList<>();
+                List<Class<?>> assigableClasses = new ArrayList<>();
                 for (int j = classes.size() - 1; j > 0; j--) {
                     Class<?> clzzj = classes.get(j);
                     if (!clzzi.isAssignableFrom(clzzj)) {

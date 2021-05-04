@@ -34,7 +34,7 @@ public class JavaCloneUtilOptions {
 
     public String classname;
     public File dir;
-    public List<Class> classes;
+    public List<Class<?>> classes;
     public Set<String> nocopyclassnamesSet;
     public String logString;
 
