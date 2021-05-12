@@ -95,9 +95,7 @@
                                       <Component id="jButtonDeletProgramItem" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButtonAddProgramItem" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jButtonPlotProgramItem" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
                                       <Component id="jButtonStepBack" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jButtonStepFwd" min="-2" max="-2" attributes="0"/>
@@ -122,7 +120,7 @@
                                       <Component id="jTextFieldDistToSelected" min="-2" pref="65" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="69" max="32767" attributes="0"/>
+                              <EmptySpace pref="99" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -160,7 +158,6 @@
                           <Component id="jButtonEditProgramItem" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButtonDeletProgramItem" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButtonAddProgramItem" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButtonPlotProgramItem" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButtonStepBack" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jButtonStepFwd" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabelExpectHoldingObject" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -262,15 +259,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonProgramResumeActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="jButtonPlotProgramItem">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Plot"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonPlotProgramItemActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jButtonRunProgFromCurrentLine">

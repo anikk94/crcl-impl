@@ -51,6 +51,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -87,7 +88,7 @@ public class Main {
         return homeDir;
     }
 
-    private static Set<String> badNames = getBadNames();
+    private static final Set<String> badNames = getBadNames();
 
     private static Set<String> getBadNames() {
         Set<String> badNamesSet = new TreeSet<>();
@@ -133,7 +134,7 @@ public class Main {
         if (canonicalName.indexOf('$') >= 0) {
             return false;
         }
-        String pkgNames[] = clss.getCanonicalName().split("\\.");
+        String pkgNames[] = canonicalName.split("\\.");
         for (int i = 0; i < pkgNames.length; i++) {
             String pkgName = pkgNames[i];
             if (badNames.contains(pkgName)) {
@@ -152,11 +153,11 @@ public class Main {
         return !excludedClassNames.contains(clss.getName());
     }
 
-    public static Log log = null;
+    public static @Nullable Log log = null;
 
     private static final StringBuilder logStringBuilder = new StringBuilder();
 
-    private static final void logString(String s) {
+    private static void logString(String s) {
         System.out.println(s);
         logStringBuilder.append(s).append("\n");
         if (null != log) {
@@ -166,29 +167,31 @@ public class Main {
 
     private static void findFilesFromDir(File dir, List<File> files) {
         File fa[] = dir.listFiles();
-        for (int i = 0; i < fa.length; i++) {
-            File file = fa[i];
-            if (file.isDirectory()) {
-                findFilesFromDir(file, files);
-            } else {
-                files.add(file);
+        if (null != fa) {
+            for (int i = 0; i < fa.length; i++) {
+                File file = fa[i];
+                if (file.isDirectory()) {
+                    findFilesFromDir(file, files);
+                } else {
+                    files.add(file);
+                }
             }
         }
     }
 
     private static class LocalParams {
 
-        String output = null;
-        String header = null;
-        String jar = null;
-        Set<String> classnamesToFind = null;
-        Set<String> packageprefixes = null;
-        String loadlibname = null;
-        String javacloner = null;
+        @Nullable String output = null;
+        @Nullable String header = null;
+        @Nullable String jar = null;
+        @Nullable Set<String> classnamesToFind = null;
+        @Nullable Set<String> packageprefixes = null;
+        @Nullable String loadlibname = null;
+        @Nullable String javacloner = null;
 
 //        Map<String, String> nativesNameMap = null;
 //        Map<String, Class> nativesClassMap = null;
-        int limit = DEFAULT_LIMIT;
+final int limit = DEFAULT_LIMIT;
         int classes_per_file = 10;
 
         String limitstring = Integer.toString(limit);
@@ -196,7 +199,7 @@ public class Main {
         String extraclassnames[] = new String[0];
         String excludedclassnames[] = new String[0];
         String nocopyclassnames[] = new String[0];
-        Set<String> nocopyclassnamesSet = new TreeSet<>();
+        final Set<String> nocopyclassnamesSet = new TreeSet<>();
         String namespace = "javaforcpp";
     }
 
@@ -241,110 +244,46 @@ public class Main {
                     localParams.nocopyclassnamesSet.add(nocopyclassname);
                 }
             }
-//            if (line.hasOption("classes-per-output")) {
-//                String cpoStr = line.getOptionValue("classes-per-output");
-//                try {
-//                    int cpoI = Integer.parseInt(cpoStr);
-//                    classes_per_file = cpoI;
-//                } catch (Exception e) {
-//                    System.err.println("Option for " + "classes-per-output" + "=\"" + cpoStr + "\"");
-//                    printHelpAndExit(options, args);
-//                }
-//            }
 
-//            if (line.hasOption("natives")) {
-//                String natives[] = line.getOptionValues("natives");
-//                if (verbose) {
-//                    logString("natives = " + Arrays.toString(natives));
-//                }
-//                nativesNameMap = new TreeMap<>();
-//                nativesClassMap = new TreeMap<>();
-//                for (int i = 0; i < natives.length; i++) {
-//                    int eq_index = natives[i].indexOf('=');
-//                    String nativeClassName = natives[i].substring(0, eq_index).trim();
-//                    String javaClassName = natives[i].substring(eq_index + 1).trim();
-//                    Class javaClass = null;
-//                    try {
-//                        javaClass = Class.forName(javaClassName);
-//                    } catch (ClassNotFoundException e) {
-//                        //e.printStackTrace();
-//                        System.err.println("Class for " + javaClassName + " not found. (It may be found later in jar if specified.)");
-//                    }
-//                    nativesNameMap.put(javaClassName, nativeClassName);
-//                    if (javaClass != null) {
-//                        nativesClassMap.put(nativeClassName, javaClass);
-//                        if (!classesList.contains(javaClass)) {
-//                            classesList.add(javaClass);
-//                        }
-//                    }
-//                }
-//            }
-            localParams.jar = line.getOptionValue("jar", localParams.jar);
+            final String initJarString = line.getOptionValue("jar");
             if (verbose) {
-                logString("jar = " + localParams.jar);
+                logString("initJarString = " + initJarString);
             }
-            if (null != localParams.jar) {
-                if (localParams.jar.startsWith("~/")) {
-                    localParams.jar = new File(new File(getHomeDir()), localParams.jar.substring(2)).getCanonicalPath();
+            if (null != initJarString) {
+                if (initJarString.startsWith("~/")) {
+                    localParams.jar = new File(new File(getHomeDir()), initJarString.substring(2)).getCanonicalPath();
+                } else if (initJarString.startsWith("./")) {
+                    localParams.jar = new File(new File(getCurrentDir()), initJarString.substring(2)).getCanonicalPath();
+                } else if (initJarString.startsWith("../")) {
+                    localParams.jar = new File(new File(getCurrentDir()).getParentFile(), initJarString.substring(3)).getCanonicalPath();
+                } else {
+                    localParams.jar = new File(initJarString).getCanonicalPath();
                 }
-                if (localParams.jar.startsWith("./")) {
-                    localParams.jar = new File(new File(getCurrentDir()), localParams.jar.substring(2)).getCanonicalPath();
-                }
-                if (localParams.jar.startsWith("../")) {
-                    localParams.jar = new File(new File(getCurrentDir()).getParentFile(), localParams.jar.substring(3)).getCanonicalPath();
-                }
+            }
+            if (verbose) {
+                logString("localParams.jar = " + localParams.jar);
             }
             if (line.hasOption("classes")) {
-                localParams.classnamesToFind = new TreeSet<String>();
                 String classStrings[] = line.getOptionValues("classes");
                 if (verbose) {
                     logString("classStrings = " + Arrays.toString(classStrings));
                 }
-                localParams.classnamesToFind.addAll(Arrays.asList(classStrings));
+                localParams.classnamesToFind = new TreeSet<>(Arrays.asList(classStrings));
                 if (verbose) {
                     logString("classnamesToFind = " + localParams.classnamesToFind);
                 }
             }
 
-//            namespace = line.getOptionValue("namespace", namespace);
-//            if (verbose) {
-//                logString("namespace = " + namespace);
-//            }
-//            if (null != namespace) {
-//                localParams.output = namespace + ".cpp";
-//            }
-            localParams.output = line.getOptionValue("output", localParams.output);
+            localParams.output = line.getOptionValue("output");
             if (verbose) {
                 logString("output = " + localParams.output);
             }
-//            if (null != localParams.output) {
-//                if (localParams.output.startsWith("~/")) {
-//                    localParams.output = System.getProperty("user.home") + localParams.output.substring(1);
-//                }
-//                header = localParams.output.substring(0, localParams.output.lastIndexOf('.')) + ".h";
-//            } else {
-//                localParams.output = "out.cpp";
-//            }
-//            header = line.getOptionValue("header", header);
-//            if (verbose) {
-//                logString("header = " + header);
-//            }
-//            if (null != header) {
-//                if (header.startsWith("~/")) {
-//                    header = System.getProperty("user.home") + header.substring(1);
-//                }
-//            } else {
-//                header = "out.h";
-//            }
 
             if (line.hasOption("packages")) {
-                localParams.packageprefixes = new TreeSet<String>();
-                localParams.packageprefixes.addAll(Arrays.asList(line.getOptionValues("packages")));
+                final String[] packages = line.getOptionValues("packages");
+                localParams.packageprefixes = new TreeSet<>(Arrays.asList(packages));
             }
-//            if (line.hasOption("limit")) {
-//                limitstring = line.getOptionValue("limit", Integer.toString(DEFAULT_LIMIT));
-//                limit = Integer.valueOf(limitstring);
-//            }
+
             if (line.hasOption("help")) {
                 printHelpAndExit(options, args);
             }
@@ -409,16 +348,16 @@ public class Main {
             logString("urlsList = " + urlsList);
         }
 
-        if (null != localParams.jar && localParams.jar.length() > 0) {
-            Path jarPath = FileSystems.getDefault().getPath(localParams.jar);
+        Path jarPath = getPath(localParams.jar);
+        if (jarPath != null) {
             File jarFile = jarPath.toFile();
+            final URL jarUrl;
             if (!jarFile.isDirectory()) {
-                URL jarUrl = new URL("jar:file:" + jarPath.toFile().getCanonicalPath() + "!/");
-                urlsList.add(jarUrl);
+                jarUrl = new URL("jar:file:" + jarPath.toFile().getCanonicalPath() + "!/");
             } else {
-                URL jarUrl = new URL("file:" + jarPath.toFile().getCanonicalPath() + "/");
-                urlsList.add(jarUrl);
+                jarUrl = new URL("file:" + jarPath.toFile().getCanonicalPath() + "/");
             }
+            urlsList.add(jarUrl);
         }
         urlsList.add(new URL("file://" + System.getProperty("user.dir") + "/"));
         for (int i = 0; i < localParams.extraclassurls.length; i++) {
@@ -429,10 +368,8 @@ public class Main {
             logString("urls = " + Arrays.toString(urls));
         }
         URLClassLoader cl = URLClassLoader.newInstance(urls);
-        if (null != localParams.jar && localParams.jar.length() > 0) {
-            Path jarPath = FileSystems.getDefault().getPath(localParams.jar);
+        if (null != jarPath) {
             final File jarFile = jarPath.toFile();
-
             if (jarFile.isDirectory()) {
                 List<File> filesList = new ArrayList<>();
                 findFilesFromDir(jarFile, filesList);
@@ -466,13 +403,15 @@ public class Main {
                     System.out.println("System.getProperty(\"user.dir\") = " + System.getProperty("user.dir"));
                     File jarFileParent = jarFile.getParentFile();
                     System.out.println("jarFileParent = " + jarFileParent);
-                    if (jarFileParent.exists()) {
-                        System.out.println("jarFileParent.listFiles() = " + Arrays.toString(jarFileParent.listFiles()));
-                    } else {
-                        File jarFileGrandParent = jarFileParent.getParentFile();
-                        System.out.println("jarFileGrandParent = " + jarFileGrandParent);
-                        if (jarFileGrandParent.exists()) {
-                            System.out.println("jarFileGrandParent.listFiles() = " + Arrays.toString(jarFileGrandParent.listFiles()));
+                    if (null != jarFileParent) {
+                        if (jarFileParent.exists()) {
+                            System.out.println("jarFileParent.listFiles() = " + Arrays.toString(jarFileParent.listFiles()));
+                        } else {
+                            File jarFileGrandParent = jarFileParent.getParentFile();
+                            System.out.println("jarFileGrandParent = " + jarFileGrandParent);
+                            if (null != jarFileGrandParent && jarFileGrandParent.exists()) {
+                                System.out.println("jarFileGrandParent.listFiles() = " + Arrays.toString(jarFileGrandParent.listFiles()));
+                            }
                         }
                     }
                 }
@@ -519,13 +458,11 @@ public class Main {
         Comparator<Class<?>> classNameComparator = new Comparator<Class<?>>() {
             @Override
             public int compare(Class o1, Class o2) {
-                if(o1 == o2) {
+                if (o1 == o2) {
                     return 0;
-                }
-                else if(o1 == null) {
+                } else if (o1 == null) {
                     return -1;
-                }
-                else if(o2 == null) {
+                } else if (o2 == null) {
                     return 1;
                 } else {
                     return o1.getName().compareTo(o2.getName());
@@ -533,11 +470,8 @@ public class Main {
             }
         };
         Collections.sort(classesList, classNameComparator);
-        
+
         if (null != localParams.classnamesToFind) {
-            if (verbose) {
-                logString("Checking classnames arguments");
-            }
             for (String classname : localParams.classnamesToFind) {
                 if (verbose) {
                     logString("classname = " + classname);
@@ -555,13 +489,13 @@ public class Main {
                         }
                         continue;
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
 
                 if (null != classname && classname.length() > 0) {
 
-                    Class c = null;
+                    Class<?> c = null;
                     try {
                         c = cl.loadClass(classname);
                     } catch (ClassNotFoundException e) {
@@ -592,29 +526,15 @@ public class Main {
                 logString("Finished checking classnames arguments");
             }
         }
-//        if (classesList == null || classesList.size() < 1) {
-//            if (null == nativesClassMap || nativesClassMap.keySet().size() < 1) {
-//                System.err.println("No Classes specified or found.");
-//                System.exit(1);
-//            }
-//        }
         if (verbose) {
             logString("Classes found = " + classesList.size());
         }
-//        if (classesList.size() > limit) {
-//            System.err.println("limit=" + limit);
-//            System.err.println("Too many classes please use -c or -p options to limit classes or -l to increase limit.");
-//            if (verbose) {
-//                logString("packagesSet = " + packagesSet);
-//            }
-//            System.exit(1);
-//        }
         List<Class<?>> newClasses = new ArrayList<Class<?>>();
         logString("Before adding extras : classesList.size() = " + classesList.size());
         if (localParams.extraclassnames.length > 0) {
             for (int i = 0; i < localParams.extraclassnames.length; i++) {
                 String extraclassname = localParams.extraclassnames[i];
-                Class clzz = cl.loadClass(extraclassname);
+                Class<?> clzz = cl.loadClass(extraclassname);
                 if (!classesList.contains(clzz)) {
                     checkClass(clzz);
                     classesList.add(clzz);
@@ -623,8 +543,8 @@ public class Main {
         }
         logString("Before adding supers : classesList.size() = " + classesList.size());
 
-        for (Class clss : classesList) {
-            Class superClass = clss.getSuperclass();
+        for (Class<?> clss : classesList) {
+            Class<?> superClass = clss.getSuperclass();
             while (null != superClass
                     && !classesList.contains(superClass)
                     && !newClasses.contains(superClass)
@@ -637,7 +557,7 @@ public class Main {
                 Field fa[] = clss.getDeclaredFields();
                 for (Field f : fa) {
                     if (Modifier.isPublic(f.getModifiers())) {
-                        Class fClass = f.getType();
+                        Class<?> fClass = f.getType();
                         if (!classesList.contains(fClass)
                                 && !newClasses.contains(fClass)
                                 && isAddableClass(fClass, excludedClassNames)) {
@@ -659,7 +579,7 @@ public class Main {
                         || Modifier.isAbstract(m.getModifiers())) {
                     continue;
                 }
-                Class retType = m.getReturnType();
+                Class<?> retType = m.getReturnType();
                 if (verbose) {
                     logString("Checking dependancies for Method = " + m);
                 }
@@ -688,7 +608,7 @@ public class Main {
                         superClass = superClass.getSuperclass();
                     }
                 }
-                for (Class paramType : m.getParameterTypes()) {
+                for (Class<?> paramType : m.getParameterTypes()) {
                     if (!classesList.contains(paramType)
                             && !newClasses.contains(paramType)
                             && isAddableClass(paramType, excludedClassNames)) {
@@ -733,11 +653,11 @@ public class Main {
         }
         classesList.addAll(newClasses);
         List<Class<?>> newOrderClasses = new ArrayList<>();
-        for (Class clss : classesList) {
+        for (Class<?> clss : classesList) {
             if (newOrderClasses.contains(clss)) {
                 continue;
             }
-            Class superClass = clss.getSuperclass();
+            Class<?> superClass = clss.getSuperclass();
             Stack<Class<?>> stack = new Stack<>();
             while (null != superClass
                     && !newOrderClasses.contains(superClass)
@@ -746,7 +666,7 @@ public class Main {
                 superClass = superClass.getSuperclass();
             }
             while (!stack.empty()) {
-                final Class poppedClass = stack.pop();
+                final Class<?> poppedClass = stack.pop();
                 if (!newOrderClasses.contains(poppedClass)) {
                     newOrderClasses.add(poppedClass);
                 }
@@ -790,24 +710,27 @@ public class Main {
         main_completed = true;
     }
 
+    @SuppressWarnings("nullness")
+    private static @Nullable
+    Path getPath(@Nullable String fname) {
+        if (null != fname && fname.length() > 0) {
+            return FileSystems.getDefault().getPath(fname);
+        } else {
+            return null;
+        }
+    }
+
     private static void addClass(URLClassLoader cl, String className, LocalParams localParams, Set<String> packagesSet, List<Class<?>> classesList, Set<String> excludedClassNames, Set<String> foundClassNames) throws ClassNotFoundException {
-        Class clss = cl.loadClass(className);
-//                        if (null != nativesClassMap
-//                                && null != nativesNameMap
-//                                && nativesNameMap.containsKey(className)) {
-//                            nativesClassMap.put(nativesNameMap.get(className), clss);
-//                            if (!classesList.contains(clss)) {
-//                                classesList.add(clss);
-//                            }
-//                        }
-        if (localParams.packageprefixes != null
-                && localParams.packageprefixes.size() > 0) {
+        Class<?> clss = cl.loadClass(className);
+        final Set<String> packageprefixes = localParams.packageprefixes;
+        if (packageprefixes != null
+                && packageprefixes.size() > 0) {
             if (null == clss.getPackage()) {
                 return;
             }
             final String pkgName = clss.getPackage().getName();
             boolean matchFound = false;
-            for (String prefix : localParams.packageprefixes) {
+            for (String prefix : packageprefixes) {
                 if (pkgName.startsWith(prefix)) {
                     matchFound = true;
                     break;
@@ -819,32 +742,24 @@ public class Main {
         }
         Package p = clss.getPackage();
         if (null != p) {
-            packagesSet.add(clss.getPackage().getName());
+            packagesSet.add(p.getName());
         }
         if (!classesList.contains(clss)
                 && isAddableClass(clss, excludedClassNames)) {
-            if (null != localParams.classnamesToFind
-                    && localParams.classnamesToFind.contains(className)
+            final Set<String> classnamesToFind = localParams.classnamesToFind;
+            if (null != classnamesToFind
+                    && classnamesToFind.contains(className)
                     && !foundClassNames.contains(className)) {
                 foundClassNames.add(className);
                 if (verbose) {
                     logString("foundClassNames = " + foundClassNames);
                 }
             }
-//                        if(verbose)  logString("clss = " + clss);
             classesList.add(clss);
-//                        Class superClass = clss.getSuperclass();
-//                        while (null != superClass
-//                                && !classes.contains(superClass)
-//                                && isAddableClass(superClass, excludedClassNames)) {
-//                            classes.add(superClass);
-//                            superClass = superClass.getSuperclass();
-//                        }
         }
-        return;
     }
 
-    private static void checkClass(Class clzz) throws RuntimeException {
+    private static void checkClass(Class<?> clzz) throws RuntimeException {
         if (clzz.getName().contains("JAXB")) {
             throw new RuntimeException("clzz=" + clzz);
         }

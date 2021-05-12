@@ -22,42 +22,18 @@ package crcl.utils;
 
 import crcl.base.CRCLProgramType;
 import crcl.base.CRCLStatusType;
-import crcl.base.CommandStateEnumType;
-import crcl.base.CommandStatusType;
-import crcl.base.GripperStatusType;
 import crcl.base.InitCanonType;
-import crcl.base.JointStatusType;
-import crcl.base.JointStatusesType;
 import crcl.base.MoveToType;
-import crcl.base.ParallelGripperStatusType;
 import crcl.base.PointType;
-import crcl.base.PoseStatusType;
 import crcl.base.PoseType;
-import crcl.base.TwistType;
 import crcl.base.VectorType;
-import crcl.base.WrenchType;
+
 import static crcl.utils.CRCLPosemath.point;
 import static crcl.utils.CRCLPosemath.pose;
 import static crcl.utils.CRCLPosemath.vector;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.Random;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -355,7 +331,7 @@ public class CRCLPosemathTest {
         try {
             CRCLPosemath.maxDiffDoubleArray(da, new double[1], 0.0);
             fail("Expected IllegalArgumentException since array lengths don't match");
-        } catch (IllegalArgumentException expectedException) {
+        } catch (IllegalArgumentException ignored) {
         }
     }
 
@@ -684,6 +660,7 @@ public class CRCLPosemathTest {
         testWithRandomMults();
     }
 
+    @SuppressWarnings("JUnit3StyleTestMethodInJUnit4Class")
     public void testWithRandomMults() {
         PoseType p1;
         PoseType p2;

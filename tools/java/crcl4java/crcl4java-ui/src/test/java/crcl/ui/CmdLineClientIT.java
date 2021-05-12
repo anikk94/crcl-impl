@@ -23,14 +23,14 @@ package crcl.ui;
 import crcl.ui.server.CmdLineSimServer;
 import crcl.ui.server.SimServerInner;
 import crcl.ui.client.CmdLineClient;
-import java.net.URISyntaxException;
+
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import static crcl.utils.CRCLUtils.requireNonNull;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

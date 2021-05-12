@@ -244,7 +244,7 @@ public class SimServerInner {
     }
 
 
-    private double maxDwell = getDoubleProperty("crcl4java.maxdwell", 6000.0);
+    private final double maxDwell = getDoubleProperty("crcl4java.maxdwell", 6000.0);
 
     private static double getDoubleProperty(String propName, double defaultVal) {
         return Double.parseDouble(System.getProperty(propName, Double.toString(defaultVal)));
@@ -270,7 +270,7 @@ public class SimServerInner {
 
     private final XpathUtils xpu;
     private final SimServerOuter outer;
-    Queue<CRCLCommandInstanceType> cmdQueue = new ConcurrentLinkedQueue<>();
+    final Queue<CRCLCommandInstanceType> cmdQueue = new ConcurrentLinkedQueue<>();
     private final Queue<CRCLCommandInstanceType> gripperCmdQueue = new ConcurrentLinkedQueue<>();
 
     private double @MonotonicNonNull [] jointPositions = null;
@@ -1309,7 +1309,7 @@ public class SimServerInner {
             try {
                 try {
                     simThread.join(100);
-                } catch (InterruptedException ex) {
+                } catch (InterruptedException ignored) {
                 }
                 if (simThread.isAlive()) {
                     if (debugInterrupts) {
@@ -1568,7 +1568,7 @@ public class SimServerInner {
                 || lastSentState.equals(commandState);
     }
 
-    private boolean debugClientStateSize = false;
+    private final boolean debugClientStateSize = false;
 
     private void checkClientStateSize(int maxSize) {
         clientStatesSize = clientStates.size();
@@ -3125,11 +3125,6 @@ public class SimServerInner {
 
         SimServerClientState(CRCLSocket cs) {
             super(cs);
-        }
-
-        @Override
-        public String toString() {
-            return "SimServerClientState{" + "cs=" + getCs() + ", getStatusRequests=" + getStatusRequests + ", cmdsRecieved=" + cmdsRecieved + ", lastCmdTime=" + lastCmdTime + ", lastStatRequestTime=" + lastStatRequestTime + ", getStatusCmdId=" + getStatusCmdId + ", cmdId=" + cmdId + '}';
         }
     }
     private static final CRCLServerSocketStateGenerator<SimServerClientState> simStateGenerator

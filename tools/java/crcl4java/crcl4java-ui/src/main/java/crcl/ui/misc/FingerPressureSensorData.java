@@ -7,8 +7,6 @@ package crcl.ui.misc;
 
 //import com.google.gson.Gson;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-
 
 /**
  *
@@ -39,37 +37,37 @@ public class FingerPressureSensorData {
 
     }
 
-    private DataItem @Nullable [] sensor_values = null;
-
-    public int getFSR_finger_A_distal() {
-        DataItem[] sensor_values1 = sensor_values;
-        if (null != sensor_values1) {
-            for (int i = 0; i < sensor_values1.length; i++) {
-                DataItem item = sensor_values1[i];
-                if (null != item) {
-                    if (item.getFSR_finger_A_distal() != Integer.MIN_VALUE) {
-                        return item.getFSR_finger_A_distal();
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-
-    public int getFSR_finger_B_distal() {
-        DataItem[] sensor_values1 = sensor_values;
-        if (null != sensor_values1) {
-            for (int i = 0; i < sensor_values1.length; i++) {
-                DataItem item = sensor_values1[i];
-                if (null != item) {
-                    if (item.getFSR_finger_B_distal() != Integer.MIN_VALUE) {
-                        return item.getFSR_finger_B_distal();
-                    }
-                }
-            }
-        }
-        return 0;
-    }
+//    private DataItem @Nullable [] sensor_values = null;
+//
+//    public int getFSR_finger_A_distal() {
+//        DataItem[] sensor_values1 = sensor_values;
+//        if (null != sensor_values1) {
+//            for (int i = 0; i < sensor_values1.length; i++) {
+//                DataItem item = sensor_values1[i];
+//                if (null != item) {
+//                    if (item.getFSR_finger_A_distal() != Integer.MIN_VALUE) {
+//                        return item.getFSR_finger_A_distal();
+//                    }
+//                }
+//            }
+//        }
+//        return 0;
+//    }
+//
+//    public int getFSR_finger_B_distal() {
+//        DataItem[] sensor_values1 = sensor_values;
+//        if (null != sensor_values1) {
+//            for (int i = 0; i < sensor_values1.length; i++) {
+//                DataItem item = sensor_values1[i];
+//                if (null != item) {
+//                    if (item.getFSR_finger_B_distal() != Integer.MIN_VALUE) {
+//                        return item.getFSR_finger_B_distal();
+//                    }
+//                }
+//            }
+//        }
+//        return 0;
+//    }
     
 //    private static Gson gson = new Gson();
 //

@@ -30,7 +30,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +40,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * Goal which touches a timestamp file.
  */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE, threadSafe = true)
+@SuppressWarnings({"initialization","nullness"})
 public class GenerateMojo
         extends AbstractMojo {
 

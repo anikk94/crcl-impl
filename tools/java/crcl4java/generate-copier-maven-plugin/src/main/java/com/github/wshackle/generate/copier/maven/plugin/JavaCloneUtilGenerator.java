@@ -31,7 +31,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +50,13 @@ public class JavaCloneUtilGenerator {
         String classname = options.classname;
         File dir = options.dir;
         List<Class<?>> classes = options.classes;
+        if(null == classes) {
+             throw new MojoExecutionException("classes=null");
+        }
 
+        if(classes.isEmpty()) {
+             throw new MojoExecutionException("classes.isEmpty()");
+        }
         Set<String> nocopyclassnamesSet = options.nocopyclassnamesSet;
         String logString = options.logString;
         if (classname.endsWith(".class")) {
@@ -206,10 +211,10 @@ public class JavaCloneUtilGenerator {
                     if (clzzj.isInterface() || Modifier.isAbstract(clzzj.getModifiers())) {
                         continue;
                     }
-                    Constructor constructors[] = clzzj.getConstructors();
+                    Constructor<?> constructors[] = clzzj.getConstructors();
                     boolean publicNoArgConstructorFound = false;
                     for (int k = 0; k < constructors.length; k++) {
-                        Constructor constructor = constructors[k];
+                        Constructor<?> constructor = constructors[k];
                         if (constructor.getParameterCount() == 0 && Modifier.isPublic(constructor.getModifiers())) {
                             publicNoArgConstructorFound = true;
                             break;

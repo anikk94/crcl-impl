@@ -535,11 +535,6 @@ public class CrclSwingClientJInternalFrame
         );
 
         jMenu1.setText("File");
-        jMenu1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu1ActionPerformed(evt);
-            }
-        });
 
         jMenuItemOpenXmlCommandInstance.setText("Open CRCL XML Command Instance File ... ");
         jMenuItemOpenXmlCommandInstance.addActionListener(new java.awt.event.ActionListener() {
@@ -651,19 +646,9 @@ public class CrclSwingClientJInternalFrame
         jMenuTools.add(jMenuItemXPathQuery);
 
         jCheckBoxMenuItemPlotXYZ.setText("2D Plot XYZ vs Time ...");
-        jCheckBoxMenuItemPlotXYZ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItemPlotXYZActionPerformed(evt);
-            }
-        });
         jMenuTools.add(jCheckBoxMenuItemPlotXYZ);
 
         jCheckBoxMenuItemPlotJoints.setText("Plot Joints");
-        jCheckBoxMenuItemPlotJoints.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxMenuItemPlotJointsActionPerformed(evt);
-            }
-        });
         jMenuTools.add(jCheckBoxMenuItemPlotJoints);
 
         jMenuItemRunTest.setText("Run Test");
@@ -678,11 +663,6 @@ public class CrclSwingClientJInternalFrame
         jMenuTools.add(jCheckBoxMenuItemRecordPoseList);
 
         jMenuItemPoseList3DPlot.setText("3D Pose List Plot ...");
-        jMenuItemPoseList3DPlot.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemPoseList3DPlotActionPerformed(evt);
-            }
-        });
         jMenuTools.add(jMenuItemPoseList3DPlot);
 
         jMenuItemOpenStatusLog.setText("Open Status Log ...");
@@ -890,25 +870,9 @@ public class CrclSwingClientJInternalFrame
         System.exit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
-    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu1ActionPerformed
-
     private void jMenuItemXPathQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemXPathQueryActionPerformed
         pendantClientJPanel1.showXpathQueryDialog();
     }//GEN-LAST:event_jMenuItemXPathQueryActionPerformed
-
-    private void jCheckBoxMenuItemPlotXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemPlotXYZActionPerformed
-//        if (this.jCheckBoxMenuItemPlotXYZ.isSelected()) {
-//            pendantClientJPanel1.show
-//        }
-    }//GEN-LAST:event_jCheckBoxMenuItemPlotXYZActionPerformed
-
-    private void jCheckBoxMenuItemPlotJointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemPlotJointsActionPerformed
-        if (this.jCheckBoxMenuItemPlotJoints.isSelected()) {
-            pendantClientJPanel1.showJointsPlot();
-        }
-    }//GEN-LAST:event_jCheckBoxMenuItemPlotJointsActionPerformed
 
     private void jMenuItemRunTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemRunTestActionPerformed
         Map<String, String> testPropsMap
@@ -918,10 +882,6 @@ public class CrclSwingClientJInternalFrame
             pendantClientJPanel1.startRunTest(testPropsMap);
         }
     }//GEN-LAST:event_jMenuItemRunTestActionPerformed
-
-    private void jMenuItemPoseList3DPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPoseList3DPlotActionPerformed
-//        pendantClientJPanel1.show3DPlot();
-    }//GEN-LAST:event_jMenuItemPoseList3DPlotActionPerformed
 
     private void jMenuItemOpenStatusLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenStatusLogActionPerformed
         pendantClientJPanel1.showStatusLog();

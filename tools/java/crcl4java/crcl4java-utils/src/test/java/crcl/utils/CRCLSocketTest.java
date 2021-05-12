@@ -26,12 +26,9 @@ import crcl.base.CRCLCommandInstanceType;
 import crcl.base.CRCLCommandType;
 import crcl.base.CRCLStatusType;
 import crcl.base.MoveThroughToType;
-import java.io.BufferedReader;
+
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import org.junit.Test;

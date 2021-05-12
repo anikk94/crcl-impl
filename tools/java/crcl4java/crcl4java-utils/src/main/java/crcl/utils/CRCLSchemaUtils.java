@@ -366,7 +366,7 @@ public class CRCLSchemaUtils {
             if (null != ps) {
                 try {
                     ps.close();
-                } catch (Exception exx) {
+                } catch (Exception ignored) {
                 }
             }
         }

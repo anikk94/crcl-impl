@@ -8,9 +8,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu1ActionPerformed"/>
-          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOpenXmlCommandInstance">
               <Properties>
@@ -134,17 +131,11 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="2D Plot XYZ vs Time ..."/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItemPlotXYZActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="jCheckBoxMenuItemPlotJoints">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Plot Joints"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItemPlotJointsActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemRunTest">
               <Properties>
@@ -163,9 +154,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="3D Pose List Plot ..."/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemPoseList3DPlotActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOpenStatusLog">
               <Properties>

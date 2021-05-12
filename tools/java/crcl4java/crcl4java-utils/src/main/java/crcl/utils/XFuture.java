@@ -256,8 +256,7 @@ public class XFuture<T> extends CompletableFuture<T> {
             stringWriter.flush();
             return stringWriter.toString();
         } catch (IOException ex) {
-            String msg = "trace=" + trace;
-            logStaticException(msg, ex);
+            logStaticException("trace=" + trace, ex);
             throw new RuntimeException(ex);
         }
     }
@@ -531,7 +530,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         for (CompletableFuture<?> cf : alsoCancel) {
             sb.append(cf).append("\n");
             if (cf instanceof XFuture) {
-                XFuture<?> xf = (XFuture) cf;
+                XFuture<?> xf = (XFuture<?>) cf;
                 if (xf.isCompletedExceptionally() && !isPrintedOrCancellationException(xf.getCompletedExceptionallyThrowable())) {
                     sb.append(xf.name).append(" : forExceptionString=").append(xf.forExceptionString()).append("\n");
                     sb.append(xf.name).append(" :  end forExceptionString").append("\n");
@@ -542,12 +541,8 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     private String manuallyCompletedString() {
-        if (null != manuallyCompletedValue
-                && null != manuallyCompletedThread
-                && null != manuallyCompletedTrace) {
-            return "completedThrowable=" + manuallyCompletedValue + "\n"
-                    + "completedThread=" + manuallyCompletedThread + "\n"
-                    + "completedTrace= \n" + traceToString(manuallyCompletedTrace) + "\n";
+        if (null != manuallyCompletedValue) {
+            return "completedThrowable=" + manuallyCompletedValue + "\n";
         }
         return "";
     }
@@ -905,7 +900,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         if (newKeepOldProfileStrings) {
             for (CompletableFuture<?> cf : this.alsoCancel) {
                 if (cf instanceof XFuture) {
-                    XFuture<?> xf = (XFuture) cf;
+                    XFuture<?> xf = (XFuture<?>) cf;
                     xf.setKeepOldProfileStrings(true);
                 }
             }
@@ -914,10 +909,6 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     private volatile @Nullable
     T manuallyCompletedValue = null;
-
-    private volatile @Nullable
-    Thread manuallyCompletedThread = null;
-    private volatile StackTraceElement manuallyCompletedTrace @Nullable []  = null;
 
     static volatile boolean closingMode = false;
 
@@ -999,7 +990,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         }
         for (CompletableFuture<?> f : this.alsoCancel) {
             if (f instanceof XFuture) {
-                XFuture<?> xf = (XFuture) f;
+                XFuture<?> xf = (XFuture<?>) f;
                 long xfCompleteTime = xf.completeTime;
                 if (xfCompleteTime > localMaxDepCompleteTime) {
                     localMaxDepCompleteTime = xfCompleteTime;
@@ -1165,7 +1156,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         CompletableFuture<U> f = super.thenApplyAsync(fname(fn, name), executor)
                 .thenCompose((CompletionStage<U> stage) -> {
                     if (stage instanceof CompletableFuture) {
-                        retXF.alsoCancelAdd((CompletableFuture) stage);
+                        retXF.alsoCancelAdd((CompletableFuture<?>) stage);
                     } else {
                         retXF.alsoCancelAdd(stage.toCompletableFuture());
                     }
@@ -1190,7 +1181,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         CompletableFuture<U> f = super.thenApplyAsync(fname(fn, name), getDefaultThreadPool())
                 .thenCompose((CompletionStage<U> stage) -> {
                     if (stage instanceof CompletableFuture) {
-                        retXF.alsoCancelAdd((CompletableFuture) stage);
+                        retXF.alsoCancelAdd((CompletableFuture<?>) stage);
                     } else {
                         retXF.alsoCancelAdd(stage.toCompletableFuture());
                     }
@@ -1352,10 +1343,8 @@ public class XFuture<T> extends CompletableFuture<T> {
 
         if (keepOldProfileStrings) {
             List<CompletableFuture<?>> alsoCancelCopy = new ArrayList<>(this.alsoCancel);
-            this.alsoCancel.clear();
-        } else {
-            this.alsoCancel.clear();
         }
+        this.alsoCancel.clear();
         cleared = true;
     }
 
@@ -1760,7 +1749,7 @@ public class XFuture<T> extends CompletableFuture<T> {
             CompletableFuture<?> cf = alsoCancelCopy.get(i);
             if (cf != null && !cf.isCancelled() && !cf.isCompletedExceptionally() && !cf.isDone()) {
                 if (cf instanceof XFuture) {
-                    XFuture<?> xf = (XFuture) cf;
+                    XFuture<?> xf = (XFuture<?>) cf;
                     int xfMaxRecurse = xf.computeMaxRecurseCount();
                     if (xfMaxRecurse > maxRecurse) {
                         maxRecurse = xfMaxRecurse;
@@ -1775,7 +1764,7 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     protected void alsoCancelAdd(CompletableFuture<?> cf) {
         if (cf instanceof XFuture) {
-            XFuture<?> xf = (XFuture) cf;
+            XFuture<?> xf = (XFuture<?>) cf;
             int xfMaxRecurseCount = xf.computeMaxRecurseCount();
             if (xfMaxRecurseCount > origMaxRecurse - 1) {
                 origMaxRecurse = xfMaxRecurseCount + 1;
@@ -1804,7 +1793,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     public <U, V> XFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn, Executor executor) {
         XFuture<V> retXF = wrap(this.name + ".thenCombineAsync", super.thenCombineAsync(other, fn, executor));
         if (other instanceof CompletableFuture) {
-            retXF.alsoCancelAdd((CompletableFuture) other);
+            retXF.alsoCancelAdd((CompletableFuture<?>) other);
         }
         return retXF;
     }
@@ -1814,7 +1803,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     public <U, V> XFuture<V> thenCombineAsync(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         XFuture<V> retXF = wrap(this.name + ".thenCombineAsync", super.thenCombineAsync(other, fn, getDefaultThreadPool()));
         if (other instanceof CompletableFuture) {
-            retXF.alsoCancelAdd((CompletableFuture) other);
+            retXF.alsoCancelAdd((CompletableFuture<?>) other);
         }
         return retXF;
     }
@@ -1824,7 +1813,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     public <U, V> XFuture<V> thenCombine(CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         XFuture<V> retXF = wrap(this.name + ".thenCombine", super.thenCombine(other, fn));
         if (other instanceof CompletableFuture) {
-            retXF.alsoCancelAdd((CompletableFuture) other);
+            retXF.alsoCancelAdd((CompletableFuture<?>) other);
         }
         return retXF;
     }
@@ -1832,7 +1821,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     public <U, V> XFuture<V> thenCombine(String name, CompletionStage<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
         XFuture<V> retXF = wrap(name, super.thenCombine(other, fn));
         if (other instanceof CompletableFuture) {
-            retXF.alsoCancelAdd((CompletableFuture) other);
+            retXF.alsoCancelAdd((CompletableFuture<?>) other);
         }
         return retXF;
     }

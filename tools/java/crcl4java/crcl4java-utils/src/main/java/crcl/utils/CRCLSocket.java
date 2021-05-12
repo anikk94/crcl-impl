@@ -165,7 +165,7 @@ public class CRCLSocket implements AutoCloseable {
             + "<CRCLProgram\n"
             + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
             + "  xsi:noNamespaceSchemaLocation=\"../xmlSchemas/CRCLProgramInstance.xsd\">";
-    private static boolean DEFAULT_JAXB_FRAGMENT = true;
+    private static final boolean DEFAULT_JAXB_FRAGMENT = true;
 
     private @MonotonicNonNull
     SocketChannel socketChannel;
@@ -214,11 +214,10 @@ public class CRCLSocket implements AutoCloseable {
     /*@NonNull*/ private final Unmarshaller u_prog;
     /*@NonNull*/ private final Marshaller m_stat;
     /*@NonNull*/ private final Unmarshaller u_stat;
-    private String readInProgressString = "";
 
     private @Nullable
     BufferedInputStream bufferedInputStream = null;
-    private boolean useBufferedInputStream = true;
+    private final boolean useBufferedInputStream = true;
 //    private @Nullable
 //    SAXSource exiCommandInSaxSource = null;
 //    private @Nullable
@@ -232,7 +231,7 @@ public class CRCLSocket implements AutoCloseable {
 
     private @Nullable
     Random random = null;
-    private int rand_seed = 12345;
+    private final int rand_seed = 12345;
     private @Nullable
     String last_xml_version_header = null;
     private @Nullable
@@ -547,15 +546,7 @@ public class CRCLSocket implements AutoCloseable {
 //        super.finalize();
 //        this.close();
 //    }
-    /**
-     * Get the string read so far, typically used to log additional information
-     * after an exception is thrown while reading/parsing.
-     *
-     * @return string read so far.
-     */
-    public String getReadInProgressString() {
-        return this.readInProgressString;
-    }
+
 
     String readUntilEndTag(final String tag, final InputStream is) throws IOException {
         String rips = "";
@@ -725,7 +716,7 @@ public class CRCLSocket implements AutoCloseable {
                 this.lastCommandString = str;
                 setUnmarshallerSchema(u_cmd, validate ? cmdSchema : null);
                 JAXBElement<?> el
-                        = (JAXBElement) u_cmd.unmarshal(new StringReader(str));
+                        = (JAXBElement<?>) u_cmd.unmarshal(new StringReader(str));
                 CRCLCommandInstanceType instance
                         = (CRCLCommandInstanceType) el.getValue();
                 if (null == instance) {
@@ -742,7 +733,7 @@ public class CRCLSocket implements AutoCloseable {
 
         synchronized (u_cmd) {
             setUnmarshallerSchema(u_cmd, validate ? cmdSchema : null);
-            JAXBElement<?> el = (JAXBElement) u_cmd.unmarshal(is);
+            JAXBElement<?> el = (JAXBElement<?>) u_cmd.unmarshal(is);
             CRCLCommandInstanceType instance
                     = (CRCLCommandInstanceType) el.getValue();
             if (null == instance) {
@@ -766,7 +757,7 @@ public class CRCLSocket implements AutoCloseable {
             synchronized (u_prog) {
                 this.lastProgramString = str;
                 setUnmarshallerSchema(u_prog, validate ? programSchema : null);
-                JAXBElement<?> el = (JAXBElement) u_prog.unmarshal(new StringReader(str));
+                JAXBElement<?> el = (JAXBElement<?>) u_prog.unmarshal(new StringReader(str));
                 CRCLProgramType prog
                         = (CRCLProgramType) el.getValue();
                 if (null == prog) {
@@ -953,7 +944,7 @@ public class CRCLSocket implements AutoCloseable {
                 }
                 lastStatusString = str;
                 setUnmarshallerSchema(u_stat, validate ? statSchema : null);
-                JAXBElement<?> el = (JAXBElement) u_stat.unmarshal(new StringReader(str));
+                JAXBElement<?> el = (JAXBElement<?>) u_stat.unmarshal(new StringReader(str));
                 CRCLStatusType instance
                         = (CRCLStatusType) el.getValue();
                 if (null == instance) {
@@ -979,7 +970,7 @@ public class CRCLSocket implements AutoCloseable {
     CRCLStatusType readStatusFromStream(final InputStream is, boolean validate) throws JAXBException {
         synchronized (u_stat) {
             setUnmarshallerSchema(u_stat, validate ? statSchema : null);
-            JAXBElement<?> el = (JAXBElement) u_stat.unmarshal(is);
+            JAXBElement<?> el = (JAXBElement<?>) u_stat.unmarshal(is);
             CRCLStatusType instance
                     = (CRCLStatusType) el.getValue();
             if (null == instance) {

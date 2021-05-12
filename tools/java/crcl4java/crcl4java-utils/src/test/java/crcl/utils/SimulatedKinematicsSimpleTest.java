@@ -8,7 +8,7 @@ package crcl.utils;
 import crcl.utils.kinematics.SimulatedKinematicsSimple;
 import crcl.base.PointType;
 import crcl.base.PoseType;
-import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Level;
@@ -28,7 +28,7 @@ public class SimulatedKinematicsSimpleTest {
     public SimulatedKinematicsSimpleTest() {
     }
 
-    static SimulatedKinematicsSimple sk = new SimulatedKinematicsSimple();
+    static final SimulatedKinematicsSimple sk = new SimulatedKinematicsSimple();
 
     private static final int RANDOM_SEED = 7321;
 

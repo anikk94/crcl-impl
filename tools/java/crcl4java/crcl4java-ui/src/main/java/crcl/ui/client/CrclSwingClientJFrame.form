@@ -8,9 +8,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu1ActionPerformed"/>
-          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOpenXmlCommandInstance">
               <Properties>
@@ -134,9 +131,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Plot Joints"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBoxMenuItemJointsActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemRunTest">
               <Properties>
@@ -155,9 +149,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="3D Pose List Plot ..."/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemPoseList3DPlotActionPerformed"/>
-              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemOpenStatusLog">
               <Properties>

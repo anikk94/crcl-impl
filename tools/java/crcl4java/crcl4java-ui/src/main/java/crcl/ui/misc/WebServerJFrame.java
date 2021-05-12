@@ -9,7 +9,6 @@ import static crcl.ui.IconImages.SERVER_IMAGE;
 import crcl.utils.CRCLUtils;
 import crcl.utils.PropertiesUtils;
 import java.awt.Desktop;
-import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -432,14 +431,14 @@ public class WebServerJFrame extends javax.swing.JFrame {
     private volatile @Nullable
     Thread monitorErrorThread;
 
-    private List<String> consoleStrings = new LinkedList<String>();
+    private final List<String> consoleStrings = new LinkedList<String>();
 
     private void consoleAppend(String s) {
         if (consoleStrings.size() > maxLoggedStrings) {
             consoleStrings.remove(0);
         }
         consoleStrings.add(s);
-        String txt = consoleStrings.stream().collect(Collectors.joining());
+        String txt = String.join("", consoleStrings);
         jTextAreaConsoleOutput.setText(txt);
         jTextAreaConsoleOutput.setCaretPosition(txt.length());
     }

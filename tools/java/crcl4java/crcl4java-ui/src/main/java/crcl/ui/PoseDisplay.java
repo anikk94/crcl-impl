@@ -85,10 +85,10 @@ public class PoseDisplay {
             };
         }
 
-        Class<?>[] types = new Class<?>[]{
+        final Class<?>[] types = new Class<?>[]{
             java.lang.String.class, java.lang.Double.class
         };
-        boolean[] canEdit;
+        final boolean[] canEdit;
 
         public Class<?> getColumnClass(int columnIndex) {
             return types[columnIndex];
@@ -125,10 +125,10 @@ public class PoseDisplay {
             };
         }
 
-        Class<?>[] types = new Class<?>[]{
+        final Class<?>[] types = new Class<?>[]{
             java.lang.String.class, java.lang.Double.class
         };
-        boolean[] canEdit;
+        final boolean[] canEdit;
 
         public Class<?> getColumnClass(int columnIndex) {
             return types[columnIndex];
@@ -164,10 +164,10 @@ public class PoseDisplay {
             };
         }
 
-        Class<?>[] types = new Class<?>[]{
+        final Class<?>[] types = new Class<?>[]{
             java.lang.String.class, java.lang.Double.class
         };
-        boolean[] canEdit;
+        final boolean[] canEdit;
 
         public Class<?> getColumnClass(int columnIndex) {
             return types[columnIndex];

@@ -161,7 +161,7 @@ class PerfTest {
             System.out.println("Starting runPerfTest(enableEXI=" + enableEXI + ",validate=" + validate + ",repeats=" + repeats + ") ...");
             try {
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             CRCLSocket csTst = new CRCLSocket();
             csTst.setReplaceHeader(true);
@@ -198,7 +198,7 @@ class PerfTest {
                                             statusCommandStatus.setStatusID(statusCommandStatus.getStatusID() + 1);
                                             cs.writeStatus(status, validate);
                                         }
-                                    } catch (Exception ex) {
+                                    } catch (Exception ignored) {
                                     } finally {
                                         try {
                                             cs.close();
@@ -220,7 +220,7 @@ class PerfTest {
                         if (null != s) {
                             try {
                                 s.close();
-                            } catch (Exception e) {
+                            } catch (Exception ignored) {
 
                             }
                         }
@@ -269,7 +269,7 @@ class PerfTest {
                 if (null != s) {
                     try {
                         s.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -290,7 +290,7 @@ class PerfTest {
             if (null != ss) {
                 try {
                     ss.close();
-                } catch (Exception exx) {
+                } catch (Exception ignored) {
                 }
             }
             System.out.println("End of runPerfTest(enableEXI=" + enableEXI + ",validate=" + validate + ",repeats=" + repeats + ") ...");

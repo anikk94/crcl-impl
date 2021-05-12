@@ -615,7 +615,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         this.queueEvents = queueEvents;
     }
 
-    private BlockingQueue<CRCLServerSocketEvent<STATE_TYPE>> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<CRCLServerSocketEvent<STATE_TYPE>> queue = new LinkedBlockingQueue<>();
 
     public void comleteGuardTrigger() {
         long now = System.currentTimeMillis();
@@ -845,11 +845,10 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                             finishWriteStatus(state, suppliedStatus, source, event, commandStatus);
                         });
                         this.lastUpdateSupplierAcceptedFuture = supplierAcceptedFuture;
-                        return true;
                     } else {
                         finishWriteStatus(state, localServerSideStatus, source, event, commandStatus);
-                        return true;
                     }
+                    return true;
                 } else {
                     final long currentCommandId = cmd.getCommandID();
                     setLastRecievedCommandID(currentCommandId);

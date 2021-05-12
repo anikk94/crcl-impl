@@ -306,7 +306,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
         setTitle("CRCL Client");
 
         jMenu1.setText("File");
-        jMenu1.addActionListener(formListener);
 
         jMenuItemOpenXmlCommandInstance.setText("Open CRCL XML Command Instance File ... ");
         jMenuItemOpenXmlCommandInstance.addActionListener(formListener);
@@ -370,7 +369,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
         jMenuTools.add(jCheckBoxMenuItemPlotXYZ);
 
         jCheckBoxMenuItemJoints.setText("Plot Joints");
-        jCheckBoxMenuItemJoints.addActionListener(formListener);
         jMenuTools.add(jCheckBoxMenuItemJoints);
 
         jMenuItemRunTest.setText("Run Test");
@@ -381,7 +379,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
         jMenuTools.add(jCheckBoxMenuItemRecordPoseList);
 
         jMenuItemPoseList3DPlot.setText("3D Pose List Plot ...");
-        jMenuItemPoseList3DPlot.addActionListener(formListener);
         jMenuTools.add(jMenuItemPoseList3DPlot);
 
         jMenuItemOpenStatusLog.setText("Open Status Log ...");
@@ -480,10 +477,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
     private class FormListener implements java.awt.event.ActionListener {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            if (evt.getSource() == jMenu1) {
-                CrclSwingClientJFrame.this.jMenu1ActionPerformed(evt);
-            }
-            else if (evt.getSource() == jMenuItemOpenXmlCommandInstance) {
+            if (evt.getSource() == jMenuItemOpenXmlCommandInstance) {
                 CrclSwingClientJFrame.this.jMenuItemOpenXmlCommandInstanceActionPerformed(evt);
             }
             else if (evt.getSource() == jMenuItemOpenXmlProgram) {
@@ -519,14 +513,8 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
             else if (evt.getSource() == jCheckBoxMenuItemPlotXYZ) {
                 CrclSwingClientJFrame.this.jCheckBoxMenuItemPlotXYZActionPerformed(evt);
             }
-            else if (evt.getSource() == jCheckBoxMenuItemJoints) {
-                CrclSwingClientJFrame.this.jCheckBoxMenuItemJointsActionPerformed(evt);
-            }
             else if (evt.getSource() == jMenuItemRunTest) {
                 CrclSwingClientJFrame.this.jMenuItemRunTestActionPerformed(evt);
-            }
-            else if (evt.getSource() == jMenuItemPoseList3DPlot) {
-                CrclSwingClientJFrame.this.jMenuItemPoseList3DPlotActionPerformed(evt);
             }
             else if (evt.getSource() == jMenuItemOpenStatusLog) {
                 CrclSwingClientJFrame.this.jMenuItemOpenStatusLogActionPerformed(evt);
@@ -574,10 +562,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
     private void jMenuItemSetSchemaFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSetSchemaFilesActionPerformed
         pendantClientJPanel1.showSetSchemaFilesDialog();
     }//GEN-LAST:event_jMenuItemSetSchemaFilesActionPerformed
-
-    private void jCheckBoxMenuItemJointsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemJointsActionPerformed
-
-    }//GEN-LAST:event_jCheckBoxMenuItemJointsActionPerformed
 
     private void jCheckBoxMenuItemPlotXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemPlotXYZActionPerformed
         if (this.jCheckBoxMenuItemPlotXYZ.isSelected()) {
@@ -627,10 +611,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
         pendantClientJPanel1.savePoseList();
     }//GEN-LAST:event_jMenuItemSavePoseListActionPerformed
 
-    private void jMenuItemPoseList3DPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPoseList3DPlotActionPerformed
-//        pendantClientJPanel1.show3DPlot();
-    }//GEN-LAST:event_jMenuItemPoseList3DPlotActionPerformed
-
     private void jMenuItemOpenStatusLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenStatusLogActionPerformed
         pendantClientJPanel1.showStatusLog();
     }//GEN-LAST:event_jMenuItemOpenStatusLogActionPerformed
@@ -672,10 +652,6 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
     private void jMenuItemSavePrefsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSavePrefsActionPerformed
         pendantClientJPanel1.savePrefsAction();
     }//GEN-LAST:event_jMenuItemSavePrefsActionPerformed
-
-    private void jMenu1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenu1ActionPerformed
 
     private void jCheckBoxMenuItemQuitProgramOnTestCommandFailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemQuitProgramOnTestCommandFailActionPerformed
         pendantClientJPanel1.setQuitOnTestCommandFailure(this.jCheckBoxMenuItemQuitProgramOnTestCommandFail.isSelected());

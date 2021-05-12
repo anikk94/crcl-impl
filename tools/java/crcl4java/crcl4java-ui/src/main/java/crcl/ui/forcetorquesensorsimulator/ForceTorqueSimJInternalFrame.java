@@ -26,7 +26,6 @@ import crcl.ui.client.CrclSwingClientJPanel;
 import crcl.utils.outer.interfaces.PropertyOwner;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  *

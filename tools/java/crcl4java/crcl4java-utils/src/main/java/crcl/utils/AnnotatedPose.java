@@ -121,6 +121,7 @@ public class AnnotatedPose extends PmPose {
         return status;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public AnnotatedPose clone() {
         return new AnnotatedPose(time, lastCommandIdSent, commandName, tran, rot, status);

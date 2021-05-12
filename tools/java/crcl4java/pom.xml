@@ -10,13 +10,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>                    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>                    
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>                    
-        <checker-framework.version>3.9.1</checker-framework.version>                    
+        <checker-framework.version>3.3.0</checker-framework.version>                    
         <checker-framework.jdk8.version>3.3.0</checker-framework.jdk8.version>                    
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>                    
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>                    
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>   
         <maven.version>3.3.9</maven.version>         
-    </properties>          
+    </properties>
     <modules>                    
         <module>crcl4java-base</module>                    
         <module>crcl4java-utils</module>                    
@@ -24,7 +24,7 @@
         <module>crclcopier</module>                  
         <module>generate-copier-maven-plugin</module>          
     </modules>              
-    <url>        https://github.com/usnistgov/crcl    </url>          
+    <url>https://github.com/usnistgov/crcl</url>          
     <description>        Tools and Libraries for Java Developers using "Canonical Robot Command Language" (CRCL)        The language called "Canonical Robot Command Language" (CRCL) provides generic command and status definitions that implement the functionality of typical industrial robots without being specific either to the language of a plan that is being executed or to the language used by a robot controller that executes CRCL commands.     </description>          
     <repositories>                    
         <repository>                              
@@ -144,7 +144,42 @@
                     <verbose>true</verbose>                                          
                 </configuration>                                 
             </plugin>                      
-        </plugins>            
+        </plugins>
+        <pluginManagement>
+        	<plugins>
+        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        		<plugin>
+        			<groupId>org.eclipse.m2e</groupId>
+        			<artifactId>lifecycle-mapping</artifactId>
+        			<version>1.0.0</version>
+        			<configuration>
+        				<lifecycleMappingMetadata>
+        					<pluginExecutions>
+        						<pluginExecution>
+        							<pluginExecutionFilter>
+        								<groupId>
+        									org.apache.maven.plugins
+        								</groupId>
+        								<artifactId>
+        									maven-dependency-plugin
+        								</artifactId>
+        								<versionRange>
+        									[3.1.1,)
+        								</versionRange>
+        								<goals>
+        									<goal>properties</goal>
+        								</goals>
+        							</pluginExecutionFilter>
+        							<action>
+        								<ignore></ignore>
+        							</action>
+        						</pluginExecution>
+        					</pluginExecutions>
+        				</lifecycleMappingMetadata>
+        			</configuration>
+        		</plugin>
+        	</plugins>
+        </pluginManagement>
     </build>          
     <profiles>                    
         <profile>                              

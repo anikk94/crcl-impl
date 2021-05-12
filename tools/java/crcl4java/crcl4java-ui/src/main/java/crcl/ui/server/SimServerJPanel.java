@@ -65,7 +65,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -313,7 +312,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
     private static final String VALIDATEXML_PROPERTY_NAME = "crcl.validateXML";
     private static final String CRCLPORT_PROPERTY_NAME = "crcl.port";
 
-    static public boolean LOG_IMAGES_DEFAULT = false;
+    static public final boolean LOG_IMAGES_DEFAULT = false;
 
     String tempDir = "/tmp";
 

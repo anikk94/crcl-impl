@@ -24,7 +24,6 @@ import crcl.ui.client.CrclSwingClientJFrame;
 import crcl.utils.XpathUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -88,7 +87,6 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
 
         jCheckBoxUpdateAutomatically.setSelected(true);
         jCheckBoxUpdateAutomatically.setText("Update Automatically");
-        jCheckBoxUpdateAutomatically.addActionListener(formListener);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -142,9 +140,6 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
             else if (evt.getSource() == jButtonClose) {
                 XpathQueryJFrame.this.jButtonCloseActionPerformed(evt);
             }
-            else if (evt.getSource() == jCheckBoxUpdateAutomatically) {
-                XpathQueryJFrame.this.jCheckBoxUpdateAutomaticallyActionPerformed(evt);
-            }
         }
     }// </editor-fold>//GEN-END:initComponents
 
@@ -197,10 +192,6 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
     private void jComboBoxXpathQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxXpathQueryActionPerformed
         checkQuery();
     }//GEN-LAST:event_jComboBoxXpathQueryActionPerformed
-
-    private void jCheckBoxUpdateAutomaticallyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxUpdateAutomaticallyActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxUpdateAutomaticallyActionPerformed
 
     private void checkQuery() {
         String q = this.jComboBoxXpathQuery.getSelectedItem().toString();

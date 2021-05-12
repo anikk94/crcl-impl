@@ -8,10 +8,9 @@ package crcl.utils;
 import crcl.utils.kinematics.SimulatedKinematicsPlausible;
 import crcl.base.PointType;
 import crcl.base.PoseType;
-import java.math.BigDecimal;
+
 import java.util.Arrays;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,7 +27,7 @@ public class SimulatedKinematicsPlausibleTest {
     public SimulatedKinematicsPlausibleTest() {
     }
 
-    static SimulatedKinematicsPlausible sk = new SimulatedKinematicsPlausible();
+    static final SimulatedKinematicsPlausible sk = new SimulatedKinematicsPlausible();
 
     private static final int RANDOM_SEED = 8321;
 

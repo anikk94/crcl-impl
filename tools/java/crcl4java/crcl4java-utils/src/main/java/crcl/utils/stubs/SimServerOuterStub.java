@@ -21,7 +21,6 @@
 package crcl.utils.stubs;
 
 import crcl.utils.outer.interfaces.SimServerOuter;
-import crcl.base.LengthUnitEnumType;
 import crcl.utils.outer.interfaces.SimServerMenuOuter;
 import java.util.logging.Level;
 import java.util.logging.Logger;

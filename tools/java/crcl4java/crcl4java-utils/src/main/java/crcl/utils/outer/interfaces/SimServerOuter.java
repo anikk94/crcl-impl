@@ -20,8 +20,6 @@
  */
 package crcl.utils.outer.interfaces;
 
-import crcl.base.LengthUnitEnumType;
-
 
 /**
  * This class defines the interface between the SimServerInner and a GUI frame.

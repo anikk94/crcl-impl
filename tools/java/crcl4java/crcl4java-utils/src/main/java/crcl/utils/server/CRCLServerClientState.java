@@ -34,11 +34,8 @@ import java.util.logging.Logger;
 public class CRCLServerClientState implements AutoCloseable {
 
     private final CRCLSocket cs;
-    public int getStatusRequests = 0;
     public int cmdsRecieved = 0;
     public long lastCmdTime = 0;
-    public long lastStatRequestTime = 0;
-    public long getStatusCmdId = -999;
     public long cmdId = -999;
     public final CRCLStatusFilterSettings filterSettings;
     
@@ -62,6 +59,12 @@ public class CRCLServerClientState implements AutoCloseable {
 
     @Override
     public String toString() {
-        return "CrclServerClientState{" + "cs=" + cs + ", getStatusRequests=" + getStatusRequests + ", cmdsRecieved=" + cmdsRecieved + ", lastCmdTime=" + lastCmdTime + ", lastStatRequestTime=" + lastStatRequestTime + ", getStatusCmdId=" + getStatusCmdId + ", cmdId=" + cmdId + '}';
+        return "CRCLServerClientState{" +
+                "cs=" + cs +
+                ", cmdsRecieved=" + cmdsRecieved +
+                ", lastCmdTime=" + lastCmdTime +
+                ", cmdId=" + cmdId +
+                ", filterSettings=" + filterSettings +
+                '}';
     }
 }

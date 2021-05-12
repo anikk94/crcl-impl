@@ -179,25 +179,25 @@ public class SideViewJPanel extends JPanel {
         l5rect.width = seglengths[5];
     }
 
-    Arc2D.Double j1circle = new Arc2D.Double(-10.0, -10.0 // x,y
+    final Arc2D.Double j1circle = new Arc2D.Double(-10.0, -10.0 // x,y
             ,
              seglengths[3], seglengths[3] // w,h
             ,
              0, 360.0, Arc2D.CHORD);
 
-    Arc2D.Double j2circle = new Arc2D.Double(-6, -6.0 // x,y
+    final Arc2D.Double j2circle = new Arc2D.Double(-6, -6.0 // x,y
             ,
              12, 12 // w,h
             ,
              0, 360, Arc2D.CHORD);
 
     //Rectangle2D.Double jrect = new Rectangle2D.Double(0.0, -5.0, 10.0, 10.0);
-    Rectangle2D.Double l0rect = new Rectangle2D.Double(0.0, -5.0, seglengths[0], 10.0);
-    Rectangle2D.Double l1rect = new Rectangle2D.Double(0.0, -5.0, seglengths[1], 10.0);
-    Rectangle2D.Double l2rect = new Rectangle2D.Double(0.0, -5.0, seglengths[2], 10.0);
-    Rectangle2D.Double l3rect = new Rectangle2D.Double(0.0, -5.0, seglengths[3], 10.0);
-    Rectangle2D.Double l4rect = new Rectangle2D.Double(0.0, -10.0, 5.0, seglengths[4]);
-    Rectangle2D.Double l5rect = new Rectangle2D.Double(0.0, -0.5, seglengths[5], 1.0);
+    final Rectangle2D.Double l0rect = new Rectangle2D.Double(0.0, -5.0, seglengths[0], 10.0);
+    final Rectangle2D.Double l1rect = new Rectangle2D.Double(0.0, -5.0, seglengths[1], 10.0);
+    final Rectangle2D.Double l2rect = new Rectangle2D.Double(0.0, -5.0, seglengths[2], 10.0);
+    final Rectangle2D.Double l3rect = new Rectangle2D.Double(0.0, -5.0, seglengths[3], 10.0);
+    final Rectangle2D.Double l4rect = new Rectangle2D.Double(0.0, -10.0, 5.0, seglengths[4]);
+    final Rectangle2D.Double l5rect = new Rectangle2D.Double(0.0, -0.5, seglengths[5], 1.0);
 
     @Override
     protected void paintComponent(Graphics g) {

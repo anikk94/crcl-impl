@@ -1,5 +1,5 @@
 /*
- * This software is public domain software, however it is preferred
+ * This software is public @Nullable domain software, however it is preferred
  * that the following disclaimers be attached.
  * Software Copywrite/Warranty Disclaimer
  * 
@@ -7,7 +7,7 @@
  * Technology by employees of the Federal Government in the course of their
  * official duties. Pursuant to title 17 Section 105 of the United States
  * Code this software is not subject to copyright protection and is in the
- * public domain.
+ * public @Nullable domain.
  * 
  * This software is experimental. NIST assumes no responsibility whatsoever 
  * for its use by other parties, and makes no guarantees, expressed or 
@@ -25,6 +25,7 @@ package com.github.wshackle.generate.copier.maven.plugin;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -32,16 +33,15 @@ import java.util.Set;
  */
 public class JavaCloneUtilOptions {
 
-    public String classname;
-    public File dir;
-    public List<Class<?>> classes;
-    public Set<String> nocopyclassnamesSet;
-    public String logString;
+    public @Nullable String classname;
+    public @Nullable File dir;
+    public @Nullable List<Class<?>> classes;
+    public @Nullable Set<String> nocopyclassnamesSet;
+    public @Nullable String logString;
 
     @Override
     public String toString() {
         return "JavaCloneUtilOptions{\n " + "classname=" + classname + ",\n   dir=" + dir + ",\n   classes=" + classes + ",\n   nocopyclassnamesSet=" + nocopyclassnamesSet + ",\n   logString=" + logString + "\n}\n";
     }
 
-    
 }
