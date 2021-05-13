@@ -67,8 +67,6 @@ public class CRCLUtils {
      * JDK / CheckerFramework. It is just a wrapper for java.util.Objects.requireNonNull
      * 
        @param ref     the object reference to check for nullity
-     * @param message detail message to be used in the event that a {@code
-     *                NullPointerException} is thrown
      * @param <T> the type of the reference
      * @return {@code ref} if not {@code null}
      * @throws NullPointerException if {@code ref} is {@code null}
