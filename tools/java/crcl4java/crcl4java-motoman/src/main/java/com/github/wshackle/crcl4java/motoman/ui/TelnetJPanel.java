@@ -204,10 +204,10 @@ public class TelnetJPanel extends javax.swing.JPanel {
                 disconnect();
             }
         } catch (Exception ex) {
-             Logger.getLogger(TelnetJPanel.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(TelnetJPanel.class.getName()).log(Level.SEVERE, "", ex);
              try {
                  disconnect();
-             } catch(Exception ex2) {
+             } catch(Exception ignored) {
                  
              }
              appendText("Connection  to "+host+":"+port +" failed: "+ex +"\n");
@@ -220,7 +220,7 @@ public class TelnetJPanel extends javax.swing.JPanel {
             inputQueue.put(line + "\r\n");
             jTextField1.setText("");
         } catch (InterruptedException ex) {
-            Logger.getLogger(TelnetJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TelnetJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jTextField1ActionPerformed
 
@@ -287,13 +287,13 @@ public class TelnetJPanel extends javax.swing.JPanel {
 
     }
 
-    private TelnetJPanelInputStream inputStream = new TelnetJPanelInputStream();
+    private final TelnetJPanelInputStream inputStream = new TelnetJPanelInputStream();
 
     public InputStream getInputStream() {
         return inputStream;
     }
 
-    List<String> logLines = new ArrayList<>();
+    final List<String> logLines = new ArrayList<>();
 
 //    private static String tabsToSpaces(String in) {
 //        return in.replaceAll("[\t]", "\\t").replaceAll("[ ]", "|s|");
@@ -333,7 +333,7 @@ public class TelnetJPanel extends javax.swing.JPanel {
                 jSpinnerMaxLines.setValue(1);
                 maxLines = 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (logLines.size() < maxLines) {
             addLogLine(l);

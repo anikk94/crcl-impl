@@ -44,7 +44,7 @@ public enum KinReturnCode {
 
     private final int id;
 
-    private static Map<Integer, KinReturnCode> map = new HashMap<>();
+    private static final Map<Integer, KinReturnCode> map = new HashMap<>();
 
     static {
         for (int i = 0; i < KinReturnCode.values().length; i++) {

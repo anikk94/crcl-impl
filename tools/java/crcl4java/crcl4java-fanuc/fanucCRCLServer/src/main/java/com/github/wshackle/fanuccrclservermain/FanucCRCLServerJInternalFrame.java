@@ -9,7 +9,6 @@ import com.github.wshackle.fanuc.robotserver.FREExecuteConstants;
 import com.github.wshackle.fanuc.robotserver.FREStepTypeConstants;
 import com.github.wshackle.fanuc.robotserver.ITPProgram;
 import com.github.wshackle.fanuc.robotserver.IVar;
-import crcl.ui.misc.ServerSensorJFrame;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -21,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -117,7 +115,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
                     = Objects.requireNonNull(ClassLoader.getSystemResource("robot.png"), "ClassLoader.getSystemResource(\"robot.png\")");
             img = ImageIO.read(robotImageSystemResourceUrl);
         } catch (IOException ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             throw new RuntimeException(ex);
         }
         return img;
@@ -150,7 +148,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
         this.jMenuConvertProgram.removeAll();
         if (null != programs) {
             synchronized (programs) {
-                Collections.sort(programs, Comparator.comparing(ITPProgram::name));
+                programs.sort(Comparator.comparing(ITPProgram::name));
                 for (ITPProgram p : programs) {
                     JMenuItem jmi = new JMenuItem(p.name());
                     jmi.addActionListener(e -> {
@@ -267,7 +265,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
 //            jCheckBoxMenuItemStartPressureServer.setSelected(getBooleanProperty("autoStartPressureSensorServer", false));
 //            jCheckBoxMenuItemShowPressureOutput.setSelected(getBooleanProperty("showPressureOutput", false));
 //        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //        }
     }
 

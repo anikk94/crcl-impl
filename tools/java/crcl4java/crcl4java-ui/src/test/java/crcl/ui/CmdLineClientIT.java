@@ -117,7 +117,7 @@ public class CmdLineClientIT {
                 fail("Program did NOT succeed.");
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             fail("Exception thrown");
         }
         CmdLineSimServer.closeServer();
@@ -197,7 +197,7 @@ public class CmdLineClientIT {
             }
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             fail("Exception thrown");
         }
         CmdLineSimServer.closeServer();
@@ -282,7 +282,7 @@ public class CmdLineClientIT {
             }
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             fail("Exception thrown: " + ex);
         }
         CmdLineSimServer.closeServer();

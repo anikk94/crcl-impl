@@ -287,7 +287,7 @@ public class CrclSwingClientJInternalFrame
 //        try {
 //            this.setIconImage(IconImages.BASE_IMAGE);
 //        } catch (Exception ex) {
-//            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //        }
     }
 
@@ -382,7 +382,7 @@ public class CrclSwingClientJInternalFrame
                         try {
                             pendantClientJPanel1.openXmlInstanceFile(xmlFile);
                         } catch (Exception ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, "", ex);
                             showMessage(ex);
                         }
                     }
@@ -407,7 +407,7 @@ public class CrclSwingClientJInternalFrame
                 });
                 this.jMenuRecentProgram.add(jmi);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -836,7 +836,7 @@ public class CrclSwingClientJInternalFrame
                     saveXmlProgramFile(f);
                 }
             } catch (JAXBException | CRCLException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
                 this.showMessage(ex);
             }
         }

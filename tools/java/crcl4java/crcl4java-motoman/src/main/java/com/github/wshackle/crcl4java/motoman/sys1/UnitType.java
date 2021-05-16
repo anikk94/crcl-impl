@@ -40,7 +40,7 @@ public enum UnitType {
         this.id = id;
     }
 
-    private static Map<Integer, UnitType> map = new HashMap<>();
+    private static final Map<Integer, UnitType> map = new HashMap<>();
 //
     static {
         for (int i = 0; i < UnitType.values().length; i++) {

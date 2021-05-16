@@ -37,7 +37,6 @@ import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -139,7 +138,7 @@ public class CRCLSchemaUtils {
         try {
             List<File> fl = readSchemaListFile(schemaListFile);
             fl = reorderProgramSchemaFiles(fl);
-            return fl.toArray(new File[fl.size()]);
+            return fl.toArray(new File[0]);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Can not read " + schemaListFile, ex);
             if (ex instanceof RuntimeException) {
@@ -172,7 +171,7 @@ public class CRCLSchemaUtils {
                 newList.add(fileI);
             }
         }
-        Collections.sort(newList, new Comparator<File>() {
+        newList.sort(new Comparator<File>() {
 
             @Override
             public int compare(File o1, File o2) {
@@ -209,10 +208,10 @@ public class CRCLSchemaUtils {
 
     private static File[] reorderAndFilterStatSchemaFiles(File fa[]) {
         if (null == fa || fa.length < 1) {
+            //noinspection ImplicitArrayToString
             throw new IllegalArgumentException("File fa[]=" + fa);
         }
-        List<File> fl = new ArrayList<>();
-        fl.addAll(Arrays.asList(fa));
+        List<File> fl = new ArrayList<>(Arrays.asList(fa));
         List<File> newList = reorderAndFilterStatSchemaFiles(fl);
         if (null != newList) {
             File files[] = listToArray(File.class, newList);
@@ -278,7 +277,7 @@ public class CRCLSchemaUtils {
         try {
             List<File> fl = readSchemaListFile(schemaListFile);
             fl = reorderAndFilterStatSchemaFiles(fl);
-            return fl.toArray(new File[fl.size()]);
+            return fl.toArray(new File[0]);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Failed to read " + schemaListFile, ex);
             if (ex instanceof RuntimeException) {
@@ -397,8 +396,7 @@ public class CRCLSchemaUtils {
         if (null == fa || fa.length < 1) {
             return EMPTY_FILE_ARRAY;
         }
-        List<File> fl = new ArrayList<>();
-        fl.addAll(Arrays.asList(fa));
+        List<File> fl = new ArrayList<>(Arrays.asList(fa));
         List<File> newList = reorderAndFilterCommandSchemaFiles(fl);
         if (newList != null) {
             return toNonNullArray(newList, File.class);
@@ -414,7 +412,7 @@ public class CRCLSchemaUtils {
                 newList.add(fileI);
             }
         }
-        Collections.sort(newList, new Comparator<File>() {
+        newList.sort(new Comparator<File>() {
 
             @Override
             public int compare(File o1, File o2) {
@@ -441,11 +439,11 @@ public class CRCLSchemaUtils {
     private static <T> T[] nonullArrayCopy(T[] oldArray) {
         final Class<?> oldArrayClass = oldArray.getClass();
         if (null == oldArrayClass) {
-            throw new IllegalArgumentException("oldArrayClass=" + oldArrayClass + ", oldArray=" + oldArray);
+            throw new IllegalArgumentException("oldArrayClass=" + oldArrayClass );
         }
         final Class<T> oldArrayComponentType = (Class<T>) oldArrayClass.getComponentType();
         if (null == oldArrayComponentType) {
-            throw new IllegalArgumentException("oldArrayComponentType=" + oldArrayComponentType + ", oldArray=" + oldArray);
+            throw new IllegalArgumentException("oldArrayComponentType=" + oldArrayComponentType);
         }
         T[] newArray = (T[]) Array.newInstance(oldArrayComponentType, oldArray.length);
         for (int i = 0; i < newArray.length; i++) {
@@ -485,7 +483,7 @@ public class CRCLSchemaUtils {
 
     /**
      * Get a default schema from the default schema files for CRCL command sockets.
-     * @return
+     * @return schema
      * @throws CRCLException schema file was invalid
      */
     public static synchronized @Nullable
@@ -581,13 +579,12 @@ public class CRCLSchemaUtils {
         if (null == fa) {
             return EMPTY_FILE_ARRAY;
         }
-        List<File> fl = new ArrayList<>();
-        fl.addAll(Arrays.asList(fa));
+        List<File> fl = new ArrayList<>(Arrays.asList(fa));
         return toNonNullArray(fl, File.class);
     }
 
     private static List<File> reorderProgramSchemaFiles(List<File> fl) {
-        Collections.sort(fl, new Comparator<File>() {
+        fl.sort(new Comparator<File>() {
 
             @Override
             public int compare(File o1, File o2) {
@@ -707,7 +704,7 @@ public class CRCLSchemaUtils {
             String version = el.getAttribute("version");
             return version;
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
         return "";
     }

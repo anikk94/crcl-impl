@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 public class TestForceControl {
 
-    private static String host = MotoPlusConnection.getDefaultHost();
+    private static final String host = MotoPlusConnection.getDefaultHost();
 
     public static void main(String[] args) throws Exception {
         System.out.println("host = " + host);

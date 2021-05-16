@@ -22,180 +22,70 @@
  */
 package crcl.ui.client;
 
-import crcl.base.ActuateJointType;
-import crcl.base.ActuateJointsType;
-import crcl.base.CRCLCommandInstanceType;
-import crcl.base.CRCLCommandType;
-import crcl.base.CRCLProgramType;
-import crcl.base.CRCLStatusType;
-import crcl.base.CloseToolChangerType;
-import crcl.base.CommandStateEnumType;
-import static crcl.base.CommandStateEnumType.CRCL_DONE;
-import static crcl.base.CommandStateEnumType.CRCL_ERROR;
-import static crcl.base.CommandStateEnumType.CRCL_READY;
-import static crcl.base.CommandStateEnumType.CRCL_WORKING;
-import crcl.base.CommandStatusType;
-import crcl.base.EndCanonType;
-import crcl.base.GripperStatusType;
-import crcl.base.GuardLimitEnumType;
-import crcl.base.GuardType;
-import crcl.base.InitCanonType;
-import crcl.base.JointSpeedAccelType;
-import crcl.base.JointStatusType;
-import crcl.base.JointStatusesType;
-import crcl.base.LengthUnitEnumType;
-import static crcl.base.LengthUnitEnumType.INCH;
-import static crcl.base.LengthUnitEnumType.METER;
-import static crcl.base.LengthUnitEnumType.MILLIMETER;
-import crcl.base.MiddleCommandType;
-import crcl.base.MoveToType;
-import crcl.base.OpenToolChangerType;
-import crcl.base.PointType;
-import crcl.base.PoseStatusType;
-import crcl.base.PoseType;
-import crcl.base.RotSpeedAbsoluteType;
-import crcl.base.SetEndEffectorType;
-import crcl.base.SetLengthUnitsType;
-import crcl.base.SetRotSpeedType;
-import crcl.base.SetTransSpeedType;
-import crcl.base.StopConditionEnumType;
-import crcl.base.StopMotionType;
-import crcl.base.TransSpeedAbsoluteType;
-import crcl.base.VectorType;
+import crcl.base.*;
+import crcl.copier.CRCLCopier;
 import crcl.ui.AutomaticPropertyFileUtils;
 import crcl.ui.ConcurrentBlockProgramsException;
 import crcl.ui.DefaultSchemaFiles;
-import static crcl.ui.IconImages.BASE_IMAGE;
-import static crcl.ui.IconImages.DISCONNECTED_IMAGE;
-import static crcl.ui.IconImages.DONE_IMAGE;
-import static crcl.ui.IconImages.ERROR_IMAGE;
-import static crcl.ui.IconImages.WORKING_IMAGE;
-import static crcl.ui.PoseDisplay.updateDisplayMode;
-import static crcl.ui.PoseDisplay.updatePointTable;
-import static crcl.ui.PoseDisplay.updatePoseTable;
 import crcl.ui.PoseDisplayMode;
-import static crcl.ui.PoseDisplayMode.XYZ_RPY;
-import static crcl.ui.PoseDisplayMode.XYZ_RX_RY_RZ;
-import static crcl.ui.PoseDisplayMode.XYZ_XAXIS_ZAXIS;
-import crcl.ui.misc.ListChooserJPanel;
-import crcl.ui.misc.MultiLineStringJPanel;
-import crcl.ui.misc.ObjTableJPanel;
-import static crcl.ui.misc.ObjTableJPanel.getAssignableClasses;
-import crcl.ui.misc.ProgramPlotter;
-import crcl.ui.misc.XpathQueryJFrame;
-import crcl.copier.CRCLCopier;
-import static crcl.copier.CRCLCopier.copy;
-import crcl.utils.CRCLException;
-import crcl.utils.CRCLPosemath;
-import static crcl.utils.CRCLPosemath.point;
-import static crcl.utils.CRCLPosemath.pose;
-import static crcl.utils.CRCLPosemath.vector;
-import crcl.utils.CRCLSchemaUtils;
-import crcl.utils.CRCLSocket;
-import crcl.utils.CRCLUtils;
-import static crcl.utils.CRCLUtils.middleCommands;
-import static crcl.utils.CRCLUtils.requireNonNull;
-import crcl.utils.XFuture;
-import crcl.utils.XFutureVoid;
+import crcl.ui.misc.*;
+import crcl.utils.*;
 import crcl.utils.outer.interfaces.CommandStatusLogElement;
 import crcl.utils.outer.interfaces.PendantClientMenuOuter;
 import crcl.utils.outer.interfaces.PendantClientOuter;
 import crcl.utils.outer.interfaces.ProgramRunData;
 import diagapplet.plotter.PlotData;
 import diagapplet.plotter.plotterJFrame;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Desktop;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import static java.awt.event.ActionEvent.ACTION_FIRST;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
-import java.nio.file.Files;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.xml.sax.SAXException;
-import rcs.posemath.PmCartesian;
-import rcs.posemath.PmEulerZyx;
-import rcs.posemath.PmException;
-import rcs.posemath.PmRotationMatrix;
-import rcs.posemath.PmRotationVector;
-import rcs.posemath.PmRpy;
-import rcs.posemath.Posemath;
+import rcs.posemath.*;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.*;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static crcl.base.CommandStateEnumType.CRCL_ERROR;
+import static crcl.copier.CRCLCopier.copy;
+import static crcl.ui.IconImages.*;
+import static crcl.ui.PoseDisplay.*;
+import static crcl.ui.misc.ObjTableJPanel.getAssignableClasses;
+import static crcl.utils.CRCLPosemath.*;
+import static crcl.utils.CRCLUtils.middleCommands;
+import static crcl.utils.CRCLUtils.requireNonNull;
+import static java.awt.event.ActionEvent.ACTION_FIRST;
 
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial"})
 public class CrclSwingClientJPanel
         extends javax.swing.JPanel
         implements PendantClientOuter {
@@ -584,28 +474,28 @@ public class CrclSwingClientJPanel
 
                 showSelectedProgramCommand(cmd, status);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         } else if (line > 0 && (null == middleCommandsList)) {
             try {
                 EndCanonType cmd = program.getEndCanon();
                 showSelectedProgramCommand(cmd, status);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         } else if (line > 0 && line <= middleCommandsList.size()) {
             try {
                 MiddleCommandType cmd = middleCommandsList.get(line - 1);
                 showSelectedProgramCommand(cmd, status);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         } else if (line == middleCommandsList.size() + 1) {
             try {
                 EndCanonType cmd = program.getEndCanon();
                 showSelectedProgramCommand(cmd, status);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         programPlotterJPanelOverhead.setProgram(program);
@@ -647,7 +537,7 @@ public class CrclSwingClientJPanel
             this.jTextAreaSelectedProgramCommand.setText(cmdString);
             this.jTextAreaSelectedProgramCommand.setCaretPosition(0);
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             throw new RuntimeException(ex);
         }
     }
@@ -689,7 +579,7 @@ public class CrclSwingClientJPanel
             }
             ps.flush();
         } catch (Exception exception) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, exception);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", exception);
         }
     }
 
@@ -763,7 +653,7 @@ public class CrclSwingClientJPanel
             };
             init();
         } catch (ParserConfigurationException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             throw new RuntimeException(ex);
         }
     }
@@ -892,7 +782,7 @@ public class CrclSwingClientJPanel
             }
         } catch (IOException ex) {
             Logger.getLogger(CrclSwingClientJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1014,14 +904,14 @@ public class CrclSwingClientJPanel
                         "ClassLoader.getSystemResourceAsStream(\"version\")");
                 BufferedReader br = new BufferedReader(new InputStreamReader(versionIs))) {
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
             while (null != (line = br.readLine())) {
                 sb.append(line);
             }
             sb.append("\nSchema versions = ").append(CRCLSchemaUtils.getSchemaVersions().toString());
             return sb.toString();
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             String exString = ex.toString();
             if (exString.length() > 30) {
                 exString = exString.substring(0, 30);
@@ -1086,7 +976,7 @@ public class CrclSwingClientJPanel
             internal.setProgram(program);
             showProgram(program, Collections.emptyList(), 0);
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1110,7 +1000,7 @@ public class CrclSwingClientJPanel
                 internal.getProgRunDataList().clear();
                 this.showProgram(program, Collections.emptyList(), -1);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -1300,7 +1190,7 @@ public class CrclSwingClientJPanel
         try {
             logClearProgramTimesDistancesInternalInfo(ste);
         } catch (IOException | JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
         for (int i = 0; i < jTableProgram.getRowCount(); i++) {
             jTableProgram.setValueAt(-1L, i, 3);
@@ -1389,7 +1279,7 @@ public class CrclSwingClientJPanel
             if (!Thread.currentThread().isInterrupted()
                     && this.jCheckBoxPoll.isSelected()
                     && startPollStopCount == pollStopCount.get()) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
             this.jCheckBoxPoll.setSelected(false);
             stopPollTimer();
@@ -1563,7 +1453,7 @@ public class CrclSwingClientJPanel
             this.clearRecordedPoints();
             internal.openXmlProgramFile(f, true);
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             showMessage(ex);
         }
     }
@@ -1651,7 +1541,7 @@ public class CrclSwingClientJPanel
             try {
                 javax.swing.SwingUtilities.invokeLater(() -> this.showProgram(programToShow, Collections.emptyList(), 0));
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -1671,10 +1561,10 @@ public class CrclSwingClientJPanel
             programPlotterJPanelSide.repaint();
 //            jTabbedPaneRightUpper.setSelectedComponent(jPanelProgramPlot);
         } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1724,7 +1614,7 @@ public class CrclSwingClientJPanel
                 }
                 pathSet.add(fprogCanon);
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
         return pathSet;
@@ -2100,7 +1990,7 @@ public class CrclSwingClientJPanel
                     if (!internal.isRunningProgram()) {
                         Integer ccstProgramIndex = ccst.getProgramIndex();
                         if (null != ccstProgramIndex) {
-                            int index = ccstProgramIndex.intValue();
+                            int index = ccstProgramIndex;
                             if (index != internal.getLastProgramIndex()) {
                                 return true;
                             }
@@ -2109,7 +1999,7 @@ public class CrclSwingClientJPanel
                 }
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
         return false;
     }
@@ -2202,7 +2092,7 @@ public class CrclSwingClientJPanel
                     }
                     Integer ccstProgramIndex = ccst.getProgramIndex();
                     if (null != ccstProgramIndex) {
-                        int index = ccstProgramIndex.intValue();
+                        int index = ccstProgramIndex;
                         if (index != internal.getLastProgramIndex() && null != program) {
                             finishShowCurrentProgramLine(index, program, curInternalStatus, internal.getProgRunDataList(), ste);
                             internal.setLastProgramIndex(index);
@@ -2228,7 +2118,7 @@ public class CrclSwingClientJPanel
                 jLabelHoldingObject2.setForeground(Color.BLACK);
             } else {
                 final Boolean holdingObject = gripperStatus.isHoldingObject();
-                if (null != holdingObject && holdingObject.booleanValue()) {
+                if (null != holdingObject && holdingObject) {
                     jLabelHoldingObject.setText("HoldingObject: TRUE");
                     jLabelHoldingObject.setForeground(Color.BLACK);
                     jLabelHoldingObject.setBackground(Color.WHITE);
@@ -2367,6 +2257,8 @@ public class CrclSwingClientJPanel
                             plotter.AddPlot(xpd, "x");
                         }
                         double x = pt.getX();
+                        // x passed to y arg because time is x axis in plot and x is the y axis.
+                        //noinspection SuspiciousNameCombination
                         plotter.AddPointToPlot(xpd, trel, x, true);
                         PlotData ypd = plotter.getPlotByName("y");
                         if (null == ypd) {
@@ -2393,6 +2285,8 @@ public class CrclSwingClientJPanel
                                 plotter.AddPlot(forceXPd, "forcex");
                             }
                             double forceX = curInternalStatus.getSensorStatuses().getForceTorqueSensorStatus().get(0).getFx();
+                            // forceX passed to y arg since time is the x axis of plot and forceX is the y axis
+                            //noinspection SuspiciousNameCombination
                             plotter.AddPointToPlot(forceXPd, trel, forceX, true);
                             PlotData forceYPd = plotter.getPlotByName("forcey");
                             if (null == forceYPd) {
@@ -2583,9 +2477,9 @@ public class CrclSwingClientJPanel
             System.out.println("lastStartPollTimerFutureLocalCopy = " + lastStartPollTimerFutureLocalCopy);
             lastStartPollTimerFutureLocalCopy.thenRun(this::completeDisconnect);
             try {
-                Thread.sleep(11 + 2 * internal.getPoll_ms());
+                Thread.sleep(11 + 2L * internal.getPoll_ms());
             } catch (InterruptedException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 throw new RuntimeException(ex);
             }
             if (isConnected()) {
@@ -2713,7 +2607,7 @@ public class CrclSwingClientJPanel
                         showMessage("Can't when status commandState = " + CommandStateEnumType.CRCL_ERROR);
                         jogStop();
                     }
-                    final double currentJointPositionn = Objects.requireNonNull(js.getJointPosition(), "js.getJointPosition()").doubleValue();
+                    final double currentJointPositionn = Objects.requireNonNull(js.getJointPosition(), "js.getJointPosition()");
                     double pos = currentJointPositionn;
                     if (apCount > 1) {
                         if (commandStatus.getCommandState() != CommandStateEnumType.CRCL_DONE) {
@@ -2794,9 +2688,8 @@ public class CrclSwingClientJPanel
                 return;
             }
 
-//        this.setJointControlModes(JointControlModeEnumType.POSITION);
             final String axis = (String) this.jComboBoxXYZRPY.getSelectedItem();
-            double tmpinc = 1.0;
+            final double tmpinc;
             sign = Math.signum(sign);
             switch (axis) {
                 case "X":
@@ -3048,7 +2941,7 @@ public class CrclSwingClientJPanel
                 jog_timer = null;
                 internal.stopMotion(FAST);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -3173,7 +3066,7 @@ public class CrclSwingClientJPanel
                 frame = new XpathQueryJFrame();
                 this.xqJFrame = frame;
             } catch (ParserConfigurationException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
         if (null != frame) {
@@ -3194,7 +3087,7 @@ public class CrclSwingClientJPanel
                     openXmlInstanceFile(f);
                 }
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
                 this.showMessage(ex);
             }
         }
@@ -3216,10 +3109,8 @@ public class CrclSwingClientJPanel
                 if (null != selectedFile) {
                     this.internal.savePoseListToCsvFile(selectedFile.getAbsolutePath());
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (PmException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException | PmException ex) {
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -3266,7 +3157,7 @@ public class CrclSwingClientJPanel
         try {
             JOptionPane.showMessageDialog(this, getVersion());
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3286,7 +3177,7 @@ public class CrclSwingClientJPanel
 ////            this.internal.savePoseListToCsvFile(tmpFile.getAbsolutePath());
 //            com.github.wshackle.poselist3dplot.MainJFrame.showPoseList(this.internal.getPoseList());
 //        } catch (Exception ex) {
-//            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
 //        }
 //    }
     public void useExiAction() {
@@ -3313,10 +3204,8 @@ public class CrclSwingClientJPanel
                     : File.createTempFile("poseList", ".csv");
             this.internal.savePoseListToCsvFile(tmpFile.getAbsolutePath());
             Desktop.getDesktop().open(tmpFile);
-        } catch (IOException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PmException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | PmException ex) {
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3382,7 +3271,7 @@ public class CrclSwingClientJPanel
             File f = writeCommandStatusLogFile();
             Desktop.getDesktop().open(f);
         } catch (IOException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3391,7 +3280,7 @@ public class CrclSwingClientJPanel
             File f = writeCommandProfileMap();
             Desktop.getDesktop().open(f);
         } catch (IOException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3399,7 +3288,7 @@ public class CrclSwingClientJPanel
         File f = getCommandProfileMapFile();
         Map<String, Long> profileMap = internal.getCmdPerfMap();
         List<Map.Entry<String, Long>> entriesList = new ArrayList<>(profileMap.entrySet());
-        Collections.sort(entriesList, Comparator.comparing((Map.Entry<String, Long> e) -> e.getValue()));
+        entriesList.sort(Comparator.comparing((Map.Entry<String, Long> e) -> e.getValue()));
         try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             pw.println("name,time");
             for (Map.Entry<String, Long> entry : entriesList) {
@@ -3429,7 +3318,7 @@ public class CrclSwingClientJPanel
             try {
                 this.showProgram(program, Collections.emptyList(), 0);
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -3558,7 +3447,7 @@ public class CrclSwingClientJPanel
             ps.println("logShowProgramInfo(program=\"" + programFile + "\", programRunDataList=\"" + progRunDataListFile + "\" (size=" + programRunDataListSize + "),line=" + line + ")");
             ps.flush();
         } catch (Exception exception) {
-            LOGGER.log(Level.SEVERE, null, exception);
+            LOGGER.log(Level.SEVERE, "", exception);
             showMessage(exception);
             if (exception instanceof RuntimeException) {
                 throw (RuntimeException) exception;
@@ -3596,7 +3485,7 @@ public class CrclSwingClientJPanel
             try {
                 dtm.setValueAt(tableCommandString(init), 0, 2);
             } catch (JAXBException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
             ProgramRunData prd = null;
             if (null != progRunDataList && !progRunDataList.isEmpty()) {
@@ -3676,7 +3565,7 @@ public class CrclSwingClientJPanel
                 jTableProgram.getSelectionModel().setSelectionInterval(line, line);
             }
         } catch (ParserConfigurationException | SAXException | IOException | JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
         programLineShowing = -1;
     }
@@ -3695,7 +3584,7 @@ public class CrclSwingClientJPanel
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings({"unchecked", "nullness", "deprecation", "rawtypes","CanBeFinal"})
+    @SuppressWarnings({"all","unchecked","rawtypes","CanBeFinal"})
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -5275,7 +5164,7 @@ public class CrclSwingClientJPanel
                 this.showProgram(program, null, -1);
                 this.showCurrentProgramLine(index, program, internal.getStatus(), internal.getProgRunDataList());
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jButtonEditProgramItemActionPerformed
@@ -5319,7 +5208,7 @@ public class CrclSwingClientJPanel
                 this.showProgram(program, Collections.emptyList(), -1);
                 this.showCurrentProgramLine(index, program, internal.getStatus(), internal.getProgRunDataList());
             } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jButtonDeletProgramItemActionPerformed
@@ -5328,7 +5217,7 @@ public class CrclSwingClientJPanel
         try {
             addProgramItem();
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         }
     }//GEN-LAST:event_jButtonAddProgramItemActionPerformed
@@ -5342,7 +5231,7 @@ public class CrclSwingClientJPanel
             Class<?> clss = MiddleCommandType.class;
             List<Class<?>> availClasses = getAssignableClasses(clss,
                     ObjTableJPanel.getClasses(customExcludedPathStrings));
-            Class ca[] = availClasses.toArray(new Class[availClasses.size()]);
+            Class ca[] = availClasses.toArray(new Class[0]);
             Arrays.sort(ca, Comparator.comparing((Class clss_in_ca) -> clss_in_ca.getSimpleName()));
             final Window outerWindow = this.getOuterWindow();
             if (null == outerWindow) {
@@ -5460,7 +5349,7 @@ public class CrclSwingClientJPanel
             lastProgramFuture = future;
             return ret;
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             XFuture<Boolean> future = new XFuture<>("runCurrentProgram immediate exception");
             future.completeExceptionally(ex);
             lastProgramFuture = null;
@@ -5497,7 +5386,7 @@ public class CrclSwingClientJPanel
             jogWorldTransSpeedsSet = false;
             jogWorldRotSpeedsSet = false;
         } catch (Exception exception) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, exception);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", exception);
             if (exception instanceof RuntimeException) {
                 throw (RuntimeException) exception;
             } else {
@@ -5612,7 +5501,7 @@ public class CrclSwingClientJPanel
         try {
             setProgram(null);
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
         return internal.startBlockingPrograms();
     }
@@ -5721,7 +5610,7 @@ public class CrclSwingClientJPanel
             lastContinueCurrentProgramRet = ret;
             return ret;
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             XFuture<Boolean> ret = (new XFuture<>("continueCurrentProgram.exception"));
             ret.completeExceptionally(ex);
             return ret;
@@ -5878,7 +5767,7 @@ public class CrclSwingClientJPanel
             this.updateLengthUnit(setLengthUnitsCmd.getUnitName());
             incAndSendCommandFromAwt(setLengthUnitsCmd);
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_lengthUnitComboBoxLengthUnitActionPerformed
 
@@ -5913,7 +5802,7 @@ public class CrclSwingClientJPanel
                 showProgram(recProgram, Collections.emptyList(), -1);
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonOpenGripperActionPerformed
 
@@ -5930,7 +5819,7 @@ public class CrclSwingClientJPanel
                 showProgram(recProgram, Collections.emptyList(), -1);
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonCloseGripperActionPerformed
 
@@ -5964,7 +5853,7 @@ public class CrclSwingClientJPanel
                     } else {
                         String limitString = limitObject.toString();
                         if (limitString.length() > 0) {
-                            guard.setLimitValue(Double.valueOf(limitString));
+                            guard.setLimitValue(Double.parseDouble(limitString));
                         }
                     }
                 }
@@ -5984,7 +5873,7 @@ public class CrclSwingClientJPanel
             incAndSendCommandFromAwt(moveto);
 
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonMoveToActionPerformed
 
@@ -6033,7 +5922,7 @@ public class CrclSwingClientJPanel
             EndCanonType end = new EndCanonType();
             incAndSendCommandFromAwt(end);
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonEndActionPerformed
 
@@ -6053,7 +5942,7 @@ public class CrclSwingClientJPanel
                 enableJoggingControls();
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonInitActionPerformed
 
@@ -6162,7 +6051,7 @@ public class CrclSwingClientJPanel
                 updatePoseTable(origPose, this.jTableMoveToPose, lastMoveToPoseDisplayMode);
             }
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jComboBoxMoveToPoseDisplayModeItemStateChanged
 
@@ -6176,7 +6065,7 @@ public class CrclSwingClientJPanel
                 updatePoseTable(origPose, this.jTableMoveToPose, lastMoveToPoseDisplayMode);
             }
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jComboBoxMoveToPoseDisplayModeActionPerformed
 
@@ -6213,7 +6102,7 @@ public class CrclSwingClientJPanel
                 showProgram(recProgram, Collections.emptyList(), -1);
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonOpenToolChangerActionPerformed
 
@@ -6229,7 +6118,7 @@ public class CrclSwingClientJPanel
                 showProgram(recProgram, Collections.emptyList(), -1);
             }
         } catch (JAXBException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonCloseToolChangerActionPerformed
 
@@ -6283,7 +6172,7 @@ public class CrclSwingClientJPanel
             plotterFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             plotterFrame.setVisible(true);
         } catch (NoSuchFieldException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonPlotStatusActionPerformed
 
@@ -6449,7 +6338,7 @@ public class CrclSwingClientJPanel
         try {
             internal.printCommandStatusLog(pw, false, true, internal.getCommandStatusLogHeadings(), 20);
         } catch (IOException ex) {
-            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
         return sw.toString();
     }
@@ -6465,7 +6354,7 @@ public class CrclSwingClientJPanel
                 writeCommandStatusLogFile();
                 return;
             } catch (IOException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         if (!pauseCommandStatusLog && !log.isEmpty()) {
@@ -6508,7 +6397,7 @@ public class CrclSwingClientJPanel
         List<Class<?>> allClasses = ObjTableJPanel.getClasses(customExcludedPathStrings);
         List<Class<?>> cmdClasses = ObjTableJPanel.getAssignableClasses(CRCLCommandType.class,
                 allClasses);
-        Collections.sort(cmdClasses, Comparator.comparing(CrclSwingClientJPanel::comparableClassName));
+        cmdClasses.sort(Comparator.comparing(CrclSwingClientJPanel::comparableClassName));
         for (final Class<?> c : cmdClasses) {
             JMenuItem jmi = new JMenuItem(comparableClassName(c));
             jmi.addActionListener(new ActionListener() {
@@ -6532,7 +6421,7 @@ public class CrclSwingClientJPanel
                             pendantClientJPanel1.saveRecentCommand(cmd);
                         }
                     } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "", ex);
                     }
                 }
             });

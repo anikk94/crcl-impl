@@ -105,7 +105,7 @@ public class CRCLServerSocketPollingExample {
                     }
                     Exception exception = e.getException();
                     if (null != exception) {
-                        Logger.getLogger(CRCLServerSocketPollingExample.class.getName()).log(Level.SEVERE, null, exception);
+                        Logger.getLogger(CRCLServerSocketPollingExample.class.getName()).log(Level.SEVERE, "", exception);
                     }
                 }
             }

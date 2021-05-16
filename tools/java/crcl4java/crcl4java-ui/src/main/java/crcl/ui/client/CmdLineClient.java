@@ -76,12 +76,12 @@ public class CmdLineClient {
                         break;
 
                     case "--autoRunTest":
-                        autoRunTest = Boolean.valueOf(args[i + 1]);
+                        autoRunTest = Boolean.parseBoolean(args[i + 1]);
                         i++;
                         break;
 
                     case "--useTempSchemaCopies":
-                        useTempSchemaCopies = Boolean.valueOf(args[i + 1]);
+                        useTempSchemaCopies = Boolean.parseBoolean(args[i + 1]);
                         i++;
                         break;
 
@@ -119,16 +119,14 @@ public class CmdLineClient {
             if (null != poseFileName) {
                 try {
                     pendantClientInner.savePoseListToCsvFile(poseFileName);
-                } catch (PmException ex) {
-                    Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (PmException | IOException ex) {
+                    Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             pendantClientInner.disconnect();
 
         } catch (Exception ex) {
-            Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
     private static final Logger LOG = Logger.getLogger(CmdLineClient.class.getName());

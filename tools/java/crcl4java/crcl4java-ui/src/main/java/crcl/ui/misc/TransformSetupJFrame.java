@@ -25,7 +25,8 @@ package crcl.ui.misc;
 import crcl.base.PointType;
 import crcl.base.PoseType;
 import crcl.ui.client.CrclSwingClientJPanel;
-import javax.swing.JTable;
+
+import javax.swing.*;
 import javax.swing.table.TableModel;
 
 /**
@@ -213,13 +214,7 @@ public class TransformSetupJFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

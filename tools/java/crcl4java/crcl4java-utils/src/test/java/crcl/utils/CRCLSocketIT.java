@@ -42,6 +42,7 @@ import static org.junit.Assert.*;
  /*>>>
 import org.checkerframework.checker.nullness.qual.*;
  */
+@SuppressWarnings("JavaDoc")
 public class CRCLSocketIT {
 
     public CRCLSocketIT() {
@@ -88,7 +89,6 @@ public class CRCLSocketIT {
         if (null != crclCommand) {
             assertTrue(crclCommand.getCommandID() == 1);
         }
-//        fail("forced failure");
     }
 
     private @Nullable
@@ -132,11 +132,11 @@ public class CRCLSocketIT {
                 } catch (InterruptedException ex) {
                     if (!interruptingServer) {
                         serverThreadEx = ex;
-                        Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 } catch (Exception ex) {
                     serverThreadEx = ex;
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
                 } finally {
                     Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " Server finished.");
                 }
@@ -169,7 +169,7 @@ public class CRCLSocketIT {
                     }
                     System.setOut(out);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
                 } finally {
                     Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " client finished.");
                 }
@@ -191,7 +191,7 @@ public class CRCLSocketIT {
                     serverThread.interrupt();
                     clientThread.interrupt();
                 } catch (InterruptedException ex) {
-                    //Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
         }, testName + "timeout");

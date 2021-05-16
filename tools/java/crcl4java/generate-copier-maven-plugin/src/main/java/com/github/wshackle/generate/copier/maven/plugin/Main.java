@@ -33,14 +33,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.cli.CommandLine;
@@ -91,8 +84,7 @@ public class Main {
     private static final Set<String> badNames = getBadNames();
 
     private static Set<String> getBadNames() {
-        Set<String> badNamesSet = new TreeSet<>();
-        badNamesSet.addAll(Arrays.asList("and", "and_eq", "bitand",
+        Set<String> badNamesSet = new TreeSet<>(Arrays.asList("and", "and_eq", "bitand",
                 "bitor", "compl", "not", "not_eq", "or",
                 "not_eq", "or", "or_eq", "xor", "xor_eq",
                 "delete", "namespace", "union", "cast"));
@@ -239,10 +231,7 @@ final int limit = DEFAULT_LIMIT;
             if (line.hasOption("nocopyclassnames")) {
                 localParams.nocopyclassnames = line.getOptionValues("nocopyclassnames");
                 logString("nocopyclassnames = " + Arrays.toString(localParams.nocopyclassnames));
-                for (int i = 0; i < localParams.nocopyclassnames.length; i++) {
-                    String nocopyclassname = localParams.nocopyclassnames[i];
-                    localParams.nocopyclassnamesSet.add(nocopyclassname);
-                }
+                localParams.nocopyclassnamesSet.addAll(Arrays.asList(localParams.nocopyclassnames));
             }
 
             final String initJarString = line.getOptionValue("jar");
@@ -297,9 +286,7 @@ final int limit = DEFAULT_LIMIT;
         List<Class<?>> classesList = new ArrayList<>();
 //        Set<Class<?>> excludedClasses = new TreeSet<>();
         Set<String> excludedClassNames = new TreeSet<>();
-        for (int i = 0; i < localParams.excludedclassnames.length; i++) {
-            excludedClassNames.add(localParams.excludedclassnames[i]);
-        }
+        Collections.addAll(excludedClassNames, localParams.excludedclassnames);
 
         Set<String> foundClassNames = new TreeSet<>();
         excludedClassNames.add(Object.class.getName());
@@ -360,10 +347,8 @@ final int limit = DEFAULT_LIMIT;
             urlsList.add(jarUrl);
         }
         urlsList.add(new URL("file://" + System.getProperty("user.dir") + "/"));
-        for (int i = 0; i < localParams.extraclassurls.length; i++) {
-            urlsList.add(localParams.extraclassurls[i]);
-        }
-        URL[] urls = urlsList.toArray(new URL[urlsList.size()]);
+        urlsList.addAll(Arrays.asList(localParams.extraclassurls));
+        URL[] urls = urlsList.toArray(new URL[0]);
         if (verbose) {
             logString("urls = " + Arrays.toString(urls));
         }
@@ -457,7 +442,7 @@ final int limit = DEFAULT_LIMIT;
         }
         Comparator<Class<?>> classNameComparator = new Comparator<Class<?>>() {
             @Override
-            public int compare(Class o1, Class o2) {
+            public int compare(Class<?> o1, Class<?> o2) {
                 if (o1 == o2) {
                     return 0;
                 } else if (o1 == null) {
@@ -469,7 +454,7 @@ final int limit = DEFAULT_LIMIT;
                 }
             }
         };
-        Collections.sort(classesList, classNameComparator);
+        classesList.sort(classNameComparator);
 
         if (null != localParams.classnamesToFind) {
             for (String classname : localParams.classnamesToFind) {
@@ -529,7 +514,7 @@ final int limit = DEFAULT_LIMIT;
         if (verbose) {
             logString("Classes found = " + classesList.size());
         }
-        List<Class<?>> newClasses = new ArrayList<Class<?>>();
+        List<Class<?>> newClasses = new ArrayList<>();
         logString("Before adding extras : classesList.size() = " + classesList.size());
         if (localParams.extraclassnames.length > 0) {
             for (int i = 0; i < localParams.extraclassnames.length; i++) {

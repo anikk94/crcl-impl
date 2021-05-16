@@ -84,7 +84,7 @@ public class JbrParser {
                 } else if (line.startsWith("//NAME ")) {
                     curJobName = line.substring("//NAME ".length()).trim();
                     System.out.println("curJobName = " + curJobName);
-                    progMap.put(curJobName, new ArrayList<String>());
+                    progMap.put(curJobName, new ArrayList<>());
                 } else if (line.equals("NOP")) {
                     jobStarted = true;
                     System.out.println("jobStarted = " + jobStarted);

@@ -208,7 +208,7 @@ public class PoseDisplay {
 
             }
         } catch (PmException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 

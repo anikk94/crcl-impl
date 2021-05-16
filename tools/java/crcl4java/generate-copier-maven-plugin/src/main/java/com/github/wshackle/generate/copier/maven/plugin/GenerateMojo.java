@@ -87,7 +87,7 @@ public class GenerateMojo
 //                pw.println("");
 //            }
         } catch (Exception  ex) {
-            Logger.getLogger(GenerateMojo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GenerateMojo.class.getName()).log(Level.SEVERE, "", ex);
             if(ex instanceof MojoExecutionException) {
                 MojoExecutionException mojoExecutionException = (MojoExecutionException) ex;
                 throw mojoExecutionException;

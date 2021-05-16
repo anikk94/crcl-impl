@@ -143,7 +143,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
             this.overHeadJPanel1.setImageLogDir(imageLogDirPath);
             this.sideViewJPanel1.setImageLogDir(imageLogDirPath);
         } catch (IOException ex) {
-            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
 
         boolean logImages = LOG_IMAGES_DEFAULT;
@@ -349,7 +349,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 gripperSocket = null;
                 this.inner.setGripperSocket(null);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
         Thread gripperReadThread1 = this.gripperReadThread;
@@ -366,7 +366,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 gripperReadThread1 = null;
                 this.gripperReadThread = null;
             } catch (InterruptedException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -982,7 +982,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
         try {
             return f.apply(b);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
         return null;
     }
@@ -1039,7 +1039,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
         try {
             JOptionPane.showMessageDialog(this, getVersion());
         } catch (IOException ex) {
-            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1086,10 +1086,10 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 SimServerJPanel.this.getStatus().setGripperStatus(gripperStatus1);
             }
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1113,7 +1113,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
             this.inner.setGripperSocket(socket);
 
         } catch (IOException | CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1196,7 +1196,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
 //            m.marshal(jaxb_status, sw);
 //            return sw.toString();
 //        } catch (JAXBException ex) {
-//            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
 //        }
 //        return null;
 //    }
@@ -1229,7 +1229,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
             String s = inner.getCheckerCRCLSocket().statusToPrettyString(statusObj, true);
             return MultiLineStringJPanel.showText(s);
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         }
         return XFuture.completedFuture(false);
@@ -1489,7 +1489,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 try {
                     saveProperties();
                 } catch (IOException ex) {
-                    Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
         }
@@ -1505,7 +1505,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                     loadProperties();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jMenuItemLoadPropertiesActionPerformed
@@ -1562,7 +1562,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 }
             }
         } catch (Exception exception) {
-            Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, null, exception);
+            Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, "", exception);
         }
     }//GEN-LAST:event_jMenuItemSaveStatusToFileActionPerformed
 
@@ -1608,7 +1608,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 }
             }
         } catch (Exception exception) {
-            Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, null, exception);
+            Logger.getLogger(SimServerJInternalFrame.class.getName()).log(Level.SEVERE, "", exception);
         }
     }//GEN-LAST:event_jMenuItemSetInitalStatusFileActionPerformed
 
@@ -1669,7 +1669,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
             plotJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             plotJFrame.setVisible(true);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonPlotGaurdValuesActionPerformed
 

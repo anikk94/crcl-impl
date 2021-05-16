@@ -22,8 +22,6 @@
  */
 package com.github.wshackle.crcl4java.motoman.kinematics;
 
-import com.github.wshackle.crcl4java.motoman.force.FcsReturnCode;
-
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}

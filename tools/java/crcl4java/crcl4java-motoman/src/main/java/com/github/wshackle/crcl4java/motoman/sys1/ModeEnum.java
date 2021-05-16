@@ -40,7 +40,7 @@ public enum ModeEnum {
         this.id = id;
     }
 
-    private static Map<Integer, ModeEnum> map = new HashMap<>();
+    private static final Map<Integer, ModeEnum> map = new HashMap<>();
 //
     static {
         for (int i = 0; i < ModeEnum.values().length; i++) {

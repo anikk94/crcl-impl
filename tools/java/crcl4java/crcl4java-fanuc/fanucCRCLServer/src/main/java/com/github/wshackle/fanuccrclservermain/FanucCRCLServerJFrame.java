@@ -33,16 +33,10 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javax.swing.JCheckBox;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -142,7 +136,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
 //            final URL systemResourceRobotImageUrl = Objects.requireNonNull(ClassLoader.getSystemResource("robot.png"),"ClassLoader.getSystemResource(\"robot.png\")");
 //            img = ImageIO.read(systemResourceRobotImageUrl);
 //        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //            throw new RuntimeException(ex);
 //        }
 //        return img;
@@ -353,7 +347,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
         this.jMenuConvertProgram.removeAll();
         if (null != programs) {
             synchronized (programs) {
-                Collections.sort(programs, Comparator.comparing(ITPProgram::name));
+                programs.sort(Comparator.comparing(ITPProgram::name));
                 for (ITPProgram p : programs) {
                     JMenuItem jmi = new JMenuItem(p.name());
                     jmi.addActionListener(e -> {
@@ -456,7 +450,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
 //            jCheckBoxMenuItemStartPressureServer.setSelected(getBooleanProperty("autoStartPressureSensorServer", false));
 //            jCheckBoxMenuItemShowPressureOutput.setSelected(getBooleanProperty("showPressureOutput", false));
 //        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //        }
     }
 
@@ -484,13 +478,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

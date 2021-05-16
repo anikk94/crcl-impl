@@ -98,7 +98,7 @@ public class PoseToleranceChecker {
      * @return whether the absolute value of the difference between two given values is less than or equal to a the tolerance given.
      */
     static private boolean isDoubleInTolerance(double v1, double v2,@Nullable Double tol) {
-           return tol == null || Double.compare(Math.abs(v2-v1), tol.doubleValue()) <= 0;
+           return tol == null || Double.compare(Math.abs(v2-v1), tol) <= 0;
     }
     
     /**

@@ -52,7 +52,7 @@ import rcs.posemath.PmRotationVector;
 import rcs.posemath.PmRpy;
 import rcs.posemath.Posemath;
 
-@SuppressWarnings("nullness")
+@SuppressWarnings("ALL")
 public class CRCLPosemathTest {
 
     public CRCLPosemathTest() {
@@ -611,7 +611,7 @@ public class CRCLPosemathTest {
 //                expResult = CRCLPosemath.toCRCLVector(cross2);
 //                checkEquals("randomCross2 (commons-math)", expResult, result);
             } catch (PmException ex) {
-                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "", ex);
                 fail("Exception not expected.");
             }
         }
@@ -653,7 +653,7 @@ public class CRCLPosemathTest {
                     = CRCLPosemath.toPmRotationMatrix(p1).multiply(CRCLPosemath.toPmCartesian(p2.getPoint()));
             System.out.println("chkCart = " + chkCart);
         } catch (PmException ex) {
-            Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "", ex);
         }
         checkEquals("234", expResult, result);
 
@@ -697,7 +697,7 @@ public class CRCLPosemathTest {
                 expResult = CRCLPosemath.toPoseType(poseProduct.tran, Posemath.toRot(poseProduct.rot));
                 checkEquals("poseProduct", expResult, result);
             } catch (PmException ex) {
-                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "", ex);
                 fail("PmException thrown.");
             }
 
@@ -804,7 +804,7 @@ public class CRCLPosemathTest {
                 identityCheck = CRCLPosemath.multiply(p, result);
                 checkEquals("identity", identityCheck, identity);
             } catch (PmException ex) {
-                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLPosemathTest.class.getName()).log(Level.SEVERE, "", ex);
                 fail("PmException thrown.");
             }
         }

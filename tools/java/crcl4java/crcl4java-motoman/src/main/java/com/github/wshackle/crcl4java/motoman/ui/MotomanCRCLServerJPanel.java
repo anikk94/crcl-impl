@@ -492,7 +492,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
             try {
                 motomanCrclServer.close();
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
             motomanCrclServer = null;
         }
@@ -502,14 +502,14 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                 try {
                     crclThread.join(100);
                 } catch (InterruptedException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, "", ex);
                 }
                 if (crclThread.isAlive()) {
                     crclThread.interrupt();
                     try {
                         crclThread.join(100);
                     } catch (InterruptedException ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "", ex);
                     }
                 }
             }
@@ -639,7 +639,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                 ObjTableJPanel.editObject(returnValue, parentJFrame, "returnValue", true, null, null, null, null);
             } catch (Exception ex) {
                 appendLog(ex.getMessage());
-                Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jButtonSendRequestActionPerformed
@@ -659,7 +659,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                         appendLog("\njButtonStatusActionPerformed: \n" + text + "\nlastCommand=\n" + lastCommandText + "\nlastCheckMoveCommand=\n" + lastCheckMoveCommandText + "\timeSinceCheckMove=" + timeSinceCheckMove + "\ntimeDiff=" + timeDiff + "\n");
                         MultiLineStringJPanel.showText(text, null, "Motoman Status", false);
                     } catch (Exception ex) {
-                        Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 })
                 .exceptionally((Throwable throwable) -> {
@@ -738,7 +738,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
             plotJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             plotJFrame.setVisible(true);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonPlotGaurdValuesActionPerformed
 
@@ -803,12 +803,8 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
             MultiLineStringJPanel.showText(msg);
             MultiLineStringJPanel.showException(ex);
             return -1;
-        } catch (IOException ex) {
-            Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
-            MultiLineStringJPanel.showException(ex);
-            return -1;
         } catch (Exception ex) {
-            Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
             MultiLineStringJPanel.showException(ex);
             return -1;
         }
@@ -826,7 +822,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                 errLogPrintln("crclPort = " + crclPort);
                 errLogPrintln("motomanPort = " + motomanPort);
                 errLogPrintln("motomanHost = " + motomanHost);
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         } else {
             disconnectCrclMotoplus();
@@ -862,12 +858,12 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         props.put(MOTOPLUS_HOST_PROPERTY_NAME, jTextFieldMotoplusHost.getText());
         try {
             setReadTimeoutMillis(Integer.parseInt(jTextFieldReadTimeout.getText().trim()));
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
 
         }
         try {
             setConnectTimeoutMillis(Integer.parseInt(jTextFieldConnectTimeout.getText().trim()));
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
 
         }
 
@@ -877,7 +873,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         if (null != motomanCrclServer) {
             try {
                 motomanCrclServer.setStatCacheTime(Integer.parseInt(jTextFieldStatCacheTime.getText().trim()));
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
             props.put("statCacheTime", Integer.toString(motomanCrclServer.getStatCacheTime()));
         }
@@ -933,7 +929,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         motomanPort = Integer.parseInt(jTextFieldMotoplusPort.getText());
         motomanHost = jTextFieldMotoplusHost.getText();
         String debugString = props.getProperty("debug");
-        if (debugString != null && debugString.length() > 0 && Boolean.valueOf(debugString)) {
+        if (debugString != null && debugString.length() > 0 && Boolean.parseBoolean(debugString)) {
             jCheckBoxDebug.setSelected(true);
         }
     }

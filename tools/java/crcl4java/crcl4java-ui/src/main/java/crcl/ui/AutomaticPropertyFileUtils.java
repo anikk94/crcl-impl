@@ -247,7 +247,7 @@ public class AutomaticPropertyFileUtils {
             }
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(CrclSwingClientJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
 
         }
         if (clss.isAssignableFrom(String.class)) {

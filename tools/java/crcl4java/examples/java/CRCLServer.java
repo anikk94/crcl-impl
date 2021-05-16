@@ -79,12 +79,12 @@ public class CRCLServer {
                                         }
                                     }
                                 } catch (Exception ex) {
-                                    Logger.getLogger(CRCLServer.class.getName()).log(Level.SEVERE, null, ex);
+                                    Logger.getLogger(CRCLServer.class.getName()).log(Level.SEVERE, "", ex);
                                 }
                             }
                         });
                     } catch (Exception ex) {
-                        Logger.getLogger(CRCLServer.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(CRCLServer.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
 

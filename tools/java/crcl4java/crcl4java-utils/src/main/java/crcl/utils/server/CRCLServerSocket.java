@@ -227,7 +227,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
 //            ProtectionDomain protDom = clzz.getProtectionDomain();
 //            System.out.println("protDom = " + protDom);
 //        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
 //        }
 //        try {
 //            Class clzz = Class.forName("com.github.wshackle.atinetft_proxy.ATIForceTorqueSensorFinder");
@@ -235,7 +235,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
 //            ProtectionDomain protDom = clzz.getProtectionDomain();
 //            System.out.println("protDom = " + protDom);
 //        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
 //        }
 
         sensorFinders.add(new RemoteCrclSensorExtractorFinder());
@@ -366,7 +366,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                     this.socket.close();
                 }
             } catch (Exception ex) {
-                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
             }
             if (null != future) {
                 this.future.cancel(true);
@@ -492,7 +492,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             try {
                 queue.offer(CRCLServerSocketEvent.serverClosed(stateClass), 1, TimeUnit.SECONDS);
             } catch (Exception ex) {
-                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         if (null != serverSocketChannel) {
@@ -527,7 +527,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             try {
                 executorService.awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
-                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         if (null != callbackService) {
@@ -535,7 +535,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             try {
                 callbackService.awaitTermination(1, TimeUnit.SECONDS);
             } catch (Exception ex) {
-                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         listeners.clear();
@@ -868,11 +868,11 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                         commandStatus.setProgramFile(instanceInProgramFile);
                     }
                     final Integer instanceInProgramIndex = instanceIn.getProgramIndex();
-                    if (null != instanceInProgramIndex && instanceInProgramIndex.intValue() > 0) {
+                    if (null != instanceInProgramIndex && instanceInProgramIndex > 0) {
                         commandStatus.setProgramIndex(instanceInProgramIndex);
                     }
                     final Integer instanceInProgramLength = instanceIn.getProgramLength();
-                    if (null != instanceInProgramLength && instanceInProgramLength.intValue() > 0) {
+                    if (null != instanceInProgramLength && instanceInProgramLength > 0) {
                         commandStatus.setProgramLength(instanceInProgramLength);
                     }
                     final CommandStateEnumType oldState = getCommandStateEnum();
@@ -909,10 +909,10 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                                 if (null != instanceInProgramFile) {
                                     commandStat.setProgramFile(instanceInProgramFile);
                                 }
-                                if (null != instanceInProgramIndex && instanceInProgramIndex.intValue() > 0) {
+                                if (null != instanceInProgramIndex && instanceInProgramIndex > 0) {
                                     commandStat.setProgramIndex(instanceInProgramIndex);
                                 }
-                                if (null != instanceInProgramLength && instanceInProgramLength.intValue() > 0) {
+                                if (null != instanceInProgramLength && instanceInProgramLength > 0) {
                                     commandStat.setProgramLength(instanceInProgramLength);
                                 }
                                 SettingsStatusType settingsStat = stat.getSettingsStatus();
@@ -1189,7 +1189,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                                             try {
                                                 oldSensorServr.close();
                                             } catch (Exception ex) {
-                                                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, null, ex);
+                                                Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", ex);
                                                 commandStatus.setCommandState(CommandStateEnumType.CRCL_ERROR);
                                                 setCommandStateError(ex.getMessage());
                                                 errorOccured = true;
@@ -1746,18 +1746,22 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         final Exception exception = event.getException();
         if (exception instanceof SocketException
                 || exception instanceof EOFException) {
+            CRCLSocket source = event.getSource();
+            if(null == source) {
+                return;
+            }
             try {
-                CRCLSocket source = event.getSource();
                 if (null != source) {
                     source.close();
                 }
             } catch (IOException ex) {
                 Logger.getLogger(CRCLServerSocket.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                        .getName()).log(Level.SEVERE, "", ex);
             }
             for (int i = 0; i < clients.size(); i++) {
                 CRCLServerClientInfo c = clients.get(i);
-                if (Objects.equals(c.getSocket(), event.getSource())) {
+                CRCLSocket cSocket = c.getSocket();
+                if (cSocket ==null || Objects.equals(cSocket, source)) {
                     clients.remove(c);
                 }
             }
@@ -1903,13 +1907,15 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     }
 
     /**
-     * Set the value of multithreaded
+     * Set the value of multithreaded. Changing the value may also close channels,sockets and
+     * the executiveService.
      *
      * @param multithreaded new value of multithreaded
-     * @throws java.io.IOException
-     * @throws java.lang.InterruptedException
+     * @throws IllegalStateException the server is already running .
+     * @throws IOException  a failure occured while closing the socket .
+     * @throws InterruptedException a failure occured while closing the executiveService.
      */
-    public void setMultithreaded(boolean multithreaded) throws IOException, InterruptedException {
+    public void setMultithreaded(boolean multithreaded) throws IllegalStateException, IOException, InterruptedException {
         if (isRunning()) {
             throw new IllegalStateException("Can not set field when server is running.");
         }
@@ -1996,7 +2002,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
 
             if (!closing) {
                 Logger.getLogger(CRCLServerSocket.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                        .getName()).log(Level.SEVERE, "", ex);
                 throw new RuntimeException(ex);
             }
         } finally {
@@ -2363,6 +2369,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             Set<SelectionKey> keySet = selectorForRun.selectedKeys();
             synchronized (keySet) {
                 keys = keySet.toArray(keys);
+                //noinspection SlowAbstractSetRemoveAll
                 keySet.removeAll(Arrays.asList(keys));
             }
         }
@@ -2381,12 +2388,14 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     }
 
     /**
-     * Set the value of backlog
+     * Set the value of backlog and close sockets/channels if open.
      *
      * @param backlog new value of backlog
-     * @throws java.io.IOException
+     *
+     * @throws IllegalStateException called while allready running
+     * @throws java.io.IOException error closing socket
      */
-    public void setBacklog(int backlog) throws IOException {
+    public void setBacklog(int backlog) throws IllegalStateException, IOException {
         if (isRunning()) {
             throw new IllegalStateException("Can not start again when server is already running.");
         }
@@ -2490,7 +2499,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                     }
                 } catch (Exception ex1) {
                     Logger.getLogger(CRCLServerSocket.class
-                            .getName()).log(Level.SEVERE, null, ex1);
+                            .getName()).log(Level.SEVERE, "", ex1);
                 }
             }
         };

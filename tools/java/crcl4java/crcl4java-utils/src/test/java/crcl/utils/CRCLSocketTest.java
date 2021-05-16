@@ -676,7 +676,6 @@ public class CRCLSocketTest {
     /**
      * Test of stringToCommand method, of class CRCLSocket.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testReadUntilEndTag2() throws Exception {
@@ -713,7 +712,6 @@ public class CRCLSocketTest {
     /**
      * Test of stringToCommand method, of class CRCLSocket.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testStringToCommand() throws Exception {
@@ -759,7 +757,6 @@ public class CRCLSocketTest {
     /**
      * Test of readCommandFromStream method, of class CRCLSocket.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testReadCommandFromStream() throws Exception {
@@ -779,7 +776,6 @@ public class CRCLSocketTest {
     /**
      * Test of stringToStatus method, of class CRCLSocket.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testStringToStatus() throws Exception {
@@ -795,7 +791,6 @@ public class CRCLSocketTest {
     /**
      * Test of readStatusFromStream method, of class CRCLSocket.
      *
-     * @throws java.lang.Exception
      */
     @Test
     public void testReadStatusFromStream() throws Exception {

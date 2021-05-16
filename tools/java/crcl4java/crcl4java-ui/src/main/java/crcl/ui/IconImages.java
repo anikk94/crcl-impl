@@ -74,7 +74,7 @@ public class IconImages {
                     return bi;
                 }
             } catch (Exception ex) {
-                Logger.getLogger(IconImages.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(IconImages.class.getName()).log(Level.SEVERE, "", ex);
             }
             return new BufferedImage(ICON_IMAGE_WIDTH, ICON_IMAGE_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
         }

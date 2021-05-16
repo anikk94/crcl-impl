@@ -677,7 +677,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                 timer = null;
             }
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1157,7 +1157,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             try {
                 startServer(port);
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         } else {
             jTextFieldCRCLSensorOutPort.setText(Integer.toString(port));
@@ -1285,7 +1285,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                 }
                 return new CurrentPoseListenerUpdateInfo(crclClientPanel, newStatus, null, holdingObjectExpected, System.currentTimeMillis());
             } catch (CRCLException ex) {
-                java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 return null;
             }
         } else {

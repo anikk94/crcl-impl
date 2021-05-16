@@ -217,7 +217,7 @@ public class RemoteCrclSensorExtractor implements SensorServerInterface {
             }
             return null;
         } catch (Exception ex) {
-            Logger.getLogger(RemoteCrclSensorExtractor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RemoteCrclSensorExtractor.class.getName()).log(Level.SEVERE, "", ex);
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) ex;
             } else {

@@ -83,7 +83,7 @@ public class PropertiesUtils {
 //                        ret.complete(null);
 //                    } catch (Exception ex) {
 //                        ret.completeExceptionally(ex);
-//                        Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, null, ex);
+//                        Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, "", ex);
 //                    }
 //                });
 //                return ret;
@@ -91,7 +91,7 @@ public class PropertiesUtils {
 //        } catch (Throwable exception) {
 //
 //            ret.completeExceptionally(exception);
-//            Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, null, exception);
+//            Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, "", exception);
 //            return ret;
 //        }
 //    }
@@ -126,7 +126,7 @@ public class PropertiesUtils {
 //        try {
 //            return f.get();
 //        } catch (InterruptedException | ExecutionException ex) {
-//            Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PropertiesUtils.class.getName()).log(Level.SEVERE, "", ex);
 //            return null;
 //        }
 //    }

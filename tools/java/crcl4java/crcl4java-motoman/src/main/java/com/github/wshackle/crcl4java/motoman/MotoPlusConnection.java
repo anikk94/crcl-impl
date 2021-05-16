@@ -124,7 +124,7 @@ public class MotoPlusConnection implements AutoCloseable {
                 }
                 return "localhost";
             } catch (Exception ex) {
-                Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
                 return "localhost";
             }
         }
@@ -251,7 +251,7 @@ public class MotoPlusConnection implements AutoCloseable {
             try {
                 dos.close();
 
-            } catch (IOException iOException) {
+            } catch (IOException ignored) {
             }
             dos = null;
         }
@@ -259,7 +259,7 @@ public class MotoPlusConnection implements AutoCloseable {
             try {
                 dis.close();
 
-            } catch (IOException iOException) {
+            } catch (IOException ignored) {
             }
             dis = null;
         }
@@ -267,7 +267,7 @@ public class MotoPlusConnection implements AutoCloseable {
             try {
                 socket.close();
 
-            } catch (IOException iOException) {
+            } catch (IOException ignored) {
             }
             socket = null;
         }
@@ -1033,14 +1033,14 @@ public class MotoPlusConnection implements AutoCloseable {
             writeDataOutputStream(bb);
         }
 
-        @Deprecated
-        /**
-         * *
+
+        /*
          * mpServoFcs.h includes a prototype for mpFcsGetSensorData but there is
          * no documentation for it in the MotoPlus PDF files. It is not clear
          * what it does but it may be redundant with mpFcsGetForceData() which
          * is documented.
          */
+        @Deprecated
         public void startMpFcsGetSensorData(MP_FCS_ROB_ID rob_id) throws IOException, MotoPlusConnectionException {
             final int inputSize = 16;
             ByteBuffer bb = ByteBuffer.allocate(inputSize);
@@ -1902,8 +1902,7 @@ public class MotoPlusConnection implements AutoCloseable {
      * values
      * @param num Number of the variable data (up to 24) [ C function allows up
      * to 126 but tcp server limits to 24]
-     * @return
-     * @throws IOException
+     * @return true if status returned ok
      */
     public boolean mpPutVarData(MP_VAR_DATA[] sData, int num) throws IOException {
         if (num < 1) {
@@ -1943,8 +1942,7 @@ public class MotoPlusConnection implements AutoCloseable {
      * @param rData variable data
      * @param num Number of variable data (up to 24) [C function allows up to
      * 252 but tcp server limits to 24]
-     * @return
-     * @throws IOException
+     * @return true if returned status is ok
      */
     public boolean mpGetVarData(MP_VAR_INFO[] sData, int[] rData, int num) throws IOException {
         if (num < 1) {
@@ -2011,7 +2009,7 @@ public class MotoPlusConnection implements AutoCloseable {
         return returner.getCartPosReturn(data);
     }
 
-    private AtomicInteger statusCount = new AtomicInteger();
+    private final AtomicInteger statusCount = new AtomicInteger();
 
     public MpcStatus readMpcStatusOnly(
             CommandStateEnumType localOrigCommandState,
@@ -2030,9 +2028,9 @@ public class MotoPlusConnection implements AutoCloseable {
 
     private final AtomicInteger alarmCount = new AtomicInteger();
 
-    private volatile long maxReadMpcStatusTime = -1;
+    private final long maxReadMpcStatusTime = -1;
     private volatile long maxReadMpcStatusTimeDiffArray[] = null;
-    private volatile long maxReadMpcStatusTimeAfterMove = -1;
+    private final long maxReadMpcStatusTimeAfterMove = -1;
     private volatile long maxReadMpcStatusTimeDiffArrayAfterMove[] = null;
     private volatile boolean afterMove = false;
     private volatile COORD_POS lastCoordTargetDest;
@@ -2343,9 +2341,7 @@ public class MotoPlusConnection implements AutoCloseable {
      * @param rob_id which robot to target
      * @param coord_type specifies the destination coordinate system
      * @param uf_no user file number for user specified coordinate system
-     * @return
-     * @throws IOException
-     * @throws MotoPlusConnectionException
+     * @return current force data
      */
     public MpFcsGetForceDataReturn mpFcsGetForceData(MP_FCS_ROB_ID rob_id, FCS_COORD_TYPE coord_type, int uf_no) throws IOException, MotoPlusConnectionException {
         starter.startMpFcsGetForceData(rob_id, coord_type, uf_no);
@@ -2392,8 +2388,6 @@ public class MotoPlusConnection implements AutoCloseable {
      * @param option_ctrl Specifies the optional controls (d0 execute the
      * contact stability process, d1 retain previous force command value)
      * @return
-     * @throws IOException
-     * @throws MotoPlusConnectionException
      */
     public MpFcsBaseReturn mpFcsStartImp(
             MP_FCS_ROB_ID rob_id,
@@ -2433,14 +2427,14 @@ public class MotoPlusConnection implements AutoCloseable {
         return returner.getMpFcsBaseReturn();
     }
 
-    @Deprecated
-    /**
-     * *
+
+    /*
      * mpServoFcs.h includes a prototype for mpFcsGetSensorData but there is no
      * documentation for it in the MotoPlus PDF files. It is not clear what it
      * does but it may be redundant with mpFcsGetForceData() which is
      * documented.
      */
+    @Deprecated
     public MpFcsGetSensorDataReturn mpFcsGetSensorData(MP_FCS_ROB_ID rob_id) throws IOException, MotoPlusConnectionException {
         starter.startMpFcsGetSensorData(rob_id);
         return returner.getMpFcsGetSensorDataReturn();
@@ -2456,10 +2450,7 @@ public class MotoPlusConnection implements AutoCloseable {
      * mpCtrlGrpId2GrpNo()
      * @param angle joint angles in 0.0001 degrees units. length should be 8.
      * Ordered with joints S,L,U,R,B,T,E,W
-     * @param tool_no
-     * @return
-     * @throws IOException
-     * @throws MotoPlusConnectionException
+     * @param tool_no tool number
      */
     public MpKinCartPosReturn mpConvAxesToCartPos(int grp_no, int angle[], int tool_no) throws IOException, MotoPlusConnectionException {
         starter.startMpConvAxesToCartPos(grp_no, angle, tool_no);
@@ -2610,7 +2601,7 @@ public class MotoPlusConnection implements AutoCloseable {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
         }
         boolean c = clearToolChangerGripperIO();
         return a && b && c;
@@ -2664,7 +2655,7 @@ public class MotoPlusConnection implements AutoCloseable {
 //        try {
 //            Thread.sleep(200);
 //        } catch (InterruptedException ex) {
-//            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
 //        }
         boolean c = clearToolChangerGripperIO();
         return a && b && c;
@@ -2727,7 +2718,7 @@ public class MotoPlusConnection implements AutoCloseable {
 //        try {
 //            Thread.sleep(200);
 //        } catch (InterruptedException ex) {
-//            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
 //        }
         boolean c = clearToolChangerGripperIO();
         return a && b && c;

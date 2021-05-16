@@ -22,10 +22,8 @@
  */
 package com.github.wshackle.crcl4java.motoman.ui;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -38,7 +36,7 @@ import org.apache.commons.net.telnet.TelnetClient;
  */
 public class MotomanTelnetClient {
 
-    public static final void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         final InputStream localInputStream = System.in;
         final PrintStream localPrintStream = System.out;
@@ -72,7 +70,7 @@ public class MotomanTelnetClient {
             try {
                 telnet.disconnect();
             } catch (IOException ex) {
-                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         telnet = null;
@@ -82,7 +80,7 @@ public class MotomanTelnetClient {
                 try {
                     remoteToLocalThread.join(100);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             remoteToLocalThread = null;
@@ -93,7 +91,7 @@ public class MotomanTelnetClient {
                 try {
                     localToRemoteThread.join(100);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             localToRemoteThread = null;
@@ -126,7 +124,7 @@ public class MotomanTelnetClient {
                     localPrintStream.print(c);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
             }
         }, "remoteToLocalTelnet");
         /*
@@ -141,21 +139,21 @@ public class MotomanTelnetClient {
         try {
             Thread.sleep(200);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
         }
         remoteOutputStream.write((userName + "\r\n").getBytes());
         remoteOutputStream.flush();
         try {
             Thread.sleep(200);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
         }
         remoteOutputStream.write((passwd + "\r\n").getBytes());
         remoteOutputStream.flush();
         try {
             Thread.sleep(200);
         } catch (InterruptedException ex) {
-            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
         }
         motomanTelnetClient.localToRemoteThread = new Thread(() -> {
             try {
@@ -166,16 +164,13 @@ public class MotomanTelnetClient {
                     ba[0] = (byte) ib;
                     if (ib == ((int) '\n')) {
                         remoteOutputStream.write("\r\n".getBytes());
-                        remoteOutputStream.flush();
                     } else {
-
                         remoteOutputStream.write(ba);
-                        remoteOutputStream.flush();
-
                     }
+                    remoteOutputStream.flush();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(MotomanTelnetClient.class.getName()).log(Level.SEVERE, "", ex);
             }
         }, "localToRemoteTelnet");
         motomanTelnetClient.localToRemoteThread.start();

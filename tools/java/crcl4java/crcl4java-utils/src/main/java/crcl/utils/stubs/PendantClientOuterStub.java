@@ -162,7 +162,7 @@ public class PendantClientOuterStub implements PendantClientOuter, PendantClient
     }
 
     private static boolean prop(String propName, boolean defaultVal) {
-        return Boolean.valueOf(System.getProperty(propName, Boolean.toString(defaultVal)));
+        return Boolean.parseBoolean(System.getProperty(propName, Boolean.toString(defaultVal)));
     }
 
     public PendantClientOuterStub() {

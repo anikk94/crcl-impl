@@ -111,7 +111,7 @@ public class CRCLServerSocketBlockingExample {
                 // handled here.
                 Exception exception = e.getException();
                 if (null != exception) {
-                    Logger.getLogger(CRCLServerSocketBlockingExample.class.getName()).log(Level.SEVERE, null, exception);
+                    Logger.getLogger(CRCLServerSocketBlockingExample.class.getName()).log(Level.SEVERE, "", exception);
                 }
             }
         }

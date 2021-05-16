@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -151,7 +150,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 try {
                     return "java -jar " + jarFile.getCanonicalPath();
                 } catch (IOException ex) {
-                    Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             File batFile = findFile("runWebApp.bat");
@@ -159,7 +158,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 try {
                     return batFile.getCanonicalPath();
                 } catch (IOException ex) {
-                    Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             return "";
@@ -178,7 +177,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
         try {
             setURL("http://" + InetAddress.getLocalHost().getHostName() + ":8080/crcl4java-vaadin-webapp");
         } catch (UnknownHostException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
         setDirectoryString(System.getProperty("user.dir"));
         readProperties();
@@ -197,7 +196,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeAndWait(() -> jTextFieldCommand.setText(s));
             }
         } catch (InterruptedException | InvocationTargetException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -209,7 +208,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeAndWait(() -> jTextFieldDirectory.setText(s));
             }
         } catch (InterruptedException | InvocationTargetException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -225,7 +224,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeAndWait(() -> jTextFieldURL.setText(s));
             }
         } catch (InterruptedException | InvocationTargetException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -431,7 +430,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
     private volatile @Nullable
     Thread monitorErrorThread;
 
-    private final List<String> consoleStrings = new LinkedList<String>();
+    private final List<String> consoleStrings = new LinkedList<>();
 
     private void consoleAppend(String s) {
         if (consoleStrings.size() > maxLoggedStrings) {
@@ -482,7 +481,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeLater(() -> consoleAppend(s + "\n"));
             }
         } catch (IOException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             javax.swing.SwingUtilities.invokeLater(() -> consoleAppend(ex.toString()));
         }
     }
@@ -501,7 +500,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 javax.swing.SwingUtilities.invokeLater(() -> consoleAppend("\nERROR:" + s + "\n"));
             }
         } catch (IOException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             javax.swing.SwingUtilities.invokeLater(() -> consoleAppend(ex.toString() + "\n"));
         }
     }
@@ -514,7 +513,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 start();
             }
         } catch (Exception ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             javax.swing.SwingUtilities.invokeLater(() -> consoleAppend(ex.toString()));
         }
     }//GEN-LAST:event_jCheckBoxRunActionPerformed
@@ -563,14 +562,14 @@ public class WebServerJFrame extends javax.swing.JFrame {
                 System.out.println("exit_code = " + exit_code);
                 System.out.println("Finished WebServerJFrame : internalProcess.destroy()");
             } catch (InterruptedException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             try {
                 System.out.println("Starting WebServerJFrame : internalProcess.destroyForcibly()");
                 internalProcess1.destroyForcibly().waitFor(10, TimeUnit.SECONDS);
                 System.out.println("Finished WebServerJFrame : internalProcess.destroyForcibly()");
             } catch (InterruptedException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             internalProcess1 = null;
             this.internalProcess = null;
@@ -582,7 +581,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
             try {
                 monitorOutputThread1.join(2000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             System.out.println("Finished WebServerJFrame : monitorOutputThread.join(...)");
             monitorOutputThread1 = null;
@@ -595,7 +594,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
             try {
                 monitorErrorThread1.join(2000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             System.out.println("Finished WebServerJFrame : monitorErrorThread.join(...)");
             monitorErrorThread1 = null;
@@ -631,7 +630,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                     jTextFieldURL.setText(url);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -646,11 +645,11 @@ public class WebServerJFrame extends javax.swing.JFrame {
 //
 //            props.store(fileWriter, "Saved automatically from " + Arrays.toString(Thread.currentThread().getStackTrace()));
 //        } catch (IOException ex) {
-//            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //        }
             PropertiesUtils.saveProperties(PROPERTIES_FILE, props);
         } catch (IOException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -671,7 +670,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
                     jTextFieldDirectory.setText(selectedFile.getCanonicalPath());
                 }
             } catch (IOException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 javax.swing.SwingUtilities.invokeLater(() -> consoleAppend(ex.toString()));
             }
         }
@@ -703,7 +702,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
             try {
                 Desktop.getDesktop().open(logFile1);
             } catch (IOException ex) {
-                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -716,7 +715,7 @@ public class WebServerJFrame extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new URL(jTextFieldURL.getText()).toURI());
         } catch (IOException | URISyntaxException ex) {
-            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonViewActionPerformed
 

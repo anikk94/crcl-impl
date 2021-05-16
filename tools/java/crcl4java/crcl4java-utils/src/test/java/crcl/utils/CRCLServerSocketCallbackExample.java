@@ -73,7 +73,7 @@ public class CRCLServerSocketCallbackExample {
                                 cmdStatus.setStatusID(requestCount);
                                 crclSocket.writeStatus(status, true);
                             } catch (CRCLException ex) {
-                                Logger.getLogger(CRCLServerSocketCallbackExample.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(CRCLServerSocketCallbackExample.class.getName()).log(Level.SEVERE, "", ex);
                             }
                         } else {
                             requestCount = 1;
@@ -87,7 +87,7 @@ public class CRCLServerSocketCallbackExample {
                     }
                     Exception exception = e.getException();
                     if (null != exception) {
-                        Logger.getLogger(CRCLServerSocketCallbackExample.class.getName()).log(Level.SEVERE, null, exception);
+                        Logger.getLogger(CRCLServerSocketCallbackExample.class.getName()).log(Level.SEVERE, "", exception);
                     }
                 }
             });

@@ -125,7 +125,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     /**
      * Construct a new object with the given name used for logging or display.
      *
-     * @param name
+     * @param name name of future
      */
     public XFuture(String name) {
         this.name = defaultName(name);
@@ -206,7 +206,7 @@ public class XFuture<T> extends CompletableFuture<T> {
      * returned by Thread.currentThread().getStackTrace() or
      * Exception.getStackTrace().
      *
-     * @param trace
+     * @param trace trace to log/display
      * @return string for logging or display
      */
     public static String traceToString(@Nullable StackTraceElement trace @Nullable []) {
@@ -354,12 +354,16 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     public String getProfileString() {
         setCompleteTime();
-        if (null != getProfileStringTrace || null != getProfileStringThreadName && !closingMode) {
-            System.out.println("getProfileStringThreadName = " + getProfileStringThreadName);
-            System.out.println("getProfileStringTrace = " + Arrays.toString(getProfileStringTrace));
+        if(!closingMode) {
+            if (null != getProfileStringTrace) {
+                System.out.println("getProfileStringThreadName = " + getProfileStringThreadName);
+            }
+            if(null != getProfileStringTrace) {
+                System.out.println("getProfileStringTrace = " + Arrays.toString(getProfileStringTrace));
+            }
         }
-        getProfileStringTrace = Thread.currentThread().getStackTrace();
-        getProfileStringThreadName = Thread.currentThread().getName();
+        this.getProfileStringTrace = Thread.currentThread().getStackTrace();
+        this.getProfileStringThreadName = Thread.currentThread().getName();
         return joinAny(",", num, startTime, completeTime, (completeTime - startTime), (completeTime - maxDepCompleteTime), "\"" + name + "\"", isCompletedExceptionally(), isCancelled(), isDone(), xFutureAlsoCancelCount.get(), cfFutureAlsoCancelCount.get(), "\"" + shortTraceToString(createTrace) + "\"");
     }
 

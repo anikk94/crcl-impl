@@ -239,7 +239,7 @@ public class FanucStatusMonitorJFrame extends javax.swing.JFrame {
                         monitorThread.interrupt();
                         monitorThread.join(500);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, "", ex);
                     } finally {
                         monitorThread = null;
                     }
@@ -399,9 +399,9 @@ public class FanucStatusMonitorJFrame extends javax.swing.JFrame {
             }
         } catch (com4j.ComException ce) {
             jTextAreaExceptions.append(ce.getMessage() + "\n");
-            Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, null, ce);
+            Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, "", ce);
         } catch (InterruptedException ex) {
-            Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucStatusMonitorJFrame.class.getName()).log(Level.SEVERE, "", ex);
         } finally {
             if (null != alarms_ec) {
                 alarms_ec.close();

@@ -706,7 +706,7 @@ public class CRCLSocket implements AutoCloseable {
      *
      * @param str string to convert
      * @param validate do additional validation
-     * @return
+     * @return new commmand instance
      * @throws CRCLException the string contained invalid CRCL
      */
     public CRCLCommandInstanceType stringToCommand(String str, boolean validate) throws CRCLException {
@@ -748,7 +748,7 @@ public class CRCLSocket implements AutoCloseable {
      *
      * @param str string to convert
      * @param validate do additional validation
-     * @return
+     * @return new program
      * @throws CRCLException string to convert was not valid
      */
     public CRCLProgramType stringToProgram(String str, boolean validate) throws CRCLException {
@@ -878,7 +878,7 @@ public class CRCLSocket implements AutoCloseable {
                 throw new IllegalStateException("socket and socketChannel are both null");
             }
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
             throw new CRCLException(ex);
         }
         return Collections.emptyList();
@@ -921,7 +921,7 @@ public class CRCLSocket implements AutoCloseable {
                 throw new IllegalStateException("socket and socketChannel are both null");
             }
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
             throw new CRCLException(ex);
         }
         return Collections.emptyList();
@@ -957,10 +957,13 @@ public class CRCLSocket implements AutoCloseable {
                     try (PrintWriter pw = new PrintWriter(new FileWriter(tmpFile))) {
                         pw.println(str);
                     }
-                    System.err.println("defaultStatSchemaFiles = " + Arrays.toString(CRCLSchemaUtils.getDefaultStatSchemaFiles()));
+                    File[] defaultStatSchemaFiles = CRCLSchemaUtils.getDefaultStatSchemaFiles();
+                    if(defaultStatSchemaFiles!=null) {
+                        System.err.println("defaultStatSchemaFiles = " + Arrays.toString(defaultStatSchemaFiles));
+                    }
                     throw new CRCLException("tmpFile=" + tmpFile, ex);
                 } catch (IOException ex1) {
-                    Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex1);
+                    Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex1);
                     throw new CRCLException(ex);
                 }
             }
@@ -980,17 +983,7 @@ public class CRCLSocket implements AutoCloseable {
         }
     }
 
-//    public CRCLStatusType
-//            readStatusFromSaxSource(SAXSource saxSource) throws JAXBException {
-//        synchronized (u_stat) {
-//            JAXBElement<CRCLStatusType> el
-//                    = u_stat.unmarshal(saxSource, CRCLStatusType.class
-//                    );
-//            return el.getValue();
-//        }
-//    }
     private InputStream getBufferedInputStream(int timeout) throws IOException {
-
         if (null != socketChannel) {
             if (!socketChannel.isBlocking() && socketChannel.isRegistered()) {
                 throw new IllegalStateException("Can not use SocketChannel inputStream when set non-blocking and registered with selector. It must be deregistered with the SelectionKey's cancel method.");
@@ -1099,7 +1092,7 @@ public class CRCLSocket implements AutoCloseable {
             }
             return str;
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
         }
         return "";
     }
@@ -1364,8 +1357,7 @@ public class CRCLSocket implements AutoCloseable {
             System.out.println("");
             System.out.flush();
             System.err.println("cmdSchemSetTrace = " + CRCLUtils.traceToString(this.cmdSchemSetTrace));
-            final File[] cmdSchemaFilesLocal = cmdSchemaFiles;
-            System.err.println("cmdSchemaFiles = " + Arrays.toString(cmdSchemaFilesLocal));
+            final File[] cmdSchemaFilesLocal = this.cmdSchemaFiles;
             if (null != cmdSchemaFilesLocal) {
                 for (int i = 0; i < cmdSchemaFilesLocal.length; i++) {
                     try {
@@ -1541,7 +1533,7 @@ public class CRCLSocket implements AutoCloseable {
             try {
                 close();
             } catch (IOException ex) {
-                Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
                 throw new CRCLException(ex);
             }
             throw new CRCLException(socketException);
@@ -1907,7 +1899,7 @@ public class CRCLSocket implements AutoCloseable {
         try {
             return getUtilSocket().statusToPrettyString(status, false);
         } catch (Exception e) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", e);
             String msg = e.getMessage();
             if (null == msg) {
                 return "EXCEPTION";
@@ -1953,7 +1945,7 @@ public class CRCLSocket implements AutoCloseable {
                 return this.lastStatusString;
             }
         } catch (JAXBException jAXBException) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, jAXBException);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", jAXBException);
             throw new Exception("status=" + status + ",validate=" + validate, jAXBException);
         }
     }
@@ -1981,7 +1973,7 @@ public class CRCLSocket implements AutoCloseable {
         try {
             return getUtilSocket().cmdToString(cmd, 12, 60);
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
             return ex.toString();
         }
     }
@@ -1990,7 +1982,7 @@ public class CRCLSocket implements AutoCloseable {
         try {
             return getUtilSocket().commandToPrettyString(cmd);
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
             return ex.toString();
         }
     }
@@ -2002,7 +1994,7 @@ public class CRCLSocket implements AutoCloseable {
 //            }
 //            return getUtilSocket().cmdToString(cmd, max_fields, max_length);
 //        } catch (Exception ex) {
-//            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
 //            return ex.toString();
 //        }
 //    }
@@ -2065,7 +2057,7 @@ public class CRCLSocket implements AutoCloseable {
             }
             return getUtilSocket().cmdToString(cmd, 15, 80);
         } catch (Exception ex) {
-            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
             return ex.toString();
         }
     }
@@ -2124,7 +2116,7 @@ public class CRCLSocket implements AutoCloseable {
 //            }
 //            return " CRCLStatusType{ " + getUtilSocket().statusToSimpleString(stat, 30, 160) + " } ";
 //        } catch (Exception ex) {
-//            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
 //            return ex.toString();
 //        }
 //    }
@@ -2321,7 +2313,7 @@ public class CRCLSocket implements AutoCloseable {
                     String useEclipseJaxbPropertyString = System.getProperty("crcl.useEclipseJaxb");
                     boolean useEclipseJaxb = false;
                     if (null != useEclipseJaxbPropertyString) {
-                        useEclipseJaxb = Boolean.valueOf(useEclipseJaxbPropertyString);
+                        useEclipseJaxb = Boolean.parseBoolean(useEclipseJaxbPropertyString);
                     }
                     if (useEclipseJaxb) {
                         Class<?> eclipselinkClass;
@@ -2334,7 +2326,7 @@ public class CRCLSocket implements AutoCloseable {
                             LOGGER.log(Level.FINE, "JAXBContext.class.getProtectionDomain() = {0}", proDeom);
                             System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
                         } catch (ClassNotFoundException ex) {
-                            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(CRCLSocket.class.getName()).log(Level.SEVERE, "", ex);
                         }
                     }
                 }
@@ -2395,7 +2387,7 @@ public class CRCLSocket implements AutoCloseable {
      * Create a new CRCL socket wrapped around the given
      * java.nio.channels.SocketChannel
      *
-     * @param socketChannel
+     * @param socketChannel channel to wrap
      */
     private CRCLSocket(SocketChannel socketChannel) {
         this(socketChannel.socket());
@@ -2406,7 +2398,7 @@ public class CRCLSocket implements AutoCloseable {
      * Create a new CRCL socket wrapped around the given
      * java.nio.channels.SocketChannel
      *
-     * @param socketChannel
+     * @param socketChannel channel to wrap
      * @return new CRCLSocket object
      */
     public static CRCLSocket newCRCLSocketForSocketChannel(SocketChannel socketChannel) {

@@ -80,7 +80,7 @@ public class CRCLClient {
                 }
             } while (!(IDback == moveTo.getCommandID()) || cmdStat.getCommandState().equals(CommandStateEnumType.CRCL_WORKING));
         } catch (Exception ex) {
-            Logger.getLogger(CRCLClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLClient.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 }

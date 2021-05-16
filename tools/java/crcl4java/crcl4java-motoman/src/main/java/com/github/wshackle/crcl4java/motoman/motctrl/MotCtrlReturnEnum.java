@@ -23,7 +23,7 @@
 package com.github.wshackle.crcl4java.motoman.motctrl;
 
 import crcl.utils.XFuture;
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +62,7 @@ public enum MotCtrlReturnEnum {
     private final int id;
     private final String message;
 
-    private static Map<Integer,MotCtrlReturnEnum> map = new HashMap<>();
+    private static final Map<Integer,MotCtrlReturnEnum> map = new HashMap<>();
     
     static {
         for (int i = 0; i < MotCtrlReturnEnum.values().length; i++) {

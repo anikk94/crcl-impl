@@ -162,6 +162,6 @@ public class CRCLServerSocketEvent<STATE_TYPE extends CRCLServerClientState> {
     }
 
     public static <STATE_TYPE extends CRCLServerClientState> CRCLServerSocketEvent<STATE_TYPE> serverClosed(Class<STATE_TYPE> clzz) {
-        return new CRCLServerSocketEvent<STATE_TYPE>(CRCLServerSocketEventType.SERVER_CLOSED, clzz, null, null, null);
+        return new CRCLServerSocketEvent<>(CRCLServerSocketEventType.SERVER_CLOSED, clzz, null, null, null);
     }
 }

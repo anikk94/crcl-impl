@@ -51,13 +51,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Level;
@@ -310,13 +304,13 @@ public class CRCLCopierTest {
                                     System.err.println("entry = " + entry);
                                     System.err.println("name = " + name);
                                     Logger.getLogger(CRCLCopierTest.class
-                                            .getName()).log(Level.SEVERE, null, ex);
+                                            .getName()).log(Level.SEVERE, "", ex);
                                 }
                             }
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(CRCLCopierTest.class
-                                .getName()).log(Level.SEVERE, null, ex);
+                                .getName()).log(Level.SEVERE, "", ex);
                     } finally {
                         try {
                             if (null != is) {
@@ -336,7 +330,7 @@ public class CRCLCopierTest {
             System.err.println("name = " + name);
             System.err.println("jar = " + jar);
             Logger.getLogger(CRCLCopierTest.class
-                    .getName()).log(Level.SEVERE, null, t);
+                    .getName()).log(Level.SEVERE, "", t);
         }
         return classes;
     }
@@ -369,7 +363,7 @@ public class CRCLCopierTest {
                     Logger.getLogger(CRCLCopierTest.class
                             .getName()).log(Level.SEVERE, "clssNameToLookup={0}", clssNameToLookup);
                     Logger.getLogger(CRCLCopierTest.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                            .getName()).log(Level.SEVERE, "", ex);
                 }
             }
         }
@@ -712,19 +706,19 @@ public class CRCLCopierTest {
 
         try {
             final File randomProgramFile = File.createTempFile("randomProgram", ".xml");
-            CRCLProgramType randProgram = reflectiveRandomGenerate(CRCLProgramType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper")));
+            CRCLProgramType randProgram = reflectiveRandomGenerate(CRCLProgramType.class, new Random(10), new TreeSet<>(Collections.singletonList("CRCLCommandWrapper")));
 
             CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
             reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
             CRCLProgramType randProgramCopy2 = CRCLCopier.copy(randProgram);
             reflectiveCheckEquals("randProgramCopy2", randProgram, randProgramCopy2, 0);
 
-            randProgram.setInitCanon(reflectiveRandomGenerate(InitCanonType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper"))));
-            randProgram.setEndCanon(reflectiveRandomGenerate(EndCanonType.class, new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper"))));
+            randProgram.setInitCanon(reflectiveRandomGenerate(InitCanonType.class, new Random(10), new TreeSet<>(Collections.singletonList("CRCLCommandWrapper"))));
+            randProgram.setEndCanon(reflectiveRandomGenerate(EndCanonType.class, new Random(10), new TreeSet<>(Collections.singletonList("CRCLCommandWrapper"))));
             for (int i = 0; i < randProgram.getMiddleCommand().size(); i++) {
                 final MiddleCommandType midCmd = randProgram.getMiddleCommand().get(i);
                 final MiddleCommandType newMidCmdtype =
-                        reflectiveRandomGenerate(midCmd.getClass(), new Random(10), new TreeSet<>(Arrays.asList("CRCLCommandWrapper")));
+                        reflectiveRandomGenerate(midCmd.getClass(), new Random(10), new TreeSet<>(Collections.singletonList("CRCLCommandWrapper")));
                 randProgram.getMiddleCommand().set(i, newMidCmdtype);
             }
             reflectiveCheckEquals("randProgramCopy2Copy", randProgramCopy, randProgramCopy2, 0);

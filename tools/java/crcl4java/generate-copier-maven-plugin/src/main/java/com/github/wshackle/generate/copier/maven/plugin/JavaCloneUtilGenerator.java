@@ -298,13 +298,13 @@ public class JavaCloneUtilGenerator {
                                     System.out.println("getterName = " + getterName);
                                     getterMethod = clzzi.getMethod(getterName);
                                 } catch (NoSuchMethodException | SecurityException ex) {
-                                    Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                                    Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, "", ex);
                                 }
                             } else {
                                 try {
                                     getterMethod = clzzi.getMethod("get" + methodJ.getName().substring(3));
                                 } catch (NoSuchMethodException | SecurityException ex) {
-                                    Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                                    Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, "", ex);
                                 }
                             }
                             if (null != getterMethod) {
@@ -336,7 +336,7 @@ public class JavaCloneUtilGenerator {
                                         componentClass = Class.forName(componentTypeName);
                                         System.out.println("componentClass = " + componentClass);
                                     } catch (ClassNotFoundException ex) {
-                                        Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, null, ex);
+                                        Logger.getLogger(JavaCloneUtilGenerator.class.getName()).log(Level.SEVERE, "", ex);
                                     }
                                 }
                                 String outColName = "out" + methodJ.getName().substring(3);

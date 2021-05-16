@@ -317,7 +317,7 @@ public class CRCLUtils {
      *
      * @param <T> the type of elements returned by the iterator
      * @param itIn input iterable that may return null values
-     * @return
+     * @return new iterable with no nulls
      */
     @SuppressWarnings({"nullness", "initialization"})
     public static <T> Iterable<@NonNull T> getNonNullIterable(@Nullable Iterable<T> itIn) {
@@ -328,15 +328,6 @@ public class CRCLUtils {
         return ret;
     }
 
-//    @SuppressWarnings({"nullness", "initialization"})
-//    public static <T> void clearAndSetList(@Nullable List<@Nullable T> list, @Nullable Collection<? extends T> collectionToAdd) {
-//        if (null != list) {
-//            list.clear();
-//            if (null != collectionToAdd) {
-//                list.addAll(collectionToAdd);
-//            }
-//        }
-//    }
 
     /**
      * Create a new list from the set of elements taken from an iterable excluding null values.

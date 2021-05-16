@@ -64,7 +64,7 @@ public class SimServerJFrame extends javax.swing.JFrame implements SimServerOute
                     frame.loadProperties();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             frame.setVisible(true);
 

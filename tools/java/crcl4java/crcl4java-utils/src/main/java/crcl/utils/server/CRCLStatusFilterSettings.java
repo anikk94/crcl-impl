@@ -37,7 +37,6 @@ import crcl.base.SettingsStatusType;
 import crcl.base.TorqueUnitEnumType;
 import static crcl.copier.CRCLCopier.copy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -394,7 +393,7 @@ public class CRCLStatusFilterSettings {
                         jointsCopy.add(jstCopy);
                     }
                 }
-                Collections.sort(jointsCopy, jointStatusComparator);
+                jointsCopy.sort(jointStatusComparator);
                 statusOutJointStatuses.getJointStatus().clear();
                 statusOutJointStatuses.getJointStatus().addAll(jointsCopy);
             }

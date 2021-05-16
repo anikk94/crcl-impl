@@ -135,7 +135,7 @@ public class SimServerOuterStub implements SimServerOuter, SimServerMenuOuter {
     }
 
     private static boolean prop(String propName, boolean defaultVal) {
-        return Boolean.valueOf(System.getProperty(propName,Boolean.toString(defaultVal)));
+        return Boolean.parseBoolean(System.getProperty(propName,Boolean.toString(defaultVal)));
     }
     
     

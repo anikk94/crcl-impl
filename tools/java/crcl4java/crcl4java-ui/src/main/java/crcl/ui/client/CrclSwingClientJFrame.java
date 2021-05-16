@@ -116,7 +116,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
         try {
             this.setIconImage(IconImages.BASE_IMAGE);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -207,7 +207,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
                         try {
                             pendantClientJPanel1.openXmlInstanceFile(xmlFile);
                         } catch (Exception ex) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, "", ex);
                             showMessage(ex);
                         }
                     }
@@ -245,7 +245,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
                 });
                 this.jMenuRecentProgram.add(jmi);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -601,7 +601,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
                     saveXmlProgramFile(f);
                 }
             } catch (JAXBException | CRCLException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
                 this.showMessage(ex);
             }
         }
@@ -732,7 +732,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
                 try {
                     new CrclSwingClientJFrame().setVisible(true);
                 } catch (ParserConfigurationException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, "", ex);
                 }
             }
         });

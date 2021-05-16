@@ -66,7 +66,7 @@ public enum FcsReturnCode {
 
     private final int id;
 
-    private static Map<Integer, FcsReturnCode> map = new HashMap<>();
+    private static final Map<Integer, FcsReturnCode> map = new HashMap<>();
 
     static {
         for (int i = 0; i < FcsReturnCode.values().length; i++) {

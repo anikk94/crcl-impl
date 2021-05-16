@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.swing.JLabel;
 
 /**
  *
@@ -36,10 +35,10 @@ import javax.swing.JLabel;
  */
 public class ConfigurationReader {
 
-    private double[] m_daftMaxes = {100, 100, 100, 100, 100, 100};
+    private final double[] m_daftMaxes = {100, 100, 100, 100, 100, 100};
     /*maximum 
      rated force/torque readings*/
-    private double[] m_daftCountsPerUnit = {1, 1, 1, 1, 1, 1};
+    private final double[] m_daftCountsPerUnit = {1, 1, 1, 1, 1, 1};
     /*counts per 
         *unit force or torque for each axis*/
 
@@ -58,7 +57,7 @@ public class ConfigurationReader {
     /**
      * Visualizes the forces and torques.
      */
-    private FTVisualizationCube m_ftvc;
+    private final FTVisualizationCube m_ftvc;
     final private String m_strSensorAddress;
     /*The network address of the sensor.*/
     private double countsPerForce;
@@ -155,7 +154,7 @@ public class ConfigurationReader {
                 + strUrlSuffix;
         cBufferedReader = new BufferedReader(new InputStreamReader(new URL(strURL).openConnection().getInputStream()));
         /*The text of the page.*/
-        String strPageText = "";
+        StringBuilder strPageText = new StringBuilder();
         /*The last line read from the web stream.*/
         String strCurLine;
         /*Precondition: cBufferedReader is at the beginning of the page.
@@ -164,9 +163,9 @@ public class ConfigurationReader {
          *page.
          */
         while (null != (strCurLine = cBufferedReader.readLine())) {
-            strPageText += strCurLine;
+            strPageText.append(strCurLine);
         }
-        return strPageText;
+        return strPageText.toString();
     }
 
     private String readNetFTAPI(int index) {
@@ -252,6 +251,7 @@ public class ConfigurationReader {
         return true;
     }
 
+    @SuppressWarnings("ImplicitArrayToString")
     @Override
     public String toString() {
         return "ConfigurationReader{" + "m_daftMaxes=" + m_daftMaxes + ", m_daftCountsPerUnit=" + m_daftCountsPerUnit + ", m_strForceUnits=" + m_strForceUnits + ", m_strTorqueUnits=" + m_strTorqueUnits + ", m_strCalSN=" + m_strCalSN + ", m_strCalIndex=" + m_strCalIndex + ", m_strCfgName=" + m_strCfgName + ", m_strCfgIndex=" + m_strCfgIndex + ", m_iRDTSampleRate=" + m_iRDTSampleRate + ", m_ftvc=" + m_ftvc + ", m_strSensorAddress=" + m_strSensorAddress + ", countsPerForce=" + countsPerForce + ", countsPerTorque=" + countsPerTorque + '}';

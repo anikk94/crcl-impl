@@ -49,7 +49,7 @@ public class CRCLServerClientState implements AutoCloseable {
         try {
             cs.close();
         } catch (IOException ex) {
-            Logger.getLogger(CRCLServerClientState.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRCLServerClientState.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 

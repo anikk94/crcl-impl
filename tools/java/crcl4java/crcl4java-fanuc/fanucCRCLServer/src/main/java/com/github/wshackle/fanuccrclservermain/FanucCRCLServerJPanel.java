@@ -39,7 +39,6 @@ import crcl.base.SetLengthUnitsType;
 import crcl.base.SetTransSpeedType;
 import crcl.base.TransSpeedAbsoluteType;
 import crcl.ui.client.CrclSwingClientJFrame;
-import crcl.ui.misc.ServerSensorJFrame;
 import crcl.ui.misc.WebServerJFrame;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
@@ -201,8 +200,8 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             float max[] = new float[6];
 
             for (int i = 0; i < model.getRowCount(); i++) {
-                min[i] = Float.valueOf(model.getValueAt(i, 1).toString());
-                max[i] = Float.valueOf(model.getValueAt(i, 3).toString());
+                min[i] = Float.parseFloat(model.getValueAt(i, 1).toString());
+                max[i] = Float.parseFloat(model.getValueAt(i, 3).toString());
 
             }
             if (null != main) {
@@ -494,7 +493,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                         }
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
                     main.showError(ex.getMessage());
                 }
             });
@@ -530,7 +529,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                 }
                 cmdId = cmdId + 1;
             } catch (PmException ex) {
-                Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -552,7 +551,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
     private boolean getBooleanProperty(String key, boolean defaultValue) {
         String sysProp = System.getProperty(key);
         if (null != sysProp) {
-            return Boolean.valueOf(sysProp);
+            return Boolean.parseBoolean(sysProp);
         }
         return Optional.ofNullable(props.getProperty(key))
                 .map(Boolean::valueOf)
@@ -584,7 +583,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             }
             fingerSensorServerCmd = getProperty("fingerSensorServerCmd", DEFAULT_FINGER_SENSOR_SERVER_COMMAND);
             fingerSensorServerDirectory = getProperty("fingerSensorServerDirectory", DEFAULT_FINGER_SENSOR_SERVER_DIRECTORY);
-            boolean keepMoveLog = Boolean.valueOf(getProperty("keepMoveLog", "false"));
+            boolean keepMoveLog = Boolean.parseBoolean(getProperty("keepMoveLog", "false"));
             jCheckBoxKeepMoveToLog.setSelected(keepMoveLog);
             if (null != main) {
                 main.setKeepMoveToLog(keepMoveLog);
@@ -593,7 +592,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //            jCheckBoxMenuItemStartPressureServer.setSelected(getBooleanProperty("autoStartPressureSensorServer", false));
 //            jCheckBoxMenuItemShowPressureOutput.setSelected(getBooleanProperty("showPressureOutput", false));
         } catch (IOException ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -726,7 +725,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                         continue;
                     }
                 } catch (PmException ex) {
-                    Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             EndCanonType end = new EndCanonType();
@@ -742,7 +741,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         } catch (CRCLException | IOException ex) {
             this.jTextAreaErrors.append(ex.toString());
             JOptionPane.showMessageDialog(this, ex);
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -899,7 +898,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             }
             if (lhs.startsWith("PR[") && lhs.endsWith("]")) {
                 int cindex = lhs.indexOf(',');
-                Integer lhs_id = 0;
+                int lhs_id = 0;
                 if (cindex > 0) {
                     lhs_id = Integer.parseInt(lhs.substring(3, cindex));
                     String el_index_string = lhs.substring(cindex + 1, lhs.length() - 1);
@@ -1003,22 +1002,22 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             client.setVisible(true);
             client.connect("localhost", getLocalCrclPort());
         } catch (Exception ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
-    private @Nullable
-    ServerSensorJFrame serverSensorJFrame = null;
+//    private @Nullable
+//    ServerSensorJFrame serverSensorJFrame = null;
 
     public void saveProperties() {
         try {
             if (null == props) {
                 props = new Properties();
             }
-            if (null != serverSensorJFrame) {
-                fingerSensorServerCmd = serverSensorJFrame.getCommandString();
-                fingerSensorServerDirectory = serverSensorJFrame.getDirectoryString();
-            }
+//            if (null != serverSensorJFrame) {
+//                fingerSensorServerCmd = serverSensorJFrame.getCommandString();
+//                fingerSensorServerDirectory = serverSensorJFrame.getDirectoryString();
+//            }
             if (null != webServerJFrame) {
                 webServerCmd = webServerJFrame.getCommandString();
                 webServerDirectory = webServerJFrame.getDirectoryString();
@@ -1036,7 +1035,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //            props.store(new FileWriter(PROPERTIES_FILE), "");
             PropertiesUtils.saveProperties(jpanelPropertiesFile, props);
         } catch (IOException ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1054,12 +1053,12 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             timer = null;
         }
         saveProperties();
-        if (null != serverSensorJFrame) {
-            serverSensorJFrame.stop();
-            serverSensorJFrame.setVisible(false);
-            serverSensorJFrame.dispose();
-            serverSensorJFrame = null;
-        }
+//        if (null != serverSensorJFrame) {
+//            serverSensorJFrame.stop();
+//            serverSensorJFrame.setVisible(false);
+//            serverSensorJFrame.dispose();
+//            serverSensorJFrame = null;
+//        }
         if (null != webServerJFrame) {
             webServerJFrame.stop();
             webServerJFrame.setVisible(false);
@@ -1070,10 +1069,10 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         FanucCRCLMain.stop();
     }
 
-    public @Nullable
-    ServerSensorJFrame getSensorJFrame() {
-        return serverSensorJFrame;
-    }
+//    public @Nullable
+//    ServerSensorJFrame getSensorJFrame() {
+//        return serverSensorJFrame;
+//    }
 
     public void launchPressureSensorServer() {
         throw new UnsupportedOperationException("pressure sensor server not implemented");
@@ -1102,7 +1101,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //                }
 //            });
 //        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
 //            if (null != main) {
 //                main.showError(ex.toString());
 //            }
@@ -1126,7 +1125,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             webServerJFrame.setVisible(true);
             webServerJFrame.start();
         } catch (Exception ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
             main.showError(ex.toString());
         }
     }
@@ -1136,7 +1135,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings({"unchecked", "deprecation", "nullness"})
+    @SuppressWarnings("all")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -1698,7 +1697,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             try {
                 main.startCrclServer();
             } catch (IOException ex) {
-                Logger.getLogger(FanucCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FanucCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         } else {
             main.stopCrclServer();
@@ -1744,7 +1743,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                 main.closeMoveToLogFile();
                 Desktop.getDesktop().open(f);
             } catch (Exception ex) {
-                Logger.getLogger(FanucCRCLServerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FanucCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jButtonShowMoveLogActionPerformed

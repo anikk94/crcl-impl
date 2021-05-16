@@ -64,7 +64,7 @@ public class SimulatedKinematicsSimpleTest {
                 try {
                     System.err.println("pose=" + CRCLPosemath.poseToString(pose));
                 } catch (Exception ex) {
-                    Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, "", ex);
                 }
                 System.err.println("j2=" + Arrays.toString(j2));
                 System.err.println("jtest=" + Arrays.toString(jtest));
@@ -93,7 +93,7 @@ public class SimulatedKinematicsSimpleTest {
                         try {
                             System.err.println("pose=" + CRCLPosemath.poseToString(pose));
                         } catch (Exception ex) {
-                            Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, "", ex);
                         }
                         System.err.println("j2=" + Arrays.toString(j2));
                         System.err.println("jtest=" + Arrays.toString(jtest));
@@ -211,7 +211,7 @@ public class SimulatedKinematicsSimpleTest {
                         System.err.println("pose=" + CRCLPosemath.poseToString(pose));
                         System.err.println("pose2=" + CRCLPosemath.poseToString(pose2));
                     } catch (Exception ex) {
-                        Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(SimulatedKinematicsSimpleTest.class.getName()).log(Level.SEVERE, "", ex);
                     }
                     System.err.println("j2=" + Arrays.toString(j2));
                     System.err.println("jtest=" + Arrays.toString(jtest));

@@ -285,7 +285,7 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
         return !panel.cancelled;
     }
 
-    public static volatile boolean disableShowText = Boolean.valueOf("crcl.ui.misc.MultiLineString.disableShowText");
+    public static volatile boolean disableShowText = Boolean.parseBoolean("crcl.ui.misc.MultiLineString.disableShowText");
 
     private static boolean ignoreForceShow = false;
 

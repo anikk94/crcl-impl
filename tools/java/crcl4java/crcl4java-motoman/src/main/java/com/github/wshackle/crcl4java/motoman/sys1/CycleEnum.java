@@ -41,7 +41,7 @@ public enum CycleEnum {
         this.id = id;
     }
 
-    private static Map<Integer, CycleEnum> map = new HashMap<>();
+    private static final Map<Integer, CycleEnum> map = new HashMap<>();
 //
     static {
         for (int i = 0; i < CycleEnum.values().length; i++) {

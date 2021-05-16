@@ -158,7 +158,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                         try {
                             documentation = xpu.getDocumentation(schemaFiles, doctype);
                         } catch (SAXException | IOException | XPathExpressionException | ParserConfigurationException ex) {
-                            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
                         }
                         if (null != documentation) {
                             jTextPaneDocumentation.setText(documentation);
@@ -195,7 +195,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     System.err.println("col0Val = " + col0Val);
                     System.err.println("col1Val = " + col1Val);
                     System.err.println("typenoparams = " + typenoparams);
-                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
         });
@@ -309,7 +309,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 //                        jButtonAddToList.setEnabled(true);
 //                    }
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
             returnvar = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -408,7 +408,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
             } catch (SecurityException | IllegalArgumentException ex) {
                 System.err.println("i = " + i);
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -441,7 +441,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             return 0;
         }
         if (Long.class.isAssignableFrom(clss)) {
-            return Long.valueOf(0);
+            return 0L;
         }
         if (clss.isEnum()) {
             return clss.getEnumConstants()[0];
@@ -567,7 +567,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                 System.err.println("o = " + o);
                 System.err.println("oclss = " + oclss);
                 System.err.println("name_prefix = " + name_prefix);
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         Method ma[] = oclss.getMethods();
@@ -790,7 +790,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     addObjectToTable(name_prefix + name + ".", tm, mo, mclss);
                 }
             } catch (SecurityException ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }
@@ -851,14 +851,8 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             String documentation = null;
             try {
                 documentation = xpu.getDocumentation(schemaFiles, clssname);
-            } catch (SAXException ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (XPathExpressionException ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParserConfigurationException ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException | ParserConfigurationException | XPathExpressionException | IOException ex) {
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
             panel.xpu = xpu;
             panel.schemaFiles = schemaFiles;
@@ -911,7 +905,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             }
         } catch (Exception ex) {
 //            Logger.getLogger(ObjTableJPanel.class
-//                    .getName()).log(Level.SEVERE, null, ex);
+//                    .getName()).log(Level.SEVERE, "", ex);
             String outText = ex.toString() + "\n\n"
                     + CRCLUtils.traceToString(ex.getStackTrace());
             jTextAreaOutput.setText(outText);
@@ -1254,7 +1248,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     Logger.getLogger(ObjTableJPanel.class
                             .getName()).log(Level.SEVERE, "clssNameToLookup={0}", clssNameToLookup);
                     Logger.getLogger(ObjTableJPanel.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                            .getName()).log(Level.SEVERE, "", ex);
                 }
             }
         }
@@ -1356,13 +1350,13 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                                     System.err.println("entry = " + entry);
                                     System.err.println("name = " + name);
                                     Logger.getLogger(ObjTableJPanel.class
-                                            .getName()).log(Level.SEVERE, null, ex);
+                                            .getName()).log(Level.SEVERE, "", ex);
                                 }
                             }
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(ObjTableJPanel.class
-                                .getName()).log(Level.SEVERE, null, ex);
+                                .getName()).log(Level.SEVERE, "", ex);
                     } finally {
                         try {
                             if (null != is) {
@@ -1382,7 +1376,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             System.err.println("name = " + name);
             System.err.println("jar = " + jar);
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, t);
+                    .getName()).log(Level.SEVERE, "", t);
         }
         return classes;
     }
@@ -1437,7 +1431,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                 System.out.println("pobj = " + pobj);
                 System.out.println("name = " + name);
                 System.out.println("pobjClass = " + pobjClass);
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
             System.err.println("Method to get object for " + name + " does not exist");
             return null;
@@ -1570,7 +1564,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     System.err.println("tobj = " + tobj);
                     System.err.println("indexVal = " + indexVal);
                     Logger.getLogger(ObjTableJPanel.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                            .getName()).log(Level.SEVERE, "", ex);
                 }
                 return;
             }
@@ -1623,7 +1617,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     System.out.println("o = " + o);
                     System.out.println("o.getClass() = " + o.getClass());
                     System.out.println("endname = " + endname);
-                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 }
                 System.err.println("Method to set " + name + " does not exist");
                 return;
@@ -1633,7 +1627,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
         } catch (Exception ex) {
             System.err.println("Error in setObjectForName(" + type + "," + name + ", " + o + ")");
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1650,24 +1644,9 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             }
             List l = (List) getObject(pobj, endname);
             l.add(tobj);
-        } catch (SecurityException ex) {
+        } catch (SecurityException | InstantiationException | ClassNotFoundException | InvocationTargetException | IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1679,18 +1658,9 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             String indexString = name.substring(index1 + 5, index2);
             int index = Integer.parseInt(indexString);
             l.remove(index);
-        } catch (SecurityException ex) {
+        } catch (SecurityException | InvocationTargetException | IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } catch (InvocationTargetException ex) {
-            Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1706,7 +1676,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             this.updateTableFromObject();
         } catch (Exception ex) {
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1727,7 +1697,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             }
             List<Class<?>> availClasses = getAssignableClasses(clss, classes);
 
-            Class ca[] = availClasses.toArray(new Class[availClasses.size()]);
+            Class ca[] = availClasses.toArray(new Class[0]);
             Class selectedClass;
             if (ca.length < 2) {
                selectedClass=ca[0];
@@ -1761,7 +1731,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             this.updateTableFromObject();
 
         } catch (Exception ex) {
-            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1773,7 +1743,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
         try {
             addToList();
         } catch (Exception ex) {
-            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonAddToListActionPerformed
 
@@ -1793,7 +1763,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             classes = getClasses(customExcludedPathStrings);
         }
         List<Class<?>> availClasses = getAssignableClasses(clss, classes);
-        Class ca[] = availClasses.toArray(new Class[availClasses.size()]);
+        Class ca[] = availClasses.toArray(new Class[0]);
         int selected = JOptionPane.showOptionDialog(this.dialog,
                 "Select class of new " + clss.getCanonicalName(),
                 name + " = new " + clss.getCanonicalName(),
@@ -1823,7 +1793,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
         } catch (Exception ex) {
             Logger.getLogger(ObjTableJPanel.class
-                    .getName()).log(Level.SEVERE, null, ex);
+                    .getName()).log(Level.SEVERE, "", ex);
         }
     }//GEN-LAST:event_jButtonRemoveFromListActionPerformed
 
@@ -1866,7 +1836,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     updateTableFromObject();
                 }
             } catch (Exception ex) {
-                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
     }//GEN-LAST:event_jButtonTextToTableActionPerformed

@@ -159,7 +159,7 @@ public class MotomanCRCLServer implements AutoCloseable {
                 maxUpdatePositionOnlyTime = diff;
             }
         } catch (Exception ex) {
-            Logger.getLogger(MotomanCRCLServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanCRCLServer.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -325,7 +325,7 @@ public class MotomanCRCLServer implements AutoCloseable {
             mpcLocal = getLocalMotoPlusConnection();
             return mpcLocal.isConnected();
         } catch (IOException ex) {
-            Logger.getLogger(MotomanCRCLServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MotomanCRCLServer.class.getName()).log(Level.SEVERE, "", ex);
             return false;
         }
     }
@@ -400,7 +400,7 @@ public class MotomanCRCLServer implements AutoCloseable {
 
     private final AtomicInteger recheckCoordTargetResendNeededCount = new AtomicInteger();
     private final AtomicInteger recheckCoordTargetResendNotNeededCount = new AtomicInteger();
-    private volatile int maxRecheckCoordTargetFailCount = 0;
+    private final int maxRecheckCoordTargetFailCount = 0;
 
     private double transDiffCartData(MP_CART_POS_RSP_DATA pos1, COORD_POS dst) {
         int diffx = pos1.lx() - dst.x;
@@ -489,7 +489,7 @@ public class MotomanCRCLServer implements AutoCloseable {
 //        }
 //    }
     private final AtomicInteger lastSentTargetId = new AtomicInteger(1);
-    private volatile int lastRecvdTargetId = 1;
+    private final int lastRecvdTargetId = 1;
 
     public int getLastSentTargetId() {
         return lastSentTargetId.get();
@@ -1136,7 +1136,7 @@ public class MotomanCRCLServer implements AutoCloseable {
             boolean power = mpcLocal.mpGetServoPower();
             if (debug) {
                 try {
-                    System.out.println("moveTo(" + CRCLSocket.getUtilSocket().commandToSimpleString(cmd) + ")");
+                    System.out.println("moveTo(" + CRCLSocket.commandToSimpleString(cmd) + ")");
                 } catch (Exception ex) {
                     logException(ex);
                 }
@@ -1157,11 +1157,7 @@ public class MotomanCRCLServer implements AutoCloseable {
             }
         }
         tgt.setId(newTargetId);
-        if (isStraight) {
-            tgt.setIntp(MP_INTP_TYPE.MP_MOVL_TYPE);
-        } else {
-            tgt.setIntp(MP_INTP_TYPE.MP_MOVL_TYPE);
-        }
+        tgt.setIntp(MP_INTP_TYPE.MP_MOVL_TYPE);
         tgt.getDst().x = (int) (cmd.getEndPosition().getPoint().getX() * 1000.0);
         tgt.getDst().y = (int) (cmd.getEndPosition().getPoint().getY() * 1000.0);
         tgt.getDst().z = (int) (cmd.getEndPosition().getPoint().getZ() * 1000.0);
@@ -1287,7 +1283,7 @@ public class MotomanCRCLServer implements AutoCloseable {
         boolean power = mpcLocal.mpGetServoPower();
         if (debug) {
             try {
-                System.out.println("actuateJoints(" + CRCLSocket.getUtilSocket().commandToSimpleString(ajs) + ")");
+                System.out.println("actuateJoints(" + CRCLSocket.commandToSimpleString(ajs) + ")");
             } catch (Exception ex) {
                 logException(ex);
             }
@@ -1447,7 +1443,7 @@ public class MotomanCRCLServer implements AutoCloseable {
     }
 
     private volatile long alarmCheckTime = -1;
-    private volatile long alarmDiffMax = 3000;
+    private final long alarmDiffMax = 3000;
 
     private CRCLStatusType errorOnlyStatus(long cmdid, String errorDescription) {
         CommandStatusType commandStatus = new CommandStatusType();
@@ -1569,7 +1565,7 @@ public class MotomanCRCLServer implements AutoCloseable {
             } else {
                 setStateDescription(CRCL_ERROR, cmd.getClass().getName() + " not implemented");
                 try {
-                    System.err.println("Unrecognized cmd = " + CRCLSocket.getUtilSocket().commandToSimpleString(cmd));
+                    System.err.println("Unrecognized cmd = " + CRCLSocket.commandToSimpleString(cmd));
                 } catch (Exception ex) {
                     logException(ex);
                 }
@@ -1586,9 +1582,9 @@ public class MotomanCRCLServer implements AutoCloseable {
         }
     }
 
-    private AtomicInteger withAlarmsCountInitCmd = new AtomicInteger();
-    private AtomicInteger withAlarmsCountNotWorking = new AtomicInteger();
-    private AtomicInteger withAlarmsCountTooLong = new AtomicInteger();
+    private final AtomicInteger withAlarmsCountInitCmd = new AtomicInteger();
+    private final AtomicInteger withAlarmsCountNotWorking = new AtomicInteger();
+    private final AtomicInteger withAlarmsCountTooLong = new AtomicInteger();
 
     private boolean checkAlarms() {
         final long now = System.currentTimeMillis();

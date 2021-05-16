@@ -24,7 +24,7 @@ import crcl.ui.client.CrclSwingClientJFrame;
 import crcl.utils.XpathUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -224,13 +224,7 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -243,7 +237,7 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
                 try {
                     new XpathQueryJFrame().setVisible(true);
                 } catch (ParserConfigurationException ex) {
-                    Logger.getLogger(XpathQueryJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(XpathQueryJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
         });
@@ -277,7 +271,7 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
             }
             resultString = xpu.queryXmlString(status, query);
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientJFrame.class.getName()).log(Level.SEVERE, "", ex);
             message("Query :" + query + " of " + status + " failed");
             failedQuery = query;
         }

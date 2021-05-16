@@ -117,10 +117,12 @@ public class CRCLCommandWrapper extends MessageType {
     }
 
     /**
+     * Create a new command wrapping argument with a listener to be called
+     * when command is done.
      *
-     * @param wrappedCommand
-     * @param listener
-     * @return
+     * @param wrappedCommand command to wrap
+     * @param listener listener to call when
+     * @return new command wrapper
      */
     public static CRCLCommandWrapper wrapWithOnDone(MiddleCommandType wrappedCommand,
             CRCLCommandWrapperConsumer listener) {
@@ -130,10 +132,12 @@ public class CRCLCommandWrapper extends MessageType {
     }
 
     /**
+     * Create a new command wrapping argument with a listener to be called
+     * when command is started.
      *
-     * @param wrappedCommand
-     * @param listener
-     * @return
+     * @param wrappedCommand command to wrap
+     * @param listener listener to call when
+     * @return new command wrapper
      */
     public static CRCLCommandWrapper wrapWithOnStart(MiddleCommandType wrappedCommand,
             CRCLCommandWrapperConsumer listener) {
@@ -143,10 +147,12 @@ public class CRCLCommandWrapper extends MessageType {
     }
 
     /**
+     * Create a new command wrapping argument with a listener to be called
+     * if an error occurs while executing this command.
      *
-     * @param wrappedCommand
-     * @param listener
-     * @return
+     * @param wrappedCommand command to wrap
+     * @param listener listener to call when
+     * @return new command wrapper
      */
     public static CRCLCommandWrapper wrapWithOnError(MiddleCommandType wrappedCommand,
             CRCLCommandWrapperConsumer listener) {
@@ -156,12 +162,14 @@ public class CRCLCommandWrapper extends MessageType {
     }
 
     /**
+     * Create a new command wrapping argument with a listeners to be called
+     * when started, done or if an error occurs while executing this command.
      *
-     * @param wrappedCommand
-     * @param onStartListener
-     * @param onDoneListener
-     * @param onErrorListener
-     * @return
+     * @param wrappedCommand command to wrap
+     * @param onStartListener listener to call when started
+     * @param onDoneListener listener to call when done
+     * @param onErrorListener listener to call if error occurs
+     * @return new command wrapper
      */
     public static CRCLCommandWrapper wrap(MiddleCommandType wrappedCommand,
             CRCLCommandWrapperConsumer onStartListener,
@@ -175,16 +183,17 @@ public class CRCLCommandWrapper extends MessageType {
     }
 
     /**
+     * Get the  wrapped command.
      *
-     * @return
+     * @return  wrapped command.
      */
     public MiddleCommandType getWrappedCommand() {
         return wrappedCommand;
     }
 
     /**
-     *
-     * @param wrappedCommand
+     * Set the wrapped command.
+     * @param wrappedCommand new value of wrapped command.
      */
     public void setWrappedCommand(MiddleCommandType wrappedCommand) {
         wrappedCommand.setCommandID(this.commandID);

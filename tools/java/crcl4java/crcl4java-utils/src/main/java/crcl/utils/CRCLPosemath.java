@@ -1554,8 +1554,8 @@ public class CRCLPosemath {
     /**
      * Add two points.
      *
-     * @param p1
-     * @param p2
+     * @param p1 first point
+     * @param p2 second point
      * @return sum of points
      */
     public static PointType add(PointType p1, PointType p2) {
@@ -1569,8 +1569,8 @@ public class CRCLPosemath {
     /**
      * Subtract one point from another.
      *
-     * @param p1
-     * @param p2
+     * @param p1 minuend
+     * @param p2 subtrahend
      * @return p1 - p2
      */
     public static PointType subtract(PointType p1, PointType p2) {
@@ -1636,8 +1636,8 @@ public class CRCLPosemath {
      * Multiply a pose by a point. That is rotate the point based on the pose
      * rotation and add to the point in the pose.
      *
-     * @param pose
-     * @param pt
+     * @param pose pose to multiply
+     * @param pt point
      * @return new result point
      * @throws CRCLException pose was invalid
      */
@@ -1654,8 +1654,8 @@ public class CRCLPosemath {
     /**
      * Multiply all fields of a vector by a BigDecimal distance.
      *
-     * @param dist
-     * @param v
+     * @param dist distance
+     * @param v vector
      * @return new scaled vector
      */
     public static PointType multiply(final BigDecimal dist, final VectorType v) {
@@ -1665,8 +1665,8 @@ public class CRCLPosemath {
     /**
      * Multiply all fields of a vector by a distance.
      *
-     * @param dist
-     * @param v
+     * @param dist distance
+     * @param v vector
      * @return new scaled vector
      */
     public static PointType multiply(double dist, VectorType v) {
@@ -1681,8 +1681,8 @@ public class CRCLPosemath {
     /**
      * Multiply all fields of a point by a distance.
      *
-     * @param dist
-     * @param p
+     * @param dist distance
+     * @param p point
      * @return new scaled point
      */
     public static PointType multiply(BigDecimal dist, PointType p) {
@@ -1692,8 +1692,8 @@ public class CRCLPosemath {
     /**
      * Multiply all fields of a point by a distance.
      *
-     * @param dist
-     * @param p
+     * @param dist distance
+     * @param p point
      * @return new scaled point
      */
     public static PointType multiply(double dist, PointType p) {
@@ -1707,8 +1707,8 @@ public class CRCLPosemath {
     /**
      * Compute the dot product of two vectors.
      *
-     * @param v1
-     * @param v2
+     * @param v1 first vector
+     * @param v2 second vector
      * @return dot product
      */
     public static double dot(VectorType v1, VectorType v2) {
@@ -1720,8 +1720,8 @@ public class CRCLPosemath {
     /**
      * Compute the dot product of a vector and a point.
      *
-     * @param v1
-     * @param p2
+     * @param v1 first vector
+     * @param p2 second vector
      * @return dot product
      */
     public static double dot(VectorType v1, PointType p2) {
@@ -1838,7 +1838,7 @@ public class CRCLPosemath {
      * Convert a CRCL PoseType to a 4x4 Homogeneous Transformation matrix in a
      * double array
      *
-     * @param poseIn
+     * @param poseIn input pose
      * @return transformation matrix
      */
     public static double[][] toHomMat(PoseType poseIn) {
@@ -1903,8 +1903,8 @@ public class CRCLPosemath {
     /**
      * Multiply to poses.
      *
-     * @param p1
-     * @param p2
+     * @param p1 first point
+     * @param p2 second point
      * @return new product.
      */
     public static PoseType multiply(PoseType p1, PoseType p2) {
@@ -1968,8 +1968,8 @@ public class CRCLPosemath {
      * rotating first by the pose rotation. Copy the rotation to the output
      * pose.
      *
-     * @param poseIn
-     * @param pt
+     * @param poseIn input pose
+     * @param pt point
      * @return new result pose
      */
     @SuppressWarnings("nullness")
@@ -1983,13 +1983,7 @@ public class CRCLPosemath {
         return poseOut;
     }
 
-//    public static PoseType pointXAxisZAxisToPose(PointType pt, VectorType x, VectorType z) {
-//        PoseType pose = new PoseType();
-//        pose.setPoint(pt);
-//        pose.setXAxis(x);
-//        pose.setZAxis(z);
-//        return pose;
-//    }
+
     /**
      * Compute the cartesian distance between two points.
      *

@@ -63,7 +63,7 @@ public class CmdLineSimServer {
 //        try {
 //            new BufferedReader(new InputStreamReader(System.in)).readLine();
 //        } catch (IOException ex) {
-//            Logger.getLogger(CmdLineSimServer.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(CmdLineSimServer.class.getName()).log(Level.SEVERE, "", ex);
 //        }
     }
 
@@ -107,7 +107,7 @@ public class CmdLineSimServer {
                         break;
 
                     case "--useTempSchemaCopies":
-                        useTempSchemaCopies = Boolean.valueOf(args[i + 1]);
+                        useTempSchemaCopies = Boolean.parseBoolean(args[i + 1]);
                         i++;
                         break;
 
@@ -126,7 +126,7 @@ public class CmdLineSimServer {
             simServerInner.restartServer(asDaemon);
 
         } catch (ParserConfigurationException | IOException ex) {
-            Logger.getLogger(CmdLineSimServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CmdLineSimServer.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
     private static final Logger LOG = Logger.getLogger(CmdLineSimServer.class.getName());

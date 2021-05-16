@@ -193,7 +193,7 @@ public class CrclSwingClientInner {
         try {
             return Optional.ofNullable(ts.tryGet());
         } catch (Throwable ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
         return Optional.empty();
     }
@@ -755,7 +755,7 @@ public class CrclSwingClientInner {
             }
             logStream = new PrintStream(new FileOutputStream(logFile));
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -932,7 +932,7 @@ public class CrclSwingClientInner {
             String s = getTempCRCLSocket().programToPrettyString(prog, true);
             return MultiLineStringJPanel.showText(s);
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         }
         return XFuture.completedFuture(false);
@@ -1008,7 +1008,7 @@ public class CrclSwingClientInner {
             }
 
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1032,7 +1032,7 @@ public class CrclSwingClientInner {
                 this.crclStatusPollingSocket.setCmdSchemaFiles(fa);
             }
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1056,7 +1056,7 @@ public class CrclSwingClientInner {
                 this.crclStatusPollingSocket.setProgramSchema(progSchema);
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1151,7 +1151,7 @@ public class CrclSwingClientInner {
         try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             pw.println(str);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
         }
     }
@@ -1338,7 +1338,7 @@ public class CrclSwingClientInner {
             return true;
         } catch (Exception ex) {
             if (!disconnecting) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
                 if (!cmdIsGetStatus) {
                     showMessage(ex);
                     showErrorMessage(ex.toString());
@@ -1441,7 +1441,7 @@ public class CrclSwingClientInner {
             try {
                 return CRCLSocket.commandToSimpleString(cmd);
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
                 return ex.toString();
             }
         } else {
@@ -1694,7 +1694,7 @@ public class CrclSwingClientInner {
             notRunningTimer.start();
             return notRunningFuture;
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             aborting = false;
             XFutureVoid notRunningFuture = new XFutureVoid("abort");
             notRunningFuture.completeExceptionally(ex);
@@ -1941,7 +1941,7 @@ public class CrclSwingClientInner {
             return WaitForDoneResult.WFD_INTERRUPTED;
         } catch (Exception ex) {
             // Ugly hack hoping to catch strange debugging problem.
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             lastWaitForDoneException = ex;
             return WaitForDoneResult.WFD_EXCEPTION;
         }
@@ -2510,7 +2510,7 @@ public class CrclSwingClientInner {
         try {
             CrclSwingClientInner.this.printCommandStatusLog(pw, false, false, null, -1);
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
         return sw.toString();
     }
@@ -2714,7 +2714,7 @@ public class CrclSwingClientInner {
                                 }
                                 pw.println(time + ",\"" + new Date(time) + "\"," + lastGuardTriggerCount + "," + triggerPoint.getX() + "," + triggerPoint.getY() + "," + triggerPoint.getZ() + "," + closeX + "," + closeY + "," + closeZ + "," + diffCloseX + "," + diffCloseY + "," + diffCloseZ);
                             } catch (IOException ex) {
-                                Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, "", ex);
                             }
                         }
                     }
@@ -2732,7 +2732,7 @@ public class CrclSwingClientInner {
             if (disconnecting || ex instanceof SocketException || ex.getCause() instanceof SocketException) {
                 return null;
             }
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             this.showMessage(ex);
             java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -3015,7 +3015,7 @@ public class CrclSwingClientInner {
             LOGGER.log(Level.FINE, "PendantClientInner.connect : crclSocket = " + crclSocket);
             outer.finishConnect();
         } catch (CRCLException | IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage("Can't connect to " + host + ":" + port + " -- " + ex.getMessage());
         } finally {
             connectChangeCount.incrementAndGet();
@@ -3146,7 +3146,7 @@ public class CrclSwingClientInner {
                     origReaderThread.join(1500);
                 }
             } catch (InterruptedException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             } finally {
                 this.readerThread = null;
                 stopStatusReaderFlag = false;
@@ -3641,7 +3641,7 @@ public class CrclSwingClientInner {
             }
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3713,7 +3713,7 @@ public class CrclSwingClientInner {
                         break;
                     }
                 } catch (InterruptedException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, "", ex);
                 }
             }
             internalSetPausedFalse();
@@ -4169,7 +4169,7 @@ public class CrclSwingClientInner {
                     try {
                         stopMotionFAST();
                     } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "", ex);
                     }
                     System.err.println("runProgram() stopped when future.isCancelled() returned true");
                     setRunProgramReturnFalseTrace();
@@ -4332,7 +4332,7 @@ public class CrclSwingClientInner {
             try {
                 stopMotionFAST();
             } catch (Exception exception) {
-                Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, null, exception);
+                Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, "", exception);
             }
             Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, "", ex);
             System.err.println("startLine = " + startLine);
@@ -4654,7 +4654,7 @@ public class CrclSwingClientInner {
                     .filter(s -> s.length() > 0)
                     .map(Double::valueOf)
                     .orElse(null);
-            final Double xyzAxisIncrement
+            final double xyzAxisIncrement
                     = Optional.ofNullable(testProperies)
                     .map(m -> m.get("xyzAxisIncrement"))
                     .map(Double::valueOf)
@@ -4789,7 +4789,7 @@ public class CrclSwingClientInner {
             outer.showDebugMessage("Test program saved to " + testProgramFile.getCanonicalPath());
             return runProgram(testProgram, 0);
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             outer.showMessage(ex);
         } finally {
             outer.checkPollSelected();
@@ -5404,8 +5404,7 @@ public class CrclSwingClientInner {
      * some commands.
      *
      * @param cmd                          the command to send and test
-     * @param startingRunProgramAbortCount
-     * @return false for failure or true for success
+     * @param startingRunProgramAbortCount the abort count before this program was started
      * @throws javax.xml.bind.JAXBException failed to parse or generate xml
      * @throws InterruptedException         this thread was interrupted
      * @throws java.io.IOException          socket closed/failed.
@@ -6081,7 +6080,7 @@ public class CrclSwingClientInner {
                 fw.write(s);
             }
         } catch (Exception ex) {
-            Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 

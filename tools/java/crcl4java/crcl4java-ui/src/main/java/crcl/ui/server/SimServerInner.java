@@ -391,7 +391,7 @@ public class SimServerInner {
                 try {
                     key.close();
                 } catch (IOException ex) {
-                    Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
                 }
                 crclSocketsToRemove.add(key);
                 continue;
@@ -536,7 +536,7 @@ public class SimServerInner {
             setPoseFromJoints(pose);
             setPose(pose);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) ex;
             } else {
@@ -562,7 +562,7 @@ public class SimServerInner {
             setPoseFromJoints(pose);
             setPose(pose);
         } catch (Exception ex) {
-            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) ex;
             } else {
@@ -722,7 +722,7 @@ public class SimServerInner {
             }
 
         } catch (PmException ex) {
-            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -806,7 +806,7 @@ public class SimServerInner {
             this.setWaypoints(null);
             setCommandState(CRCL_DONE);
         } catch (PmException ex) {
-            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -942,7 +942,7 @@ public class SimServerInner {
     }
 
     private boolean handleContinueMoveScrew(MoveScrewType moveScrew, AngleUnitEnumType angleType) {
-        switch (Objects.requireNonNull(moveScrewStep, "moveScrewStep")) {
+        switch (moveScrewStep) {
             case 0:
                 setCommandState(CRCL_WORKING);
                 ;
@@ -1146,7 +1146,7 @@ public class SimServerInner {
             }
             lastDiffRotv = diffRotv;
         } catch (PmException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             outer.showMessage(ex.toString());
         }
         return newGoal;
@@ -1201,7 +1201,7 @@ public class SimServerInner {
                 maxdiff = maxDiffDoubleArray(commandedJointPositions1, this.jointPositions, 360.0);
             }
         } catch (PmException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             throw new RuntimeException(ex);
         }
         this.commandedJointPositions = commandedJointPositions1;
@@ -1224,7 +1224,7 @@ public class SimServerInner {
                 state.getCs().setCmdSchemaFiles(fa);
             }
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1241,7 +1241,7 @@ public class SimServerInner {
                 state.getCs().setStatSchema(newStatSchema);
             }
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
         }
     }
 
@@ -1299,7 +1299,7 @@ public class SimServerInner {
                             t.join(2000);
                         }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
             }
@@ -1322,7 +1322,7 @@ public class SimServerInner {
                     simThread.join(100);
                 }
             } catch (InterruptedException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
             this.simulationThread = null;
         }
@@ -1331,7 +1331,7 @@ public class SimServerInner {
                 try {
                     s.close();
                 } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, "", ex);
                 }
             }
             clientStates.clear();
@@ -1344,7 +1344,7 @@ public class SimServerInner {
             try {
                 this.crclServerSocket.close();
             } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "", ex);
             }
             this.crclServerSocket = null;
         }
@@ -1365,7 +1365,7 @@ public class SimServerInner {
                             t.join(100);
                         }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
                 this.clientThreadMap.clear();
@@ -1455,11 +1455,11 @@ public class SimServerInner {
                             this.lastStatusMap.put(socket, lsi);
                         }
                     } catch (CRCLException ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "", ex);
                         try {
                             socket.close();
                         } catch (IOException ex1) {
-                            LOGGER.log(Level.SEVERE, null, ex1);
+                            LOGGER.log(Level.SEVERE, "", ex1);
                         }
                         if (null != lastStatusMap) {
                             lastStatusMap.remove(socket);
@@ -1509,7 +1509,7 @@ public class SimServerInner {
                         write_count++;
                     } catch (IOException ex) {
                         try {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, "", ex);
                             checkClientStateSize(1);
                             clientStates.remove(clientState);
                             checkClientStateSize(0);
@@ -1530,10 +1530,10 @@ public class SimServerInner {
                             }
                             updateConnectedClients();
                         } catch (InterruptedException ex1) {
-                            LOGGER.log(Level.SEVERE, null, ex1);
+                            LOGGER.log(Level.SEVERE, "", ex1);
                         }
                     } catch (InterruptedException ex) {
-                        LOGGER.log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "", ex);
                     }
                 }
                 if (menuOuter().isDebugSendStatusSelected() && new_state) {
@@ -1547,7 +1547,7 @@ public class SimServerInner {
                 }
             }
         } catch (CRCLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex + "\n" + ((curSocket != null) ? curSocket.getLastStatusString() : ""));
         }
     }
@@ -2051,7 +2051,7 @@ public class SimServerInner {
                 ps.println("End printClientStates");
             }
         } catch (Exception ex) {
-            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -2091,7 +2091,7 @@ public class SimServerInner {
 //                try {
 //                    cs.close();
 //                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, null, ex1);
+//                    LOGGER.log(Level.SEVERE, "", ex1);
 //                }
 //                this.clientStates.remove(state);
 //                clientStatesSize = clientStates.size();
@@ -2102,7 +2102,7 @@ public class SimServerInner {
 //                try {
 //                    cs.close();
 //                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, null, ex1);
+//                    LOGGER.log(Level.SEVERE, "", ex1);
 //                }
 //                this.clientStates.remove(state);
 //                clientStatesSize = clientStates.size();
@@ -2111,7 +2111,7 @@ public class SimServerInner {
 //            }
 //            if (closeCount.get() <= start_close_count) {
 //                System.err.println("String to parse was:" + cs.getLastCommandString());
-//                LOGGER.log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.SEVERE, "", ex);
 //                this.showMessage(ex.toString() + "\nString to parse was:" + cs.getLastCommandString());
 //            }
 //        } catch (IOException ex) {
@@ -2122,7 +2122,7 @@ public class SimServerInner {
 //                    return;
 //                }
 //                LOGGER.log(Level.SEVERE, "ReadInProgressString:{0}", str);
-//                LOGGER.log(Level.SEVERE, null, ex);
+//                LOGGER.log(Level.SEVERE, "", ex);
 //            }
 //            clientStatesSize = clientStates.size();
 ////            System.out.println("clientStates.size()=" + clientStatesSize);
@@ -2939,7 +2939,7 @@ public class SimServerInner {
     public void setWaypoints(@Nullable List<PoseType> waypoints) {
         this.waypoints.clear();
         if (null != waypoints) {
-            waypoints.addAll(waypoints);
+            this.waypoints.addAll(waypoints);
             outer.updateNumWaypoints(waypoints.size());
         } else {
             outer.updateNumWaypoints(0);
@@ -3070,10 +3070,10 @@ public class SimServerInner {
                         }
                     } catch (InterruptedException ex) {
                         if (SimServerInner.this.closeCount.get() <= start_close_count) {
-                            LOGGER.log(Level.SEVERE, null, ex);
+                            LOGGER.log(Level.SEVERE, "", ex);
                         }
                     } catch (Exception ex) {
-                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
             }, "simThread.ssock=" + restartingServerSocket);
@@ -3091,7 +3091,7 @@ public class SimServerInner {
             System.err.println("traceMap=" + traceMap);
             System.err.println("threadMap=" + threadMap);
             showMessage("Can not start server on port " + port + " : " + ex.getMessage());
-            LOGGER.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "", ex);
             throw new RuntimeException(ex);
         }
     }

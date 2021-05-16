@@ -45,7 +45,7 @@ public enum RemoteFunctionGroup {
 
     private final int id;
 
-    private static Map<Integer, MotCtrlReturnEnum> map = new HashMap<>();
+    private static final Map<Integer, MotCtrlReturnEnum> map = new HashMap<>();
 
     static {
         for (int i = 0; i < MotCtrlReturnEnum.values().length; i++) {

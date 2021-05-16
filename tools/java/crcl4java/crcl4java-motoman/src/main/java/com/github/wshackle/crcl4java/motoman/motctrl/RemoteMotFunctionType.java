@@ -22,10 +22,6 @@
  */
 package com.github.wshackle.crcl4java.motoman.motctrl;
 
-import com.github.wshackle.crcl4java.motoman.motctrl.MotCtrlReturnEnum;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}

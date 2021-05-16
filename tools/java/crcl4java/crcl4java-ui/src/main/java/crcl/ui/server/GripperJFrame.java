@@ -54,7 +54,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings({"all","serialization"})
 public class GripperJFrame extends javax.swing.JFrame {
 
     /**
@@ -407,7 +407,7 @@ public class GripperJFrame extends javax.swing.JFrame {
             try {
                 cs.close();
             } catch (IOException ex) {
-                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
         }
         clientsList.clear();
@@ -415,7 +415,7 @@ public class GripperJFrame extends javax.swing.JFrame {
             try {
                 serverSocket.close();
             } catch (IOException ex) {
-                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             serverSocket = null;
         }
@@ -424,7 +424,7 @@ public class GripperJFrame extends javax.swing.JFrame {
             try {
                 acceptThread.join(100);
             } catch (InterruptedException ex) {
-                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             acceptThread = null;
         }
@@ -433,7 +433,7 @@ public class GripperJFrame extends javax.swing.JFrame {
             try {
                 updateThread.join(100);
             } catch (InterruptedException ex) {
-                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
             }
             updateThread = null;
         }
@@ -593,14 +593,14 @@ public class GripperJFrame extends javax.swing.JFrame {
                             CRCLSocket curClient = clientsList.get(i);
                             curClient.writeWithFill(xmlS);
                         } catch (IOException ex) {
-                            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                             clientsList.remove(i);
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                         }
                     }
                 } catch (CRCLException ex) {
-                    Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
         }
@@ -651,7 +651,7 @@ public class GripperJFrame extends javax.swing.JFrame {
                             cmdQueue.put(cmd);
                         }
                     } catch (CRCLException ex) {
-                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                     } catch (IOException | InterruptedException iex) {
                         try {
                             cs.close();
@@ -664,7 +664,7 @@ public class GripperJFrame extends javax.swing.JFrame {
             clientThreads.add(t);
             t.start();
         } catch (Exception ex) {
-            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -692,7 +692,7 @@ public class GripperJFrame extends javax.swing.JFrame {
                             acceptClient();
                         }
                     } catch (IOException ex) {
-                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
 
@@ -709,13 +709,13 @@ public class GripperJFrame extends javax.swing.JFrame {
                             updateStatus();
                         }
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 }
             }, "gripperUpdateThread");
             updateThread.start();
         } catch (IOException ex) {
-            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GripperJFrame.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
