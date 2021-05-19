@@ -39,11 +39,10 @@ public class DefaultSchemaFiles {
 
     public DefaultSchemaFiles(File cmdSchemasFile, File statSchemasFile, File programSchemasFile) {
         int cmdSchemaFilesLength;
-        File startingCmdSchemaFiles[];
         boolean startingCmdSchemasFileExists = cmdSchemasFile.exists();
         boolean allStartingCmdSchemaFilesExist = true;
         if(startingCmdSchemasFileExists) {
-            startingCmdSchemaFiles = CRCLSchemaUtils.readCmdSchemaFiles(cmdSchemasFile);
+            File startingCmdSchemaFiles[] = CRCLSchemaUtils.readCmdSchemaFiles(cmdSchemasFile);
             for (int i = 0; i < startingCmdSchemaFiles.length; i++) {
                 File startingCmdSchemaFile = startingCmdSchemaFiles[i];
                 if(allStartingCmdSchemaFilesExist && !startingCmdSchemaFile.exists()) {
@@ -54,7 +53,6 @@ public class DefaultSchemaFiles {
             }
             cmdSchemaFilesLength= startingCmdSchemaFiles.length;
         } else {
-            startingCmdSchemaFiles = null;
             cmdSchemaFilesLength= 0;
         }
         if (!startingCmdSchemasFileExists || !allStartingCmdSchemaFilesExist || cmdSchemaFilesLength < 1) {
@@ -66,11 +64,10 @@ public class DefaultSchemaFiles {
         }
 
         int statSchemaFilesLength;
-        File startingStatSchemaFiles[];
         boolean startingStatSchemasFileExists = statSchemasFile.exists();
         boolean allStartingStatSchemaFilesExist = true;
         if(startingStatSchemasFileExists) {
-            startingStatSchemaFiles = CRCLSchemaUtils.readStatSchemaFiles(statSchemasFile);
+            File startingStatSchemaFiles[] = CRCLSchemaUtils.readStatSchemaFiles(statSchemasFile);
             for (int i = 0; i < startingStatSchemaFiles.length; i++) {
                 File startingStatSchemaFile = startingStatSchemaFiles[i];
                 if(allStartingCmdSchemaFilesExist && !startingStatSchemaFile.exists()) {
@@ -82,7 +79,6 @@ public class DefaultSchemaFiles {
             statSchemaFilesLength= startingStatSchemaFiles.length;
             
         } else {
-            startingStatSchemaFiles = null;
             statSchemaFilesLength= 0;
         }
         if (!startingStatSchemasFileExists || !allStartingStatSchemaFilesExist || statSchemaFilesLength < 1) {
@@ -94,13 +90,11 @@ public class DefaultSchemaFiles {
         }
         
         int programSchemaFilesLength;
-        File startingProgramSchemaFiles[];
         boolean startingProgramSchemasFileExists = programSchemasFile.exists();
         if(startingProgramSchemasFileExists) {
-            startingProgramSchemaFiles = CRCLSchemaUtils.readProgramSchemaFiles(programSchemasFile);
+            File startingProgramSchemaFiles[] = CRCLSchemaUtils.readProgramSchemaFiles(programSchemasFile);
             programSchemaFilesLength= startingProgramSchemaFiles.length;
         } else {
-            startingProgramSchemaFiles = null;
             programSchemaFilesLength= 0;
         }
         if (!startingProgramSchemasFileExists || programSchemaFilesLength < 1) {

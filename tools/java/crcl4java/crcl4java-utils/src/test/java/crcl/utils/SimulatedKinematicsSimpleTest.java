@@ -13,10 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import rcs.posemath.PmException;
@@ -31,22 +28,6 @@ public class SimulatedKinematicsSimpleTest {
     static final SimulatedKinematicsSimple sk = new SimulatedKinematicsSimple();
 
     private static final int RANDOM_SEED = 7321;
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of jointsToPose method, of class SimulatedKinematicsSimple.
@@ -105,20 +86,6 @@ public class SimulatedKinematicsSimpleTest {
                 // ignore
             }
         }
-    }
-
-    /**
-     * Test of printRot9x9 method, of class SimulatedKinematicsSimple.
-     */
-    @Test
-    public void testPrintRot9x9() {
-    }
-
-    /**
-     * Test of rot9x9mult method, of class SimulatedKinematicsSimple.
-     */
-    @Test
-    public void testRot9x9mult() {
     }
 
     /**

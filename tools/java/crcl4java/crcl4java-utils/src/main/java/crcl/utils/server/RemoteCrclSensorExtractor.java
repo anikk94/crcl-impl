@@ -111,10 +111,10 @@ public class RemoteCrclSensorExtractor implements SensorServerInterface {
     private final ExecutorService executorService;
     private volatile @Nullable
     SensorStatusType currentSensorStatus = null;
-    private volatile boolean getting_status = false;
+    private volatile boolean getting_status;
 
     private volatile @MonotonicNonNull
-    Future<?> lastFuture = null;
+    Future<?> lastFuture;
 
     @Override
     public @Nullable

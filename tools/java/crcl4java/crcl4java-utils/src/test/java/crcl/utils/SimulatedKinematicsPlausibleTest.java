@@ -12,16 +12,13 @@ import crcl.base.PoseType;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import rcs.posemath.PmException;
 import rcs.posemath.PmRpy;
 
-@SuppressWarnings("nullness")
+@SuppressWarnings({"nullness", "EmptyMethod"})
 public class SimulatedKinematicsPlausibleTest {
 
     public SimulatedKinematicsPlausibleTest() {
@@ -30,22 +27,6 @@ public class SimulatedKinematicsPlausibleTest {
     static final SimulatedKinematicsPlausible sk = new SimulatedKinematicsPlausible();
 
     private static final int RANDOM_SEED = 8321;
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of printRot9x9 method, of class SimulatedKinematicsPlausible.

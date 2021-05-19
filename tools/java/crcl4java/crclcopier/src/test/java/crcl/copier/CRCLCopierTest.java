@@ -27,7 +27,6 @@ import crcl.base.CRCLStatusType;
 import crcl.base.CommandStateEnumType;
 import crcl.base.CommandStatusType;
 import crcl.base.EndCanonType;
-import crcl.base.GripperStatusType;
 import crcl.base.InitCanonType;
 import crcl.base.JointStatusType;
 import crcl.base.JointStatusesType;
@@ -56,10 +55,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import rcs.posemath.PmCartesian;
@@ -75,14 +72,6 @@ import rcs.posemath.PmRotationMatrix;
 public class CRCLCopierTest {
 
     public CRCLCopierTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
     }
 
     private PointType pt123 = null;
@@ -148,10 +137,6 @@ public class CRCLCopierTest {
         cart321 = new PmCartesian(3.0, 2.0, 1.0);
     }
 
-    @After
-    public void tearDown() {
-    }
-
     static final private double ASSERT_TOLERANCE_DELTA = 1e-6;
 
     private void checkEquals(String msg, double v1, double v2) {
@@ -167,7 +152,7 @@ public class CRCLCopierTest {
     }
 
     private void checkEquals(String msg, BigDecimal v1, BigDecimal v2) {
-        assertTrue(msg + " both are null or neither is null", (v1 == null) == (v2 == null));
+        assertEquals(msg + " both are null or neither is null", (v1 == null), (v2 == null));
         if (v1 == null) {
             return;
         }
@@ -593,7 +578,9 @@ public class CRCLCopierTest {
             Collection<?> c1 = (Collection<?>) o1;
             Collection<?> c2 = (Collection<?>) o2;
             assertEquals(msg + ".size()", c1.size(), c2.size());
+            //noinspection SuspiciousMethodCalls
             assertTrue(msg + ".c1.containsAll(c2) c1=" + c1 + ", c2=" + c2, c1.containsAll(c2));
+            //noinspection SuspiciousMethodCalls
             assertTrue(msg + ".c2.containsAll(c1) c1=" + c1 + ", c2=" + c2, c2.containsAll(c1));
         } else {
             reflectiveCheckFields(clzz.getFields(), msg, o1, o2, recursion + 1);
@@ -766,7 +753,7 @@ public class CRCLCopierTest {
         VectorType expResult = xvec;
         VectorType result = CRCLCopier.copy(vec);
         checkEquals("vector", result, expResult);
-        assertTrue(result != vec);
+        assertNotSame(result, vec);
     }
 
     /**
@@ -779,10 +766,10 @@ public class CRCLCopierTest {
         PoseType expResult = pose321rot90;
         PoseType result = CRCLCopier.copy(pose);
         checkEquals("pose", result, expResult);
-        assertTrue(result != pose);
-        assertTrue(result.getPoint() != pose.getPoint());
-        assertTrue(result.getXAxis() != pose.getXAxis());
-        assertTrue(result.getZAxis() != pose.getZAxis());
+        assertNotSame(result, pose);
+        assertNotSame(result.getPoint(), pose.getPoint());
+        assertNotSame(result.getXAxis(), pose.getXAxis());
+        assertNotSame(result.getZAxis(), pose.getZAxis());
     }
 
     /**
@@ -809,12 +796,12 @@ public class CRCLCopierTest {
         CRCLStatusType result = CRCLCopier.copy(status);
 
         checkEquals("pose", result.getPoseStatus().getPose(), expResult.getPoseStatus().getPose());
-        assertTrue(result != status);
-        assertTrue(result.getPoseStatus() != status.getPoseStatus());
-        assertTrue(result.getPoseStatus().getPose() != status.getPoseStatus().getPose());
-        assertTrue(result.getCommandStatus() != status.getCommandStatus());
+        assertNotSame(result, status);
+        assertNotSame(result.getPoseStatus(), status.getPoseStatus());
+        assertNotSame(result.getPoseStatus().getPose(), status.getPoseStatus().getPose());
+        assertNotSame(result.getCommandStatus(), status.getCommandStatus());
         assertEquals(result.getCommandStatus().getCommandID(), expResult.getCommandStatus().getCommandID());
-        assertTrue(result.getCommandStatus() != status.getCommandStatus());
+        assertNotSame(result.getCommandStatus(), status.getCommandStatus());
 
         try {
             final File randomStatusFile = File.createTempFile("randomStatus", ".xml");
@@ -851,10 +838,10 @@ public class CRCLCopierTest {
         ParallelGripperStatusType status = new ParallelGripperStatusType();
         status.setSeparation(DOUBLE_1);
 //        GripperStatusType expResult = status;
-        GripperStatusType result = CRCLCopier.copy(status);
-        checkEquals("seperation", ((ParallelGripperStatusType) result).getSeparation(),
+        ParallelGripperStatusType result = CRCLCopier.copy(status);
+        checkEquals("seperation", result.getSeparation(),
                 status.getSeparation());
-        assertTrue(result != status);
+        assertNotSame(result, status);
     }
 
     /**
@@ -868,8 +855,8 @@ public class CRCLCopierTest {
         PoseStatusType expResult = status;
         PoseStatusType result = CRCLCopier.copy(status);
         checkEquals("pose", result.getPose(), expResult.getPose());
-        assertTrue(result != status);
-        assertTrue(result.getPose() != status.getPose());
+        assertNotSame(result, status);
+        assertNotSame(result.getPose(), status.getPose());
     }
 
     /**
@@ -885,9 +872,9 @@ public class CRCLCopierTest {
         TwistType result = CRCLCopier.copy(twist);
         checkEquals("angularVelocity", result.getAngularVelocity(), expResult.getAngularVelocity());
         checkEquals("linearVelocity", result.getLinearVelocity(), expResult.getLinearVelocity());
-        assertTrue(result != twist);
-        assertTrue(result.getAngularVelocity() != twist.getAngularVelocity());
-        assertTrue(result.getLinearVelocity() != twist.getLinearVelocity());
+        assertNotSame(result, twist);
+        assertNotSame(result.getAngularVelocity(), twist.getAngularVelocity());
+        assertNotSame(result.getLinearVelocity(), twist.getLinearVelocity());
 
     }
 
@@ -904,9 +891,9 @@ public class CRCLCopierTest {
         WrenchType result = CRCLCopier.copy(wrench);
         checkEquals("force", result.getForce(), expResult.getForce());
         checkEquals("moment", result.getMoment(), expResult.getMoment());
-        assertTrue(result != wrench);
-        assertTrue(result.getForce() != wrench.getForce());
-        assertTrue(result.getMoment() != wrench.getMoment());
+        assertNotSame(result, wrench);
+        assertNotSame(result.getForce(), wrench.getForce());
+        assertNotSame(result.getMoment(), wrench.getMoment());
     }
 
     /**
@@ -924,10 +911,10 @@ public class CRCLCopierTest {
         JointStatusesType result = CRCLCopier.copy(status);
         checkEquals("jointPosition", result.getJointStatus().get(0).getJointPosition(),
                 expResult.getJointStatus().get(0).getJointPosition());
-        assertTrue(result != status);
-        assertTrue(result.getJointStatus() != status.getJointStatus());
-        assertTrue(result.getJointStatus().size() == status.getJointStatus().size());
-        assertTrue(result.getJointStatus().get(0) != status.getJointStatus().get(0));
+        assertNotSame(result, status);
+        assertNotSame(result.getJointStatus(), status.getJointStatus());
+        assertEquals(result.getJointStatus().size(), status.getJointStatus().size());
+        assertNotSame(result.getJointStatus().get(0), status.getJointStatus().get(0));
 
     }
 
@@ -947,7 +934,7 @@ public class CRCLCopierTest {
         checkEquals("Position", result.getJointPosition(), expResult.getJointPosition());
         checkEquals("TorqueOrForce", result.getJointTorqueOrForce(), expResult.getJointTorqueOrForce());
         checkEquals("Velocity", result.getJointVelocity(), expResult.getJointVelocity());
-        assertTrue(result != status);
+        assertNotSame(result, status);
     }
 
     /**
@@ -965,7 +952,7 @@ public class CRCLCopierTest {
         assertEquals(expResult.getCommandID(), result.getCommandID());
         assertEquals(expResult.getStatusID(), result.getStatusID());
         assertEquals(expResult.getCommandState(), result.getCommandState());
-        assertTrue(result != status);
+        assertNotSame(result, status);
     }
 
 }

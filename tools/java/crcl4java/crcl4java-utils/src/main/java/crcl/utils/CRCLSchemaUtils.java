@@ -291,8 +291,7 @@ public class CRCLSchemaUtils {
     private static List<File> readSchemaListFile(File schemaListFile) throws IOException {
         List<File> fl = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(schemaListFile))) {
-            String line = null;
-
+            String line;
             while (null != (line = br.readLine())) {
                 File file = new File(line.trim());
                 if (file.isAbsolute()) {
@@ -473,6 +472,7 @@ public class CRCLSchemaUtils {
      */
     public static synchronized Schema filesToCmdSchema(File fa[]) throws CRCLException {
         if (null == fa || fa.length < 1) {
+            //noinspection ImplicitArrayToString
             throw new IllegalArgumentException("File fa[]=" + fa);
         }
         File arrayCopy[] = nonullArrayCopy(fa);
@@ -526,6 +526,7 @@ public class CRCLSchemaUtils {
      */
     public static synchronized Schema filesToStatSchema(File fa[]) throws CRCLException {
         if (null == fa || fa.length < 1) {
+            //noinspection ImplicitArrayToString
             throw new IllegalArgumentException("File fa[]=" + fa);
         }
         File[] reorderedFa = reorderAndFilterStatSchemaFiles(nonullArrayCopy(fa));

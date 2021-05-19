@@ -383,7 +383,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return Collections.unmodifiableList(clients);
     }
 
-    private int port = CRCLSocket.DEFAULT_PORT;
+    private int port;
 
     /**
      * Get the value of port
@@ -1774,7 +1774,6 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                 setCommandStateError(exception.toString());
             }
         }
-        return;
     }
 
     private volatile @Nullable
@@ -2376,7 +2375,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return keys;
     }
 
-    private int backlog = 0;
+    private int backlog;
 
     /**
      * Get the value of backlog
@@ -2759,12 +2758,12 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         });
 
         handleEvent(CRCLServerSocketEvent.guardLimitReached(guard_client_state, commandInstance, guard));
-        long delayMillis = DEFAULT_GUARDS_CHECK_DELAY_MILLIS;
-        Long microsLong = guard.getRecheckTimeMicroSeconds();
-        if (null != microsLong) {
-            long micros = microsLong;
-            delayMillis = micros / 1000;
-        }
+//        long delayMillis = DEFAULT_GUARDS_CHECK_DELAY_MILLIS;
+//        Long microsLong = guard.getRecheckTimeMicroSeconds();
+//        if (null != microsLong) {
+//            long micros = microsLong;
+//            delayMillis = micros / 1000;
+//        }
     }
 
     private static String guardMapId(GuardType guard) {
@@ -2807,6 +2806,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                                         for (int i = 0; i < forceTorqueSensorStatus.size(); i++) {
                                             ForceTorqueSensorStatusType oldStat = forceTorqueSensorStatus.get(i);
                                             if (oldStat.getSensorID().equals(statf.getSensorID())) {
+                                                //noinspection SuspiciousListRemoveInLoop
                                                 forceTorqueSensorStatus.remove(i);
                                             }
                                         }
@@ -3098,7 +3098,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         this(port, backlog, addr, multithreaded, stateGenerator, classFromGenerator(stateGenerator));
     }
 
-    private volatile StackTraceElement createTrace @MonotonicNonNull []  = null;
+    private final StackTraceElement [] createTrace;
 
     @SuppressWarnings({"nullness","initialization"})
     public CRCLServerSocket(int port, int backlog, InetAddress addr, boolean multithreaded, CRCLServerSocketStateGenerator<STATE_TYPE> stateGenerator, Class<STATE_TYPE> stateClass) {

@@ -1485,6 +1485,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     private @Nullable
     CRCLServerSocket<ForceTorqueSimClientState> crclServerSocket;
 
+    @SuppressWarnings("EmptyMethod")
     private void handleCrclServerSocketEvent(CRCLServerSocketEvent<ForceTorqueSimClientState> evt) {
 
     }

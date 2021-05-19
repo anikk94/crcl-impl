@@ -127,7 +127,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                 String type = col0Val.toString();
                 String name = col1Val.toString();
                 String typenoparams = removeTypeParams(type);
-                Class<?> clss = null;
+                Class<?> clss;
                 try {
                     if (col0Val instanceof Class) {
                         clss = (Class<?>) col0Val;
@@ -241,8 +241,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
             @Override
             public boolean isCellEditable(int row, int column) {
-                boolean returnvar = false;
-                returnvar = super.isCellEditable(row, column);
+                boolean returnvar = super.isCellEditable(row, column);
                 if (returnvar && column == 2 && noneditableSet.contains(row)) {
                     return false;
                 }
@@ -290,7 +289,6 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component returnvar = null;
             if (column == 2) {
                 try {
                     DefaultTableModel tm = (DefaultTableModel) table.getModel();
@@ -305,15 +303,11 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                         table.setRowHeight(row, Math.max(rheight, pnl.getPreferredSize().height));
                         return pnl;
                     }
-//                    if (isList(clss)) {
-//                        jButtonAddToList.setEnabled(true);
-//                    }
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
                 }
             }
-            returnvar = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            return returnvar;
+            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     };
 
@@ -1511,7 +1505,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             if (null != valueOf) {
                 tobj = valueOf.invoke(null, new Object[]{ostring});
             } else {
-                Constructor<?> constructor = null;
+                Constructor<?> constructor;
 
                 try {
                     constructor = tclass.getConstructor(String.class);
@@ -1725,8 +1719,7 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 //                selected = comboBox.getSelectedIndex();
             }
             this.updateObjFromTable();
-            Object newo = null;
-            newo = selectedClass.getDeclaredConstructor().newInstance();
+            Object newo = selectedClass.getDeclaredConstructor().newInstance();
             this.setObjectForName(type, name, newo);
             this.updateTableFromObject();
 

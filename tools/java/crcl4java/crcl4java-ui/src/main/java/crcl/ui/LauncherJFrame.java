@@ -20,7 +20,6 @@
  */
 package crcl.ui;
 
-import crcl.ui.misc.WebServerJFrame;
 import crcl.ui.server.GripperJFrame;
 import crcl.ui.server.SimServerJFrame;
 import crcl.ui.client.CrclSwingClientJFrame;
@@ -57,7 +56,6 @@ public class LauncherJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButtonLaunchWebServer = new javax.swing.JButton();
         jButtonLaunchServer = new javax.swing.JButton();
         jButtonLaunchClient = new javax.swing.JButton();
         jButtonLaunchGripperServer = new javax.swing.JButton();
@@ -65,14 +63,9 @@ public class LauncherJFrame extends javax.swing.JFrame {
         jCheckBoxClient = new javax.swing.JCheckBox();
         jCheckBoxSimulationServer = new javax.swing.JCheckBox();
         jCheckBoxGripperServer = new javax.swing.JCheckBox();
-        jCheckBoxWebServer = new javax.swing.JCheckBox();
         jCheckBoxForceTorqueSensorSimulator = new javax.swing.JCheckBox();
 
         FormListener formListener = new FormListener();
-
-        jButtonLaunchWebServer.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
-        jButtonLaunchWebServer.setText("Launch CRCL Web Server");
-        jButtonLaunchWebServer.addActionListener(formListener);
 
         jButtonLaunchServer.setFont(new java.awt.Font("Cantarell", 0, 24)); // NOI18N
         jButtonLaunchServer.setText("Launch Simulated  CRCL Server  ");
@@ -104,9 +97,6 @@ public class LauncherJFrame extends javax.swing.JFrame {
         jCheckBoxGripperServer.setFont(new java.awt.Font("Noto Sans", 0, 24)); // NOI18N
         jCheckBoxGripperServer.setText("CRCL Simulation Gripper Server");
 
-        jCheckBoxWebServer.setFont(new java.awt.Font("Noto Sans", 0, 24)); // NOI18N
-        jCheckBoxWebServer.setText("CRCL Simulation Web Server");
-
         jCheckBoxForceTorqueSensorSimulator.setFont(new java.awt.Font("Noto Sans", 0, 24)); // NOI18N
         jCheckBoxForceTorqueSensorSimulator.setSelected(true);
         jCheckBoxForceTorqueSensorSimulator.setText("CRCL Force Torque Sensor Simulator");
@@ -123,10 +113,11 @@ public class LauncherJFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jCheckBoxClient)
                             .addComponent(jCheckBoxSimulationServer)
-                            .addComponent(jCheckBoxGripperServer)
-                            .addComponent(jCheckBoxWebServer)
-                            .addComponent(jCheckBoxForceTorqueSensorSimulator))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(jCheckBoxGripperServer))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jCheckBoxForceTorqueSensorSimulator)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -139,12 +130,10 @@ public class LauncherJFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBoxGripperServer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jCheckBoxWebServer)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jCheckBoxForceTorqueSensorSimulator)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonLaunchAll)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -155,7 +144,10 @@ public class LauncherJFrame extends javax.swing.JFrame {
     private class FormListener implements java.awt.event.ActionListener {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            if (evt.getSource() == jButtonLaunchServer) {
+            if (evt.getSource() == jButtonLaunchAll) {
+                LauncherJFrame.this.jButtonLaunchAllActionPerformed(evt);
+            }
+            else if (evt.getSource() == jButtonLaunchServer) {
                 LauncherJFrame.this.jButtonLaunchServerActionPerformed(evt);
             }
             else if (evt.getSource() == jButtonLaunchClient) {
@@ -163,12 +155,6 @@ public class LauncherJFrame extends javax.swing.JFrame {
             }
             else if (evt.getSource() == jButtonLaunchGripperServer) {
                 LauncherJFrame.this.jButtonLaunchGripperServerActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButtonLaunchAll) {
-                LauncherJFrame.this.jButtonLaunchAllActionPerformed(evt);
-            }
-            else if (evt.getSource() == jButtonLaunchWebServer) {
-                LauncherJFrame.this.jButtonLaunchWebServerActionPerformed(evt);
             }
         }
     }// </editor-fold>//GEN-END:initComponents
@@ -241,21 +227,17 @@ public class LauncherJFrame extends javax.swing.JFrame {
                 forceTorqueSensorSim.setVisible(true);
                 forceTorqueSensorSim.startServer();
             }
-            if (jCheckBoxWebServer.isSelected()) {
-                WebServerJFrame webServer = new WebServerJFrame();
-                webServer.setVisible(true);
-                webServer.setState(Frame.ICONIFIED);
-                webServer.start();
-            }
+//            if (jCheckBoxWebServer.isSelected()) {
+//                WebServerJFrame webServer = new WebServerJFrame();
+//                webServer.setVisible(true);
+//                webServer.setState(Frame.ICONIFIED);
+//                webServer.start();
+//            }
         } catch (Exception ex) {
             Logger.getLogger(LauncherJFrame.class.getName()).log(Level.SEVERE, "evt=" + evt, ex);
         }
         this.setState(Frame.ICONIFIED);
     }//GEN-LAST:event_jButtonLaunchAllActionPerformed
-
-    private void jButtonLaunchWebServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLaunchWebServerActionPerformed
-        new WebServerJFrame().setVisible(true);
-    }//GEN-LAST:event_jButtonLaunchWebServerActionPerformed
 
     public void startGripperServer() {
         new GripperJFrame().setVisible(true);
@@ -278,7 +260,7 @@ public class LauncherJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LauncherJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LauncherJFrame.class.getName()).log(java.util.logging.Level.SEVERE, "", ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -298,12 +280,10 @@ public class LauncherJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLaunchClient;
     private javax.swing.JButton jButtonLaunchGripperServer;
     private javax.swing.JButton jButtonLaunchServer;
-    private javax.swing.JButton jButtonLaunchWebServer;
     private javax.swing.JCheckBox jCheckBoxClient;
     private javax.swing.JCheckBox jCheckBoxForceTorqueSensorSimulator;
     private javax.swing.JCheckBox jCheckBoxGripperServer;
     private javax.swing.JCheckBox jCheckBoxSimulationServer;
-    private javax.swing.JCheckBox jCheckBoxWebServer;
     // End of variables declaration//GEN-END:variables
     private static final Logger LOG = Logger.getLogger(LauncherJFrame.class.getName());
 }

@@ -302,7 +302,7 @@ public class SimServerInner {
     private double commandedRotAccel = maxRotAccel * 0.5;
 
     private final List<CRCLCommandType> cmdLog = new ArrayList<>();
-    private SimRobotEnum robotType = SimRobotEnum.PLAUSIBLE;
+    private SimRobotEnum robotType;
     private int port;
     private boolean moveStraight = false;
 
@@ -394,6 +394,7 @@ public class SimServerInner {
                     Logger.getLogger(SimServerInner.class.getName()).log(Level.SEVERE, "", ex);
                 }
                 crclSocketsToRemove.add(key);
+                //noinspection UnnecessaryContinue
                 continue;
             }
         }
@@ -772,7 +773,7 @@ public class SimServerInner {
         if (stat.getCommandStatus().getCommandState() == CRCL_WORKING) {
             throw new IllegalStateException("changing joint position while executing command.");
         }
-        synchronized (jointPositions) {
+        synchronized (this) {
             this.jointPositions[index] = _position;
         }
     }
@@ -898,11 +899,8 @@ public class SimServerInner {
             if (null == jointTolSettings) {
                 return false;
             }
-            double jointdiffs[] = new double[jpa2.length];
             double jointtols[] = new double[jpa2.length];
-            for (int i = 0; i < jointtols.length; i++) {
-                jointtols[i] = getJointDiffMax();
-            }
+            Arrays.fill(jointtols, getJointDiffMax());
             final List<JointPositionToleranceSettingType> settingsList
                     = getNonNullFilteredList(jointTolSettings.getSetting());
             for (int i = 0; i < settingsList.size(); i++) {
@@ -912,9 +910,10 @@ public class SimServerInner {
                     jointtols[n - 1] = setting.getJointPositionTolerance();
                 }
             }
-            for (int i = 0; i < jointdiffs.length; i++) {
+//            double jointdiffs[] = new double[jpa2.length];
+            for (int i = 0; i < jpa2.length; i++) {
                 double jointdiff = Math.abs(jpa2[i] - cjpa2[i]);
-                jointdiffs[i] = jointdiff;
+//                jointdiffs[i] = jointdiff;
                 if (jointdiff > jointtols[i]) {
                     return false;
                 }
@@ -1513,7 +1512,7 @@ public class SimServerInner {
                             checkClientStateSize(1);
                             clientStates.remove(clientState);
                             checkClientStateSize(0);
-                            Thread t = null;
+                            Thread t;
                             synchronized (clientThreadMap) {
                                 t = clientThreadMap.get(curSocket);
                                 clientThreadMap.remove(curSocket);
@@ -1639,9 +1638,7 @@ public class SimServerInner {
         }
         System.arraycopy(newJointPositions, 0, jointPositions, 0, jointPositions.length);
         System.arraycopy(newJointPositions, 0, commandedJointPositions, 0, jointPositions.length);
-        for (int i = 0; i < jointVelocites.length; i++) {
-            jointVelocites[i] = 0;
-        }
+        Arrays.fill(jointVelocites, 0);
         CRCLStatusType stat = this.status.get();
 
         JointStatusesType jsst = stat.getJointStatuses();
@@ -1724,7 +1721,7 @@ public class SimServerInner {
                     if (null == commandedJointPositions1) {
                         commandedJointPositions1 = Arrays.copyOf(jointPositions, jointPositions.length);
                     }
-                    synchronized (jointPositions) {
+                    synchronized (this) {
                         List<JointStatusType> jsl = new ArrayList<>();
                         for (int i = 0; i < jointPositions.length; i++) {
                             final double JOINT_DIFF_MAX = getAllowedJointDiff(i);
@@ -1849,7 +1846,6 @@ public class SimServerInner {
                                 this.setMoveStraight(false);
                                 this.setWaypoints(null);
                             } else {
-                                newGoalPose = null;
                                 this.goalPose = null;
                             }
                         }
@@ -2701,7 +2697,7 @@ public class SimServerInner {
                             setGoalPose(wpts.get(wpts.size() - 1));
                         }
                     }
-                    commandedJointPositions1 = initCommandedJointPositionsVelocitiesAccellerations(jointPositions);
+                    this.commandedJointPositions = initCommandedJointPositionsVelocitiesAccellerations(jointPositions);
                 } else if (cmd instanceof ActuateJointsType) {
                     this.executingMoveCommand = true;
                     ActuateJointsType ajst = (ActuateJointsType) cmd;
@@ -2711,8 +2707,8 @@ public class SimServerInner {
                         throw new IllegalStateException("null == jointPositions");
                     }
                     if (null == commandedJointPositions1) {
-                        commandedJointPositions1 = Arrays.copyOf(jointPositions, jointPositions.length);
-                        this.commandedJointPositions = commandedJointPositions1;
+                       commandedJointPositions1 = Arrays.copyOf(jointPositions, jointPositions.length);
+                       this.commandedJointPositions = commandedJointPositions1;
                     }
                     for (ActuateJointType aj : ajl) {
                         int index = aj.getJointNumber() - 1;
@@ -2733,7 +2729,7 @@ public class SimServerInner {
                             if (null != vel) {
                                 if (null == this.commandedJointVelocities) {
                                     this.commandedJointVelocities = new double[commandedJointPositions1.length];
-                                    Arrays.setAll(this.commandedJointVelocities, i -> Double.POSITIVE_INFINITY);
+                                    Arrays.fill(this.commandedJointVelocities, Double.POSITIVE_INFINITY);
                                 }
                                 this.commandedJointVelocities[index] = vel;
                             }
@@ -2741,7 +2737,7 @@ public class SimServerInner {
                             if (null != acc) {
                                 if (null == this.commandedJointAccellerations) {
                                     this.commandedJointAccellerations = new double[commandedJointPositions1.length];
-                                    Arrays.setAll(this.commandedJointAccellerations, i -> Double.POSITIVE_INFINITY);
+                                    Arrays.fill(this.commandedJointAccellerations, Double.POSITIVE_INFINITY);
                                 }
                                 this.commandedJointAccellerations[index] = acc;
                             }
@@ -2752,7 +2748,7 @@ public class SimServerInner {
                         if (jointPositions == null) {
                             jointPositions = Arrays.copyOf(commandedJointPositions1, commandedJointPositions1.length);
                         } else {
-                            synchronized (jointPositions) {
+                            synchronized (this) {
                                 System.arraycopy(commandedJointPositions1, 0, jointPositions, 0, Math.min(commandedJointPositions1.length, jointPositions.length));
                             }
                         }
@@ -2772,7 +2768,7 @@ public class SimServerInner {
                     this.setMoveStraight(moveto.isMoveStraight());
                     this.setCurrentWaypoint(0);
                     outer.updatePanels(true);
-                    commandedJointPositions1 = initCommandedJointPositionsVelocitiesAccellerations(jointPositions);
+                    this.commandedJointPositions = initCommandedJointPositionsVelocitiesAccellerations(jointPositions);
                 } else if (cmd instanceof SetAngleUnitsType) {
 //                    SetAngleUnitsType setAngle = (SetAngleUnitsType) cmd;
 //                    this.setAngleType(setAngle.getUnitName());
@@ -2895,9 +2891,9 @@ public class SimServerInner {
         commandedJointPositions1 = Arrays.copyOf(oldJointPositions, length);
         this.commandedJointPositions = commandedJointPositions1;
         this.commandedJointAccellerations = new double[length];
-        Arrays.setAll(this.commandedJointAccellerations, i -> Double.POSITIVE_INFINITY);
+        Arrays.fill(this.commandedJointAccellerations, Double.POSITIVE_INFINITY);
         this.commandedJointVelocities = new double[length];
-        Arrays.setAll(this.commandedJointVelocities, i -> Double.POSITIVE_INFINITY);
+        Arrays.fill(this.commandedJointVelocities, Double.POSITIVE_INFINITY);
         return commandedJointPositions1;
     }
 

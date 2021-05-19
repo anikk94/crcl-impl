@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="LauncherJFrame" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="crcl.ui.LauncherJFrame" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

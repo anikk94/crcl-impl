@@ -143,7 +143,6 @@ public class SimulatedKinematicsSimple {
     }
 
     public PoseType jointsToPose(double[] jv, PoseType _pose) throws PmException {
-        PoseType pose = null;
         double[] sl = this.scaled_seglengths;
         PmSpherical sphereTran = new PmSpherical(Math.toRadians(jv[1]), Math.toRadians(jv[2] + 90.0), jv[0] * this.scale);
         PmCartesian endSeg = new PmCartesian();
@@ -154,7 +153,7 @@ public class SimulatedKinematicsSimple {
         PmCartesian cart = endSeg.add(rmat.multiply(new PmCartesian(sl[0], 0, 0)));
         PmRotationVector rv = new PmRotationVector();
         Posemath.pmMatRotConvert(rmat, rv);
-        pose = CRCLPosemath.toPoseType(cart, rv, _pose);
+        PoseType pose = CRCLPosemath.toPoseType(cart, rv, _pose);
         return pose;
     }
     private static final Logger LOG = Logger.getLogger(SimulatedKinematicsSimple.class.getName());

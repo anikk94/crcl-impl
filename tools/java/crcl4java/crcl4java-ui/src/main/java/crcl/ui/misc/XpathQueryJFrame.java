@@ -21,6 +21,7 @@
 package crcl.ui.misc;
 
 import crcl.ui.client.CrclSwingClientJFrame;
+import crcl.utils.CRCLUtils;
 import crcl.utils.XpathUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -225,7 +226,7 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(XpathQueryJFrame.class.getName()).log(java.util.logging.Level.SEVERE, "", ex);
         }
         //</editor-fold>
         //</editor-fold>
@@ -266,7 +267,7 @@ public class XpathQueryJFrame extends javax.swing.JFrame {
     String runQuery(String query, String status) {
         String resultString = "";
         try {
-            if (query.equals(failedQuery)) {
+            if (CRCLUtils.equals(query,failedQuery)) {
                 return null;
             }
             resultString = xpu.queryXmlString(status, query);

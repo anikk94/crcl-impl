@@ -363,7 +363,6 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                     gripperReadThread1.interrupt();
                     gripperReadThread1.join(100);
                 }
-                gripperReadThread1 = null;
                 this.gripperReadThread = null;
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.SEVERE, "", ex);
@@ -1164,7 +1163,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 InputStream is = requireNonNull(ClassLoader.getSystemResourceAsStream("version"), "ClassLoader.getSystemResourceAsStream(\"version\")");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
             while (null != (line = br.readLine())) {
                 sb.append(line);
             }

@@ -215,7 +215,7 @@ public class TransformSetupJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TransformSetupJFrame.class.getName()).log(java.util.logging.Level.SEVERE, "", ex);
         }
         //</editor-fold>
 

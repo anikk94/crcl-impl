@@ -73,7 +73,7 @@ public class CRCLSocketBlockingClientExample {
 
             CommandStatusType cmdStat;
             CommandStateEnumType state;
-            long IDback =1;
+            long IDback;
             
             do {
                 // Create and send getStatus request.

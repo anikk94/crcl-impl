@@ -203,11 +203,11 @@ public class CRCLSocket implements AutoCloseable {
     String lastProgramString = null;
 
     private @Nullable
-    Schema cmdSchema = null;
+    Schema cmdSchema;
     private @Nullable
-    Schema programSchema = null;
+    Schema programSchema;
     private @Nullable
-    Schema statSchema = null;
+    Schema statSchema;
     /*@NonNull*/ private final Marshaller m_cmd;
     /*@NonNull*/ private final Unmarshaller u_cmd;
     /*@NonNull*/ private final Marshaller m_prog;
@@ -216,7 +216,7 @@ public class CRCLSocket implements AutoCloseable {
     /*@NonNull*/ private final Unmarshaller u_stat;
 
     private @Nullable
-    BufferedInputStream bufferedInputStream = null;
+    BufferedInputStream bufferedInputStream;
     private final boolean useBufferedInputStream = true;
 //    private @Nullable
 //    SAXSource exiCommandInSaxSource = null;
@@ -244,7 +244,7 @@ public class CRCLSocket implements AutoCloseable {
     private static final boolean DEBUG_JAXB_SELECTION
             = Boolean.getBoolean("crcl.DEBUG_JAXB_SELECTION");
 
-    private volatile StackTraceElement cmdSchemSetTrace @Nullable []  = null;
+    private volatile StackTraceElement cmdSchemSetTrace @Nullable [];
     private volatile File @Nullable [] cmdSchemaFiles = null;
 
     /**
@@ -555,10 +555,9 @@ public class CRCLSocket implements AutoCloseable {
         StringBuilder sb = new StringBuilder();
         StringBuilder skipped = new StringBuilder();
         synchronized (is) {
-            byte lastbyte = 0;
-            lastbyte = readUntilMatch(startTag, is, skipped);
+            byte lastbyteIgnored = readUntilMatch(startTag, is, skipped);
             sb.append(startTag);
-            lastbyte = readUntilMatch(">", is, sb);
+            byte lastbyte = readUntilMatch(">", is, sb);
             sb.append(">");
             if (lastbyte != '/') {
                 readUntilMatch(endTagStartString, is, sb);
@@ -596,7 +595,6 @@ public class CRCLSocket implements AutoCloseable {
                         } else {
                             tagBytesPrepped = 0;
                         }
-                        i = 0;
                         break;
                     }
                 }
@@ -646,7 +644,7 @@ public class CRCLSocket implements AutoCloseable {
      */
     public List<CRCLCommandInstanceType> parseMultiCommandString(String s, boolean validate) throws CRCLException {
         unparsedCommandString += s;
-        int index = -1;
+        int index;
         final String endtag = "</CRCLCommandInstance>";
         List<CRCLCommandInstanceType> list = new ArrayList<>();
         while (0 < (index = unparsedCommandString.indexOf(endtag))) {
@@ -688,7 +686,7 @@ public class CRCLSocket implements AutoCloseable {
      */
     public List<CRCLStatusType> parseMultiStatusString(String s, boolean validate) throws CRCLException {
         unparsedStatusString += s;
-        int index = -1;
+        int index;
         final String endtag = "</CRCLStatus>";
         List<CRCLStatusType> list = new ArrayList<>();
         while (0 < (index = unparsedStatusString.indexOf(endtag))) {
@@ -1211,7 +1209,7 @@ public class CRCLSocket implements AutoCloseable {
                         objectFactory.createCRCLCommandInstance(cmd)
                 );
         StringWriter sw = new StringWriter();
-        String ret = null;
+        String ret;
         this.checkCommandSchema(validate);
         synchronized (m_cmd) {
             try {
@@ -1337,7 +1335,7 @@ public class CRCLSocket implements AutoCloseable {
                         objectFactory.createCRCLCommandInstance(cmd)
                 );
         StringWriter sw = new StringWriter();
-        String ret = null;
+        String ret;
         try {
             this.checkCommandSchema(validate);
             synchronized (m_cmd) {
@@ -1398,7 +1396,7 @@ public class CRCLSocket implements AutoCloseable {
                             objectFactory.createCRCLCommandInstance(cmd)
                     );
             StringWriter sw = new StringWriter();
-            String ret = null;
+            String ret;
             checkCommandSchema(validate);
 
             synchronized (m_cmd) {

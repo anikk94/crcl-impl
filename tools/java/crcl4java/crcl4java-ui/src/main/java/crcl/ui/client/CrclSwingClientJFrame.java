@@ -721,7 +721,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
                 }
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
                 java.util.logging.Logger.getLogger(CrclSwingClientJFrame.class
-                        .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                        .getName()).log(java.util.logging.Level.SEVERE, "", ex);
 
             }
         }

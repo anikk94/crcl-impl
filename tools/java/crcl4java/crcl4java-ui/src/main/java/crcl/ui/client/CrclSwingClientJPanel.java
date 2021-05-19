@@ -981,10 +981,19 @@ public class CrclSwingClientJPanel
     }
 
     public void recordCurrentPoint() {
-        Optional.ofNullable(internal)
-                .map(CrclSwingClientInner::getStatus)
-                .map(CRCLPosemath::getNullablePose)
-                .ifPresent(this::recordPoint);
+        if (null != internal) {
+            CRCLStatusType status = internal.getStatus();
+            if (null != status) {
+                PoseType pose = CRCLPosemath.getNullablePose(status);
+                if (pose != null) {
+                    this.recordPoint(pose);
+                }
+            }
+        }
+//        Optional.ofNullable(internal)
+//                .map(CrclSwingClientInner::getStatus)
+//                .map(CRCLPosemath::getNullablePose)
+//                .ifPresent(this::recordPoint);
     }
 
     public void clearRecordedPoints() {
@@ -1207,6 +1216,7 @@ public class CrclSwingClientJPanel
         return pose;
     }
 
+    @SuppressWarnings("nullness")
     public Optional<CRCLStatusType> currentStatus() {
         return Optional.ofNullable(internal)
                 .map(x -> x.getStatus());
@@ -1623,9 +1633,11 @@ public class CrclSwingClientJPanel
     private boolean showing_message = false;
     private volatile long last_message_show_time = 0;
 
-    private final @MonotonicNonNull Container outerContainer;
+    private final @MonotonicNonNull
+    Container outerContainer;
 
-    private final @MonotonicNonNull JFrame outerJFrame;
+    private final @MonotonicNonNull
+    JFrame outerJFrame;
 
     private boolean searchedForOuterFrame = false;
 
@@ -2081,14 +2093,16 @@ public class CrclSwingClientJPanel
 
                 if (!isRunning) {
                     String ccstProgramFile = ccst.getProgramFile();
-                    if (null != ccstProgramFile
-                            && !ccstProgramFile.equals(internal.getOutgoingProgramFile())
-                            && !ccstProgramFile.equals(lastProgramFile)) {
-                        File f = findProgram(ccstProgramFile);
-                        if (null != f) {
-                            openXmlProgramFile(f);
+                    if (null != ccstProgramFile) {
+                        final String outgoingProgramFile = internal.getOutgoingProgramFile();
+                        if ((null == outgoingProgramFile || !ccstProgramFile.equals(outgoingProgramFile))
+                                && (null == lastProgramFile || !ccstProgramFile.equals(lastProgramFile))) {
+                            File f = findProgram(ccstProgramFile);
+                            if (null != f) {
+                                openXmlProgramFile(f);
+                            }
+                            lastProgramFile = ccstProgramFile;
                         }
-                        lastProgramFile = ccstProgramFile;
                     }
                     Integer ccstProgramIndex = ccst.getProgramIndex();
                     if (null != ccstProgramIndex) {
@@ -2216,9 +2230,7 @@ public class CrclSwingClientJPanel
             }
         }
         PoseType p
-                = Optional.ofNullable(curInternalStatus)
-                        .map(CRCLPosemath::getNullablePose)
-                        .orElse(null);
+                = CRCLPosemath.getNullablePose(curInternalStatus);
         if (null != p) {
             updatePoseTable(p, this.jTablePose, getCurrentPoseDisplayMode());
             PointType pt = p.getPoint();
@@ -2809,7 +2821,7 @@ public class CrclSwingClientJPanel
                                     System.err.println("internal.getCmdId() = " + internal.getCmdId());
                                     System.err.println("commandStatus.getCommandID() = " + commandStatus.getCommandID());
                                     System.err.println("internal.getLastCommandSent() = " + localLastCommandSent);
-                                    System.err.println("internal.getLastCommandSentStackTrace() = " + Arrays.toString(internal.getLastCommandSentStackTrace()));
+                                    System.err.println("internal.getLastCommandSentStackTrace() = " + CRCLUtils.arraysToString(internal.getLastCommandSentStackTrace()));
                                     System.err.println("internal.getPrevLastCommandSent() = " + internal.getPrevLastCommandSent());
                                 }
                                 String reasonString = "commandStatus.getCommandID() < internal.getCmdId() : jogStopFlag=" + jogStopFlag + ", actionCount=" + actionCount + ",  internal.getLastCommandSent()=" + localLastCommandSent + "\n";
@@ -2827,10 +2839,7 @@ public class CrclSwingClientJPanel
                         VectorType endPosZAxis = new VectorType();
                         endPos.setZAxis(endPosZAxis);
                         moveToCmd.setEndPosition(endPos);
-                        PoseType pose = Optional.ofNullable(internal)
-                                .map(CrclSwingClientInner::getStatus)
-                                .map(CRCLPosemath::getNullablePose)
-                                .orElse(null);
+                        PoseType pose = (null != internal) ? CRCLPosemath.getNullablePose(internal.getStatus()) : null;
                         if (null != pose) {
                             final PointType posePoint = requireNonNull(pose.getPoint(), "pose.getPoint()");
                             endPosPoint.setX(posePoint.getX());
@@ -3198,10 +3207,11 @@ public class CrclSwingClientJPanel
 
     public void showStatusLog() {
         try {
+            final File tempLogDir = internal.getTempLogDir();
             File tmpFile
-                    = (internal.getTempLogDir() != null)
-                    ? File.createTempFile("poseList", ".csv", internal.getTempLogDir())
-                    : File.createTempFile("poseList", ".csv");
+                    = (tempLogDir != null)
+                            ? File.createTempFile("poseList", ".csv", tempLogDir)
+                            : File.createTempFile("poseList", ".csv");
             this.internal.savePoseListToCsvFile(tmpFile.getAbsolutePath());
             Desktop.getDesktop().open(tmpFile);
         } catch (IOException | PmException ex) {
@@ -3245,10 +3255,11 @@ public class CrclSwingClientJPanel
 
     private File getCommandStatusLogFile() throws IOException {
         if (null == commandStatusLogFile) {
+            final File tempLogDir = internal.getTempLogDir();
             commandStatusLogFile
-                    = (internal.getTempLogDir() != null)
-                    ? File.createTempFile("commandStatus_", ".csv", internal.getTempLogDir())
-                    : File.createTempFile("commandStatus_", ".csv");
+                    = (tempLogDir != null)
+                            ? File.createTempFile("commandStatus_", ".csv", tempLogDir)
+                            : File.createTempFile("commandStatus_", ".csv");
         }
         return commandStatusLogFile;
     }
@@ -3258,10 +3269,11 @@ public class CrclSwingClientJPanel
 
     private File getCommandProfileMapFile() throws IOException {
         if (null == commandProfileMapLogFile) {
+            final File tempLogDir = internal.getTempLogDir();
             commandProfileMapLogFile
-                    = (internal.getTempLogDir() != null)
-                    ? File.createTempFile("commandProfileMap_", ".csv", internal.getTempLogDir())
-                    : File.createTempFile("commandProfileMap_", ".csv");
+                    = (tempLogDir != null)
+                            ? File.createTempFile("commandProfileMap_", ".csv", tempLogDir)
+                            : File.createTempFile("commandProfileMap_", ".csv");
         }
         return commandProfileMapLogFile;
     }
@@ -3288,7 +3300,7 @@ public class CrclSwingClientJPanel
         File f = getCommandProfileMapFile();
         Map<String, Long> profileMap = internal.getCmdPerfMap();
         List<Map.Entry<String, Long>> entriesList = new ArrayList<>(profileMap.entrySet());
-        entriesList.sort(Comparator.comparing((Map.Entry<String, Long> e) -> e.getValue()));
+        entriesList.sort(Map.Entry.comparingByValue());
         try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             pw.println("name,time");
             for (Map.Entry<String, Long> entry : entriesList) {
@@ -3584,7 +3596,7 @@ public class CrclSwingClientJPanel
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings({"all","unchecked","rawtypes","CanBeFinal"})
+    @SuppressWarnings({"all", "unchecked", "rawtypes", "CanBeFinal"})
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -5246,6 +5258,7 @@ public class CrclSwingClientJPanel
             }
             MiddleCommandType cmdOrig = (MiddleCommandType) selectedClss.getDeclaredConstructor().newInstance();
 
+            assert cmdOrig != null : "@AssumeAssertion(nullness): Constructor.newInstance() should be annotated NonNull";
             CRCLSocket editCrclSocket = CRCLSocket.getUtilSocket();;
             MiddleCommandType cmdEdited
                     = (MiddleCommandType) ObjTableJPanel.editObject(cmdOrig,
@@ -6407,6 +6420,8 @@ public class CrclSwingClientJPanel
                     try {
                         CrclSwingClientInner internal = pendantClientJPanel1.getInternal();
                         CRCLCommandType cmd = (CRCLCommandType) c.getDeclaredConstructor().newInstance();
+                        assert cmd != null : "@AssumeAssertion(nullness): Constructor.newInstance() should be annotated NonNull";
+
                         CRCLSocket editCrclSocket = CRCLSocket.getUtilSocket();
                         cmd
                                 = ObjTableJPanel.editObject(

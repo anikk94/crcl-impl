@@ -726,7 +726,7 @@ public class CRCLSocketTest {
         mttInstanceType.setCRCLCommand(mttt);
         CRCLSocket.cmdToString(mttt);
         boolean validate = true;
-        CRCLCommandInstanceType result = null;
+        CRCLCommandInstanceType result;
         CRCLSocket instance = new CRCLSocket();
         try {
             String mttString = instance.commandInstanceToPrettyDocString(mttInstanceType, validate);
@@ -748,7 +748,7 @@ public class CRCLSocketTest {
             throw new RuntimeException(ex);
         }
         final CRCLCommandType c = result.getCRCLCommand();
-        assertTrue(c != null && c instanceof MoveThroughToType);
+        assertTrue(c instanceof MoveThroughToType);
         final MoveThroughToType moveCommand = (MoveThroughToType) c;
         assertEquals(99, c.getCommandID());
         assertEquals(2, moveCommand.getNumPositions());
@@ -767,7 +767,7 @@ public class CRCLSocketTest {
         CRCLCommandInstanceType expResult = null;
         CRCLCommandInstanceType result = instance.readCommandFromStream(is, validate);
         final CRCLCommandType c = result.getCRCLCommand();
-        assertTrue(c != null && c instanceof MoveThroughToType);
+        assertTrue(c instanceof MoveThroughToType);
         final MoveThroughToType moveCommand = (MoveThroughToType) c;
         assertEquals(99, c.getCommandID());
         assertEquals(2, moveCommand.getNumPositions());

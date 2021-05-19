@@ -21,10 +21,7 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -48,24 +45,12 @@ public class CRCLSocketIT {
     public CRCLSocketIT() {
     }
 
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
+     @Before
     public void setUp() {
         CRCLSchemaUtils.clearSchemas();
     }
 
-    @After
-    public void tearDown() {
-    }
-
-    /**
+     /**
      * Test of stringToCommand method, of class CRCLSocket.
      *
      * @throws java.lang.Exception
@@ -87,7 +72,7 @@ public class CRCLSocketIT {
         final CRCLCommandType crclCommand = result.getCRCLCommand();
         assertTrue(crclCommand instanceof InitCanonType);
         if (null != crclCommand) {
-            assertTrue(crclCommand.getCommandID() == 1);
+            assertEquals(1, crclCommand.getCommandID());
         }
     }
 
@@ -145,7 +130,7 @@ public class CRCLSocketIT {
 
         serverThread.start();
         Thread.sleep(200);
-        assertTrue("this.serverThreadEx(" + this.serverThreadEx + ") == null", this.serverThreadEx == null);
+        assertTrue("this.serverThreadEx(" + this.serverThreadEx + ") == null", null == this.serverThreadEx);
         final PrintStream out = System.out;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final PrintStream newout = new PrintStream(baos);
@@ -206,7 +191,7 @@ public class CRCLSocketIT {
         assertTrue("\"" + clientoutput + "\".contains(\"State = CRCL_DONE\")", clientoutput.contains("State = CRCL_DONE"));
         assertTrue("\"" + clientoutput + "\".contains(\"pose = 1.1,0.0,0.1\")", clientoutput.contains("pose = 1.1,0.0,0.1"));
 //        System.out.println("clientoutput = " + clientoutput);
-        assertTrue(this.serverThreadEx == null);
+        assertTrue("this.serverThreadEx == null",this.serverThreadEx == null);
         interruptingServer = true;
         timeoutThread.interrupt();
         timeoutThread.join();
@@ -1114,19 +1099,19 @@ public class CRCLSocketIT {
         CRCLSocket instance = new CRCLSocket();
         CRCLProgramType result = instance.stringToProgram(str, validate);
         final InitCanonType initCanon = result.getInitCanon();
-        assertTrue(initCanon != null);
+        assertNotNull(initCanon);
         if (null != initCanon) {
-            assertTrue(initCanon.getCommandID() == 1);
+            assertEquals(1, initCanon.getCommandID());
         }
         final List<MiddleCommandType> middleCommandList = CRCLUtils.getNonNullFilteredList(result.getMiddleCommand());
-        assertTrue(middleCommandList != null);
+        assertNotNull(middleCommandList);
         if (null != middleCommandList) {
             assertEquals(middleCommandList.size(), 39);
         }
         final EndCanonType endCanon = result.getEndCanon();
-        assertTrue(endCanon != null);
+        assertNotNull(endCanon);
         if (null != endCanon) {
-            assertTrue(endCanon.getCommandID() == 41);
+            assertEquals(41, endCanon.getCommandID());
         }
 
     }

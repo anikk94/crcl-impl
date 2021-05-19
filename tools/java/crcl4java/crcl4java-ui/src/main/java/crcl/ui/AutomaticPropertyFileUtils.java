@@ -137,18 +137,18 @@ public class AutomaticPropertyFileUtils {
         int eqindex = l.indexOf('=');
         String afterEq;
         String beforeEq;
-        if(eqindex > 0) {
+        if (eqindex > 0) {
             beforeEq = l.substring(0, eqindex);
-            afterEq = l.substring(eqindex+1).trim();
+            afterEq = l.substring(eqindex + 1).trim();
         } else {
             beforeEq = l.trim();
             afterEq = "";
         }
         String beforeEqA[] = beforeEq.split("[ \t\r\n]+");
-        if(beforeEqA.length <= 1) {
-            return new String[]{beforeEqA[0],afterEq};
+        if (beforeEqA.length <= 1) {
+            return new String[]{beforeEqA[0], afterEq};
         } else {
-            return new String[]{beforeEqA[0],beforeEqA[1],afterEq};
+            return new String[]{beforeEqA[0], beforeEqA[1], afterEq};
         }
     }
 
@@ -185,17 +185,6 @@ public class AutomaticPropertyFileUtils {
     }
 
     static private boolean haveValueOf(Class<?> clss) {
-        Method vmethod
-                = Stream.of(clss.getMethods())
-                        .filter(m -> m.getName().equals("valueOf"))
-                        .filter(m -> m.getParameterTypes().length == 1)
-                        .filter(m -> Modifier.isStatic(m.getModifiers()))
-                        .filter(m -> m.getParameterTypes()[0].isAssignableFrom(String.class))
-                        .findAny()
-                        .orElse(null);
-        if (null != vmethod) {
-            return true;
-        }
         if (clss.isAssignableFrom(String.class)) {
             return true;
         } else if (clss.isAssignableFrom(double.class)) {
@@ -226,8 +215,21 @@ public class AutomaticPropertyFileUtils {
             return true;
         } else if (clss.isAssignableFrom(Boolean.class)) {
             return true;
+        } else {
+            Optional<Method> vmethod
+                    = Stream.of(clss.getMethods())
+                            .filter(m -> m.getName().equals("valueOf"))
+                            .filter(m -> m.getParameterTypes().length == 1)
+                            .filter(m -> Modifier.isStatic(m.getModifiers()))
+                            .filter(m -> m.getParameterTypes()[0].isAssignableFrom(String.class))
+                            .findAny();
+            if (vmethod.isPresent()) {
+                return true;
+            } else {
+                return false;
+            }
         }
-        return false;
+
     }
 
     @SuppressWarnings({"unchecked", "nullness"})
@@ -284,7 +286,7 @@ public class AutomaticPropertyFileUtils {
         return null;
     }
 
-    @SuppressWarnings({"unchecked","nullness"})
+    @SuppressWarnings({"unchecked", "nullness"})
     private static void setParam(Map<String, Object> targetMap, Object defaultTarget, String args[]) {
         try {
             if (args.length < 2) {
@@ -292,18 +294,16 @@ public class AutomaticPropertyFileUtils {
             }
             final Class<? extends Object> defaultTargetClass = defaultTarget.getClass();
             if (args[0].equals("classname") || args[1].equals("classname")) {
-                if (!Objects.equals(defaultTargetClass.getCanonicalName(),args[args.length-1])) {
+                if (!Objects.equals(defaultTargetClass.getCanonicalName(), args[args.length - 1])) {
                     throw new RuntimeException("wrong class: defaultTarget.getClass()=" + defaultTargetClass + ", args=" + Arrays.toString(args));
                 }
                 return;
             }
-            
+
             if (args.length < 3) {
                 return;
             }
-            
 
-            
             Class<?> clss = null;
 
             switch (args[0]) {
@@ -333,22 +333,22 @@ public class AutomaticPropertyFileUtils {
 
                 default:
                     try {
-                        if (args[0].indexOf('.') < 0) {
-                            clss = Class.forName("java.lang." + args[0]);
-                        } else {
-                            clss = Class.forName(args[0]);
-                        }
-                    } catch (ClassNotFoundException classNotFoundException) {
-                        System.err.println("Can't set param type: args= " + Arrays.toString(args));
+                    if (args[0].indexOf('.') < 0) {
+                        clss = Class.forName("java.lang." + args[0]);
+                    } else {
+                        clss = Class.forName(args[0]);
                     }
-                    break;
+                } catch (ClassNotFoundException classNotFoundException) {
+                    System.err.println("Can't set param type: args= " + Arrays.toString(args));
+                }
+                break;
             }
 
             if (null == clss) {
                 System.err.println("clss== null, args=" + Arrays.toString(args));
                 return;
             }
-            final String valueString = args.length == 3? args[2]: String.join(" ", Arrays.copyOfRange(args, 2, args.length-1));
+            final String valueString = args.length == 3 ? args[2] : String.join(" ", Arrays.copyOfRange(args, 2, args.length - 1));
             Object o = valueOf(clss, valueString);
             if (null == o) {
                 System.err.println("o== null, clss=" + clss + ", args=" + Arrays.toString(args));

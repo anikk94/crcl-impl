@@ -8,39 +8,30 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="crcl4java-ui" />
-        <module name="crcl4java-motoman" />
         <module name="generate-copier-maven-plugin" />
-        <module name="fanucCRCLServer" />
         <module name="crcl4java-utils" />
         <module name="crcl4java-base" />
-        <module name="ATINetFT_proxy" />
         <module name="crclcopier" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ATINetFT_proxy" target="1.8" />
       <module name="crcl4java" target="1.8" />
       <module name="crcl4java-base" target="1.8" />
-      <module name="crcl4java-fanuc" target="1.8" />
-      <module name="crcl4java-motoman" target="1.8" />
       <module name="crcl4java-ui" target="1.8" />
       <module name="crcl4java-utils" target="1.8" />
       <module name="crclcopier" target="1.8" />
-      <module name="fanucCRCLServer" target="1.8" />
       <module name="generate-copier-maven-plugin" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:all,-serial" />
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="ATINetFT_proxy" options="-parameters" />
-      <module name="crcl4java-base" options="-parameters" />
-      <module name="crcl4java-motoman" options="-parameters" />
-      <module name="crcl4java-ui" options="-parameters" />
-      <module name="crcl4java-utils" options="-parameters" />
-      <module name="crclcopier" options="-parameters" />
-      <module name="fanucCRCLServer" options="-parameters" />
-      <module name="generate-copier-maven-plugin" options="-parameters" />
+      <module name="crcl4java" options="" />
+      <module name="crcl4java-base" options="-Xlint:all,-serial -Werror -parameters" />
+      <module name="crcl4java-ui" options="-Xlint:all,-serial -Werror -parameters" />
+      <module name="crcl4java-utils" options="-Xlint:all,-serial -Werror -parameters" />
+      <module name="crclcopier" options="-Xlint:all,-serial -Werror -parameters" />
+      <module name="generate-copier-maven-plugin" options="-Xlint:all -Xlint:-processing -Werror -parameters" />
     </option>
   </component>
 </project>

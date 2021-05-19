@@ -43,6 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -61,12 +62,41 @@ public class CRCLUtils {
 
     private CRCLUtils() {
     }
-    
+
     /**
      * This is a work-around for missing annotations for some versions of the
-     * JDK / CheckerFramework. It is just a wrapper for java.util.Objects.requireNonNull
-     * 
-       @param ref     the object reference to check for nullity
+     * JDK / CheckerFramework. It is just a copy of java.util.Objects.equals
+     *
+     * @param a an object
+     * @param b an object to be compared with {@code a} for equality
+     * @return {@code true} if the arguments are equal to each other and
+     * {@code false} otherwise
+     * @see Object#equals(Object)
+     */
+    @SuppressWarnings("nullness")
+    public static boolean equals(@Nullable Object a, @Nullable Object b) {
+        return (a == b) || (a != null && b != null && a.equals(b));
+    }
+
+    /**
+     * This is a work-around for missing annotations for some versions of the
+     * JDK / CheckerFramework. It is just a wrapper for
+     * java.util.Arrays.toString
+     *
+     * @param a the array whose string representation to return
+     * @return a string representation of {@code a}
+     */
+    @SuppressWarnings("nullness")
+    public static String arraysToString(Object @Nullable [] a) {
+        return Arrays.toString(a);
+    }
+
+    /**
+     * This is a work-around for missing annotations for some versions of the
+     * JDK / CheckerFramework. It is just a wrapper for
+     * java.util.Objects.requireNonNull
+     *
+     * @param ref the object reference to check for nullity
      * @param <T> the type of the reference
      * @return {@code ref} if not {@code null}
      * @throws NullPointerException if {@code ref} is {@code null}
@@ -79,9 +109,10 @@ public class CRCLUtils {
 
     /**
      * This is a work-around for missing annotations for some versions of the
-     * JDK / CheckerFramework. It is just a wrapper for java.util.Objects.requireNonNull
-     * 
-       @param ref     the object reference to check for nullity
+     * JDK / CheckerFramework. It is just a wrapper for
+     * java.util.Objects.requireNonNull
+     *
+     * @param ref the object reference to check for nullity
      * @param message detail message to be used in the event that a {@code
      *                NullPointerException} is thrown
      * @param <T> the type of the reference
@@ -94,7 +125,6 @@ public class CRCLUtils {
         return Objects.requireNonNull(ref, message);
     }
 
-    
     /**
      * Convert an array returned from Thread.currentThread().getStackTrace() or
      * exception.getStackTrace() to a readable loggable string.
@@ -216,6 +246,7 @@ public class CRCLUtils {
 
     /**
      * Get a property and parse it as a long
+     *
      * @param name name of property
      * @param defaultValue value to be returned if property is not found
      * @return value of property
@@ -312,8 +343,8 @@ public class CRCLUtils {
     }
 
     /**
-     * Create an iterable from one that may have null values to one where null values are
-     * filtered out.
+     * Create an iterable from one that may have null values to one where null
+     * values are filtered out.
      *
      * @param <T> the type of elements returned by the iterator
      * @param itIn input iterable that may return null values
@@ -328,9 +359,10 @@ public class CRCLUtils {
         return ret;
     }
 
-
     /**
-     * Create a new list from the set of elements taken from an iterable excluding null values.
+     * Create a new list from the set of elements taken from an iterable
+     * excluding null values.
+     *
      * @param <T> the type of elements returned by the iterator
      * @param itIn input iterable that may return null values
      * @return new list without null values
@@ -349,7 +381,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the command field from a command instance object or throw a more informative NullPointerException 
+     * Get the command field from a command instance object or throw a more
+     * informative NullPointerException
+     *
      * @param cmdInstance object to get field from
      * @return value of CRCLCommand field if not null
      */
@@ -362,7 +396,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the command status field from a status object or throw a more informative NullPointerException 
+     * Get the command status field from a status object or throw a more
+     * informative NullPointerException
+     *
      * @param stat object to get field from
      * @return command status field if not null
      */
@@ -375,7 +411,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the zaxis field from a pose object or throw a more informative NullPointerException 
+     * Get the zaxis field from a pose object or throw a more informative
+     * NullPointerException
+     *
      * @param pose object to get field from
      * @return zaxis field if not null
      */
@@ -388,7 +426,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the xaxis field from a pose object or throw a more informative NullPointerException 
+     * Get the xaxis field from a pose object or throw a more informative
+     * NullPointerException
+     *
      * @param pose object to get field from
      * @return xaxis field if not null
      */
@@ -401,7 +441,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the point field from a pose object or throw a more informative NullPointerException 
+     * Get the point field from a pose object or throw a more informative
+     * NullPointerException
+     *
      * @param pose object to get field from
      * @return point field if not null
      */
@@ -431,7 +473,9 @@ public class CRCLUtils {
     }
 
     /**
-     * Get the middleCommands field from a program object or throw a more informative NullPointerException 
+     * Get the middleCommands field from a program object or throw a more
+     * informative NullPointerException
+     *
      * @param prog object to get field from
      * @return middleCommands field if not null
      */
@@ -446,9 +490,10 @@ public class CRCLUtils {
 
     /**
      * Get an iterable for JointStatus with null values filtered out.
-     * 
+     *
      * @param jsst object with joint status list field
-     * @return new iterable from list or throw NullPointerException with more informative message.
+     * @return new iterable from list or throw NullPointerException with more
+     * informative message.
      */
     public static Iterable<JointStatusType> getNonNullJointStatusIterable(JointStatusesType jsst) {
         return getNonNullIterable(

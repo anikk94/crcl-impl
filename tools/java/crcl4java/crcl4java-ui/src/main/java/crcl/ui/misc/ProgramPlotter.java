@@ -108,6 +108,7 @@ public class ProgramPlotter {
         return !Double.isInfinite(x) && !Double.isNaN(x);
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     public boolean hasFiniteBounds() {
         return null != bounds
                 && isFinite(bounds.x)

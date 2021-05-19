@@ -256,6 +256,7 @@ public class XFuture<T> extends CompletableFuture<T> {
             stringWriter.flush();
             return stringWriter.toString();
         } catch (IOException ex) {
+            //noinspection ImplicitArrayToString
             logStaticException("trace=" + trace, ex);
             throw new RuntimeException(ex);
         }
@@ -1441,14 +1442,14 @@ public class XFuture<T> extends CompletableFuture<T> {
         return newFuture;
     }
 
-    public <T> XFuture<T> wrap(String name, CompletableFuture<T> future) {
+    public <CFT> XFuture<CFT> wrap(String name, CompletableFuture<CFT> future) {
         if (future instanceof XFuture) {
             if (this != future) {
-                ((XFuture<T>) future).alsoCancelAdd(this);
+                ((XFuture<CFT>) future).alsoCancelAdd(this);
             }
-            return (XFuture<T>) future;
+            return (XFuture<CFT>) future;
         }
-        XFuture<T> newFuture = new XFuture<>(name);
+        XFuture<CFT> newFuture = new XFuture<>(name);
         newFuture.setKeepOldProfileStrings(this.keepOldProfileStrings);
         future.handle((x, t) -> hiddenHandler(x, t, future, newFuture));
         newFuture.alsoCancelAdd(this);
@@ -1510,7 +1511,7 @@ public class XFuture<T> extends CompletableFuture<T> {
                 || (t instanceof CompletionException)
                 || (t instanceof PrintedException)
                 || (t instanceof PrintedXFutureRuntimeException)
-                || (null != cause && t != cause
+                || (t != cause
                 && (cause instanceof CancellationException) || (cause instanceof PrintedXFutureRuntimeException));
     }
 
@@ -1862,7 +1863,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         };
     }
 
-    private <T> T logAndRethrow(Throwable t) {
+    private  T logAndRethrow(Throwable t) {
         checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
         return rethrow(t);
     }
@@ -1874,6 +1875,10 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     public XFutureVoid thenRun(String name, Runnable action) {
         return wrapvoid(name, super.thenRun(runWrap(action)));
+    }
+
+    public XFutureVoid thenAcceptAsync(String name, Consumer<? super T> action, Executor executor) {
+        return wrapvoid(name, super.thenAcceptAsync(action, executor));
     }
 
     @Override
