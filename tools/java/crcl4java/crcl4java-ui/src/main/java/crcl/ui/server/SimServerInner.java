@@ -116,9 +116,6 @@ import crcl.utils.outer.interfaces.SimServerOuter;
 import crcl.utils.server.CRCLServerClientState;
 import crcl.utils.server.CRCLServerSocket;
 import crcl.utils.server.CRCLServerSocketEvent;
-import static crcl.utils.server.CRCLServerSocketEventType.CRCL_COMMAND_RECIEVED;
-import static crcl.utils.server.CRCLServerSocketEventType.GUARD_LIMIT_REACHED;
-import static crcl.utils.server.CRCLServerSocketEventType.NEW_CRCL_CLIENT;
 import crcl.utils.server.CRCLServerSocketStateGenerator;
 import crcl.utils.server.UnitsTypeSet;
 import java.io.File;
@@ -1011,16 +1008,16 @@ public class SimServerInner {
 //        return false;
     }
 
-    private boolean handleMultiStepCommand(SimServerClientState clientState) {
-        if (null == multiStepCommand) {
-            return false;
-        }
-        if (multiStepCommand instanceof MoveScrewType) {
-            return handleContinueMoveScrew((MoveScrewType) multiStepCommand, clientState.filterSettings.getClientUserSet().getAngleUnit());
-        }
-        multiStepCommand = null;
-        return false;
-    }
+//    private boolean handleMultiStepCommand(SimServerClientState clientState) {
+//        if (null == multiStepCommand) {
+//            return false;
+//        }
+//        if (multiStepCommand instanceof MoveScrewType) {
+//            return handleContinueMoveScrew((MoveScrewType) multiStepCommand, clientState.filterSettings.getClientUserSet().getAngleUnit());
+//        }
+//        multiStepCommand = null;
+//        return false;
+//    }
 
     public void setCommandState(CommandStateEnumType state) {
         if (null != crclServerSocket) {

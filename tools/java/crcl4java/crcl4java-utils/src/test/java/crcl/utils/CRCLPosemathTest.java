@@ -76,7 +76,7 @@ public class CRCLPosemathTest {
     private PoseType pose123 = null;
     private PoseType pose321 = null;
     private PoseType pose321rot90 = null;
-    private PmPose pmPose123 = null;
+//    private PmPose pmPose123 = null;
 
     static final private double ASSERT_TOLERANCE_DELTA = 1e-6;
 
@@ -84,21 +84,21 @@ public class CRCLPosemathTest {
         assertEquals(msg, v1, v2, ASSERT_TOLERANCE_DELTA);
     }
 
-    private void checkEquals(String msg, BigDecimal v1, double v2) {
-        assertEquals(msg, v1.doubleValue(), v2, ASSERT_TOLERANCE_DELTA);
-    }
+//    private void checkEquals(String msg, BigDecimal v1, double v2) {
+//        assertEquals(msg, v1.doubleValue(), v2, ASSERT_TOLERANCE_DELTA);
+//    }
 
-    private void checkEquals(String msg, double v1, BigDecimal v2) {
-        assertEquals(msg, v1, v2.doubleValue(), ASSERT_TOLERANCE_DELTA);
-    }
+//    private void checkEquals(String msg, double v1, BigDecimal v2) {
+//        assertEquals(msg, v1, v2.doubleValue(), ASSERT_TOLERANCE_DELTA);
+//    }
 
-    private void checkEquals(String msg, BigDecimal v1, BigDecimal v2) {
-        assertTrue(msg + " both are null or neither is null", (v1 == null) == (v2 == null));
-        if (v1 == null) {
-            return;
-        }
-        checkEquals(msg, v1.doubleValue(), v2.doubleValue());
-    }
+//    private void checkEquals(String msg, BigDecimal v1, BigDecimal v2) {
+//        assertTrue(msg + " both are null or neither is null", (v1 == null) == (v2 == null));
+//        if (v1 == null) {
+//            return;
+//        }
+//        checkEquals(msg, v1.doubleValue(), v2.doubleValue());
+//    }
 
     private void checkEquals(String msg, PmCartesian cart1, PmCartesian cart2) {
         checkEquals(msg + ".x", cart1.x, cart2.x);
@@ -862,7 +862,6 @@ public class CRCLPosemathTest {
         assertArrayEquals("mat[2]", expResult[2], result[2], ASSERT_TOLERANCE_DELTA);
         assertArrayEquals("mat[3]", expResult[3], result[3], ASSERT_TOLERANCE_DELTA);
     }
-    private static final Logger LOG = Logger.getLogger(CRCLPosemathTest.class.getName());
 
     /**
      * Test of getNullablePose method, of class CRCLPosemath.

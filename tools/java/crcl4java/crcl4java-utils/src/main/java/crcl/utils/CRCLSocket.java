@@ -549,7 +549,7 @@ public class CRCLSocket implements AutoCloseable {
 //    }
 
 
-    String readUntilEndTag(final String tag, final InputStream is) throws IOException {
+    static String readUntilEndTag(final String tag, final InputStream is) throws IOException {
         String rips = "";
         final String endTagStartString = "</" + tag;
         final String startTag = "<" + tag;
@@ -572,7 +572,7 @@ public class CRCLSocket implements AutoCloseable {
         return str;
     }
 
-    private byte readUntilMatch(String toMatch, final InputStream is, StringBuilder sb) throws IOException {
+    static private byte readUntilMatch(String toMatch, final InputStream is, StringBuilder sb) throws IOException {
         byte[] tagBytes;
         byte[] tagBytesPrep;
         tagBytes = toMatch.getBytes(UTF_8);
@@ -831,7 +831,7 @@ public class CRCLSocket implements AutoCloseable {
      */
     public CRCLCommandInstanceType readCommand(boolean validate, int soTimeout) throws CRCLException, IOException {
         final String threadName = Thread.currentThread().getName();
-        final String str = this.readUntilEndTag("CRCLCommandInstance", getBufferedInputStream(soTimeout));
+        final String str = CRCLSocket.readUntilEndTag("CRCLCommandInstance", getBufferedInputStream(soTimeout));
         if (null == str) {
             throw new EOFException("readUntilEndTag returned null");
         }
@@ -1041,7 +1041,7 @@ public class CRCLSocket implements AutoCloseable {
             throws CRCLException {
         long t0 = System.currentTimeMillis();
         try {
-            this.lastStatusString = this.readUntilEndTag("CRCLStatus", getBufferedInputStream(soTimeout));
+            this.lastStatusString = CRCLSocket.readUntilEndTag("CRCLStatus", getBufferedInputStream(soTimeout));
             if (null == this.lastStatusString) {
                 throw new EOFException("readUntilEndTag returned null");
             }
@@ -2006,9 +2006,9 @@ public class CRCLSocket implements AutoCloseable {
         private int last_end_buffer_length = 0;
         private int maxFields;
 
-        public int getMaxFields() {
-            return maxFields;
-        }
+//        public int getMaxFields() {
+//            return maxFields;
+//        }
 
         public void setMaxFields(int maxFields) {
             this.maxFields = maxFields;

@@ -247,7 +247,7 @@ public class CrclSwingClientInner {
 
     private PoseToleranceType expectedEndPoseTolerance;
     private PoseToleranceType expectedIntermediatePoseTolerance;
-    private volatile AtomicInteger close_test_count = new AtomicInteger(0);
+//    private volatile AtomicInteger close_test_count = new AtomicInteger(0);
     int request_status_count = 0;
     private final GetStatusType getStatusMsg = new GetStatusType();
     private static final int JOG_INTERVAL_DEFAULT = 50;
@@ -705,9 +705,9 @@ public class CrclSwingClientInner {
         cmd.setCommandID(id);
     }
 
-    private void setCommandId(CRCLCommandType cmd) {
-        setCommandId(cmd, commandId.incrementAndGet());
-    }
+//    private void setCommandId(CRCLCommandType cmd) {
+//        setCommandId(cmd, commandId.incrementAndGet());
+//    }
 
     private boolean requestStatus(@Nullable CRCLSocket crclRequestSocket) throws JAXBException {
         if (null == crclRequestSocket) {
@@ -2393,7 +2393,8 @@ public class CrclSwingClientInner {
     Appendable lastPrintCommandStatusAppendable = null;
 
     public void printCommandStatusLog(Appendable appendable, boolean clearLog, String headers[]) throws IOException {
-        CSVPrinter printer = new CSVPrinter(appendable, CSVFormat.DEFAULT);
+        @SuppressWarnings("resource")
+		CSVPrinter printer = new CSVPrinter(appendable, CSVFormat.DEFAULT);
         if (!CRCLUtils.equals(lastPrintCommandStatusAppendable, appendable)) {
             printer.printRecord((Object[]) headers);
             lastPrintCommandStatusAppendable = appendable;
@@ -4494,9 +4495,9 @@ public class CrclSwingClientInner {
         return ret;
     }
 
-    private boolean isCrclSocketActionThreadAlive() {
-        return null != crclSocketActionThread && crclSocketActionThread.isAlive();
-    }
+//    private boolean isCrclSocketActionThreadAlive() {
+//        return null != crclSocketActionThread && crclSocketActionThread.isAlive();
+//    }
 
     private boolean isRunProgramFutureNotCompleted() {
         return null != runProgramFuture && !runProgramFuture.isDone() && !runProgramFuture.isCancelled()

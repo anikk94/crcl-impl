@@ -24,8 +24,6 @@
  */
 package crcl.utils;
 
-import static crcl.utils.XFutureVoid.allOf;
-import static crcl.utils.XFutureVoid.allOfWithName;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -1472,20 +1470,20 @@ public class XFuture<T> extends CompletableFuture<T> {
         return newFuture;
     }
 
-    private <A, R> Function<A, R> fWrap(Function<A, R> f) {
-        return x -> {
-            try {
-                return f.apply(x);
-            } catch (Throwable t) {
-                checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
-                if (t instanceof RuntimeException) {
-                    throw ((RuntimeException) t);
-                } else {
-                    throw new RuntimeException(t);
-                }
-            }
-        };
-    }
+//    private <A, R> Function<A, R> fWrap(Function<A, R> f) {
+//        return x -> {
+//            try {
+//                return f.apply(x);
+//            } catch (Throwable t) {
+//                checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
+//                if (t instanceof RuntimeException) {
+//                    throw ((RuntimeException) t);
+//                } else {
+//                    throw new RuntimeException(t);
+//                }
+//            }
+//        };
+//    }
 
     private <A, B, R> BiFunction<A, B, R> biWrap(BiFunction<A, B, R> f) {
         return (A a, B b) -> {

@@ -2525,7 +2525,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         this.updateStatusSupplier = updateStatusSupplier;
     }
 
-    private volatile int updateStatusRunCount = 0;
+//    private volatile int updateStatusRunCount = 0;
 
     private ExecutorService initExecutorService() {
         ExecutorService es = this.executorService;
@@ -2707,7 +2707,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     }
 
     private volatile long guardTriggerStartTime = -1;
-    private static final int EXTRA_GUARD_SAMPLES = 10;
+//    private static final int EXTRA_GUARD_SAMPLES = 10;
 
     private void triggerGuard(double value, STATE_TYPE guard_client_state, CRCLCommandInstanceType commandInstance, GuardType guard) throws Exception {
         if (null == serverSideStatus) {

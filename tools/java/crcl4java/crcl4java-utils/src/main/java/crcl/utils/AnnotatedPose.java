@@ -36,8 +36,7 @@ import rcs.posemath.PmQuaternion;
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
 public class AnnotatedPose extends PmPose {
-    private static final Logger LOG = Logger.getLogger(AnnotatedPose.class.getName());
-
+    
     private final long time;
     private final long lastCommandIdSent;
     private final String commandName;

@@ -284,32 +284,33 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
     };
 
     final Map<Integer, NewDeletePanel> pnlMap = new HashMap<>();
-    @SuppressWarnings("serial")
-    private class MyTableCellRenderer extends DefaultTableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (column == 2) {
-                try {
-                    DefaultTableModel tm = (DefaultTableModel) table.getModel();
-                    String type = (String) tm.getValueAt(row, 0);
-                    String typenoparams = removeTypeParams(type);
-                    Class<?> clss = Class.forName(typenoparams);
-                    pnlMap.remove(row);
-                    if (isCompound(clss, customExcludedPathStrings)) {
-                        NewDeletePanel pnl = new NewDeletePanel();
-                        pnlMap.put(row, pnl);
-                        int rheight = table.getRowHeight(row);
-                        table.setRowHeight(row, Math.max(rheight, pnl.getPreferredSize().height));
-                        return pnl;
-                    }
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
-                }
-            }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        }
-    };
+    
+//    @SuppressWarnings("serial")
+//    private class MyTableCellRenderer extends DefaultTableCellRenderer {
+//
+//        @Override
+//        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//            if (column == 2) {
+//                try {
+//                    DefaultTableModel tm = (DefaultTableModel) table.getModel();
+//                    String type = (String) tm.getValueAt(row, 0);
+//                    String typenoparams = removeTypeParams(type);
+//                    Class<?> clss = Class.forName(typenoparams);
+//                    pnlMap.remove(row);
+//                    if (isCompound(clss, customExcludedPathStrings)) {
+//                        NewDeletePanel pnl = new NewDeletePanel();
+//                        pnlMap.put(row, pnl);
+//                        int rheight = table.getRowHeight(row);
+//                        table.setRowHeight(row, Math.max(rheight, pnl.getPreferredSize().height));
+//                        return pnl;
+//                    }
+//                } catch (ClassNotFoundException ex) {
+//                    Logger.getLogger(ObjTableJPanel.class.getName()).log(Level.SEVERE, "", ex);
+//                }
+//            }
+//            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//        }
+//    };
 
     private static String removeTypeParams(String type) {
         String typenoparams = type;

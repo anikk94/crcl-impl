@@ -36,1089 +36,580 @@ import static org.junit.Assert.*;
  * the framework allows potential NullPointerExceptions to be found.
  */
 
- /*>>>
+/*>>>
 import org.checkerframework.checker.nullness.qual.*;
- */
+*/
 @SuppressWarnings("JavaDoc")
 public class CRCLSocketIT {
 
-    public CRCLSocketIT() {
-    }
+	public CRCLSocketIT() {
+	}
 
-     @Before
-    public void setUp() {
-        CRCLSchemaUtils.clearSchemas();
-    }
+	@Before
+	public void setUp() {
+		CRCLSchemaUtils.clearSchemas();
+	}
 
-     /**
-     * Test of stringToCommand method, of class CRCLSocket.
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testStringToCommand() throws Exception {
-        System.out.println("stringToCommand");
-        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<CRCLCommandInstance\n"
-                + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "  xsi:noNamespaceSchemaLocation=\"../xmlSchemas/CRCLCommandInstance.xsd\">\n"
-                + "  <CRCLCommand xsi:type=\"InitCanonType\">\n"
-                + "    <CommandID>1</CommandID>\n"
-                + "  </CRCLCommand>\n"
-                + "</CRCLCommandInstance>";
-        boolean validate = false;
-        CRCLSocket instance = new CRCLSocket();
-        CRCLCommandInstanceType result = instance.stringToCommand(str, validate);
-        final CRCLCommandType crclCommand = result.getCRCLCommand();
-        assertTrue(crclCommand instanceof InitCanonType);
-        if (null != crclCommand) {
-            assertEquals(1, crclCommand.getCommandID());
-        }
-    }
+	/**
+	 * Test of stringToCommand method, of class CRCLSocket.
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testStringToCommand() throws Exception {
+		System.out.println("stringToCommand");
+		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<CRCLCommandInstance\n"
+				+ "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+				+ "  xsi:noNamespaceSchemaLocation=\"../xmlSchemas/CRCLCommandInstance.xsd\">\n"
+				+ "  <CRCLCommand xsi:type=\"InitCanonType\">\n" + "    <CommandID>1</CommandID>\n"
+				+ "  </CRCLCommand>\n" + "</CRCLCommandInstance>";
+		boolean validate = false;
+		try (CRCLSocket instance = new CRCLSocket()) {
+			CRCLCommandInstanceType result = instance.stringToCommand(str, validate);
+			final CRCLCommandType crclCommand = result.getCRCLCommand();
+			assertTrue(crclCommand instanceof InitCanonType);
+			if (null != crclCommand) {
+				assertEquals(1, crclCommand.getCommandID());
+			}
+		}
+	}
 
-    private @Nullable
-    Exception serverThreadEx = null;
+	private @Nullable Exception serverThreadEx = null;
 
-    private boolean interruptingServer = false;
-    private boolean timeoutOccured = false;
+	private boolean interruptingServer = false;
+	private boolean timeoutOccured = false;
 
-    private enum ExampleType {
-        BLOCKING, POLLING, CALLBACK
-    };
+	private enum ExampleType {
+		BLOCKING, POLLING, CALLBACK
+	};
 
-    private void testClientServer(final String testName,
-            final ExampleType clientType,
-            final ExampleType serverType,
-            final boolean serverMultiThreaded) throws InterruptedException {
-        interruptingServer = false;
-        serverThreadEx = null;
-        timeoutOccured = false;
-        System.out.println(testName);
-        System.setProperty("CRCLServerSocket.multithreaded", Boolean.toString(serverMultiThreaded));
-        final Thread serverThread = new Thread(new Runnable() {
+	private void testClientServer(final String testName, final ExampleType clientType, final ExampleType serverType,
+			final boolean serverMultiThreaded) throws InterruptedException {
+		interruptingServer = false;
+		serverThreadEx = null;
+		timeoutOccured = false;
+		System.out.println(testName);
+		System.setProperty("CRCLServerSocket.multithreaded", Boolean.toString(serverMultiThreaded));
+		final Thread serverThread = new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    switch (serverType) {
-                        case BLOCKING:
-                            CRCLServerSocketBlockingExample.main(new String[]{});
-                            break;
+			@Override
+			public void run() {
+				try {
+					switch (serverType) {
+					case BLOCKING:
+						CRCLServerSocketBlockingExample.main(new String[] {});
+						break;
 
-                        case POLLING:
-                            CRCLServerSocketPollingExample.main(new String[]{});
-                            break;
+					case POLLING:
+						CRCLServerSocketPollingExample.main(new String[] {});
+						break;
 
-                        case CALLBACK:
-                            CRCLServerSocketCallbackExample.main(new String[]{});
-                            break;
-                    }
+					case CALLBACK:
+						CRCLServerSocketCallbackExample.main(new String[] {});
+						break;
+					}
 
-                } catch (InterruptedException ex) {
-                    if (!interruptingServer) {
-                        serverThreadEx = ex;
-                        Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
-                    }
-                } catch (Exception ex) {
-                    serverThreadEx = ex;
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
-                } finally {
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " Server finished.");
-                }
-            }
-        }, testName + "ServerMain");
+				} catch (InterruptedException ex) {
+					if (!interruptingServer) {
+						serverThreadEx = ex;
+						Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
+					}
+				} catch (Exception ex) {
+					serverThreadEx = ex;
+					Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
+				} finally {
+					Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " Server finished.");
+				}
+			}
+		}, testName + "ServerMain");
 
-        serverThread.start();
-        Thread.sleep(200);
-        assertTrue("this.serverThreadEx(" + this.serverThreadEx + ") == null", null == this.serverThreadEx);
-        final PrintStream out = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final PrintStream newout = new PrintStream(baos);
-        final Thread clientThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.setOut(newout);
-                    switch (clientType) {
-                        case BLOCKING:
-                            CRCLSocketBlockingClientExample.main(new String[]{});
-                            break;
+		serverThread.start();
+		Thread.sleep(200);
+		assertTrue("this.serverThreadEx(" + this.serverThreadEx + ") == null", null == this.serverThreadEx);
+		final PrintStream out = System.out;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream newout = new PrintStream(baos);
+		final Thread clientThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					System.setOut(newout);
+					switch (clientType) {
+					case BLOCKING:
+						CRCLSocketBlockingClientExample.main(new String[] {});
+						break;
 
-                        case POLLING:
-                            CRCLSocketPollingClientExample.main(new String[]{});
-                            break;
+					case POLLING:
+						CRCLSocketPollingClientExample.main(new String[] {});
+						break;
 
-                        default:
-                            System.setOut(out);
-                            fail("Bad clientType" + clientType);
-                    }
-                    System.setOut(out);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
-                } finally {
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " client finished.");
-                }
-            }
-        }, testName + "client");
+					default:
+						System.setOut(out);
+						fail("Bad clientType" + clientType);
+					}
+					System.setOut(out);
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
+				} finally {
+					Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.FINE, testName + " client finished.");
+				}
+			}
+		}, testName + "client");
 
-        Thread timeoutThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    timeoutOccured = true;
-                    Map<Thread, String> allThreads = new HashMap<>();
-                    Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();
-                    for (Entry<Thread, StackTraceElement[]> entry : traces.entrySet()) {
-                        allThreads.put(entry.getKey(), Arrays.deepToString(entry.getValue()) + "\n");
-                    }
-                    Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "Timedout with Thread.getAllStackTraces()=" + allThreads);
-                    serverThread.interrupt();
-                    clientThread.interrupt();
-                } catch (InterruptedException ex) {
-                    //Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
-                }
-            }
-        }, testName + "timeout");
-        timeoutThread.start();
-        clientThread.start();
-        clientThread.join();
-        assertFalse("timeoutOccured", timeoutOccured);
-        newout.flush();
-        String clientoutput = baos.toString();
-        System.setOut(out);
-        assertTrue("\"" + clientoutput + "\".contains(\"CommandID = 8\")", clientoutput.contains("CommandID = 8"));
-        assertTrue("\"" + clientoutput + "\".contains(\"State = CRCL_DONE\")", clientoutput.contains("State = CRCL_DONE"));
-        assertTrue("\"" + clientoutput + "\".contains(\"pose = 1.1,0.0,0.1\")", clientoutput.contains("pose = 1.1,0.0,0.1"));
+		Thread timeoutThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(5000);
+					timeoutOccured = true;
+					Map<Thread, String> allThreads = new HashMap<>();
+					Map<Thread, StackTraceElement[]> traces = Thread.getAllStackTraces();
+					for (Entry<Thread, StackTraceElement[]> entry : traces.entrySet()) {
+						allThreads.put(entry.getKey(), Arrays.deepToString(entry.getValue()) + "\n");
+					}
+					Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE,
+							"Timedout with Thread.getAllStackTraces()=" + allThreads);
+					serverThread.interrupt();
+					clientThread.interrupt();
+				} catch (InterruptedException ex) {
+					// Logger.getLogger(CRCLSocketIT.class.getName()).log(Level.SEVERE, "", ex);
+				}
+			}
+		}, testName + "timeout");
+		timeoutThread.start();
+		clientThread.start();
+		clientThread.join();
+		assertFalse("timeoutOccured", timeoutOccured);
+		newout.flush();
+		String clientoutput = baos.toString();
+		System.setOut(out);
+		assertTrue("\"" + clientoutput + "\".contains(\"CommandID = 8\")", clientoutput.contains("CommandID = 8"));
+		assertTrue("\"" + clientoutput + "\".contains(\"State = CRCL_DONE\")",
+				clientoutput.contains("State = CRCL_DONE"));
+		assertTrue("\"" + clientoutput + "\".contains(\"pose = 1.1,0.0,0.1\")",
+				clientoutput.contains("pose = 1.1,0.0,0.1"));
 //        System.out.println("clientoutput = " + clientoutput);
-        assertTrue("this.serverThreadEx == null",this.serverThreadEx == null);
-        interruptingServer = true;
-        timeoutThread.interrupt();
-        timeoutThread.join();
-        serverThread.interrupt();
-        serverThread.join();
-        System.out.println("end " + testName);
-        this.serverThreadEx = null;
-        interruptingServer = false;
-    }
+		assertTrue("this.serverThreadEx == null", this.serverThreadEx == null);
+		interruptingServer = true;
+		timeoutThread.interrupt();
+		timeoutThread.join();
+		serverThread.interrupt();
+		serverThread.join();
+		System.out.println("end " + testName);
+		this.serverThreadEx = null;
+		interruptingServer = false;
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientBlockingServerBlockingSingleThreaded() throws Exception {
-        testClientServer("testClientBlockingServerBlockingSingleThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.BLOCKING,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientBlockingServerBlockingSingleThreaded() throws Exception {
+		testClientServer("testClientBlockingServerBlockingSingleThreaded", ExampleType.BLOCKING, ExampleType.BLOCKING,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientBlockingServerBlockingMultiThreaded() throws Exception {
-        testClientServer("testClientBlockingServerBlockingMultiThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.BLOCKING,
-                true);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientBlockingServerBlockingMultiThreaded() throws Exception {
+		testClientServer("testClientBlockingServerBlockingMultiThreaded", ExampleType.BLOCKING, ExampleType.BLOCKING,
+				true);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientPollingServerBlockingSingleThreaded() throws Exception {
-        testClientServer("testClientPollingServerBlockingSingleThreaded",
-                ExampleType.POLLING,
-                ExampleType.BLOCKING,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientPollingServerBlockingSingleThreaded() throws Exception {
+		testClientServer("testClientPollingServerBlockingSingleThreaded", ExampleType.POLLING, ExampleType.BLOCKING,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientPollingServerBlockingMultiThreaded() throws Exception {
-        testClientServer("testClientBlockingServerBlockingMultiThreaded",
-                ExampleType.POLLING,
-                ExampleType.BLOCKING,
-                true);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientPollingServerBlockingMultiThreaded() throws Exception {
+		testClientServer("testClientBlockingServerBlockingMultiThreaded", ExampleType.POLLING, ExampleType.BLOCKING,
+				true);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientPollingServerPollingSingleThreaded() throws Exception {
-        testClientServer("testClientPollingServerPollingSingleThreaded",
-                ExampleType.POLLING,
-                ExampleType.POLLING,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientPollingServerPollingSingleThreaded() throws Exception {
+		testClientServer("testClientPollingServerPollingSingleThreaded", ExampleType.POLLING, ExampleType.POLLING,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientPollingServerPollingMultiThreaded() throws Exception {
-        testClientServer("testClientBlockingServerBlockingMultiThreaded",
-                ExampleType.POLLING,
-                ExampleType.POLLING,
-                true);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientPollingServerPollingMultiThreaded() throws Exception {
+		testClientServer("testClientBlockingServerBlockingMultiThreaded", ExampleType.POLLING, ExampleType.POLLING,
+				true);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientBlockingServerPollingSingleThreaded() throws Exception {
-        testClientServer("testClientBlockingServerPollingSingleThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.POLLING,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientBlockingServerPollingSingleThreaded() throws Exception {
+		testClientServer("testClientBlockingServerPollingSingleThreaded", ExampleType.BLOCKING, ExampleType.POLLING,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientBlockingServerPollingMultiThreaded() throws Exception {
-        testClientServer("testClientBlockingServerPollingMultiThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.POLLING,
-                true);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientBlockingServerPollingMultiThreaded() throws Exception {
+		testClientServer("testClientBlockingServerPollingMultiThreaded", ExampleType.BLOCKING, ExampleType.POLLING,
+				true);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientPollingServerCallbackSingleThreaded() throws Exception {
-        testClientServer("testClientPollingServerCallbackSingleThreaded",
-                ExampleType.POLLING,
-                ExampleType.CALLBACK,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientPollingServerCallbackSingleThreaded() throws Exception {
+		testClientServer("testClientPollingServerCallbackSingleThreaded", ExampleType.POLLING, ExampleType.CALLBACK,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    private void testClientPollingServerCallbackMultiThreaded() throws Exception {
-        testClientServer("testClientPollingServerCallbackMultiThreaded",
-                ExampleType.POLLING,
-                ExampleType.CALLBACK,
-                true);
-    }
+//	/**
+//	 * Test that Blocking Client works with Blocking Single-Threaded Server
+//	 *
+//	 * @throws java.lang.Exception
+//	 */
+//	private void testClientPollingServerCallbackMultiThreaded() throws Exception {
+//		testClientServer("testClientPollingServerCallbackMultiThreaded", ExampleType.POLLING, ExampleType.CALLBACK,
+//				true);
+//	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testClientBlockingServerCallbackSingleThreaded() throws Exception {
-        testClientServer("testClientBlockingServerCallbackSingleThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.CALLBACK,
-                false);
-    }
+	/**
+	 * Test that Blocking Client works with Blocking Single-Threaded Server
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testClientBlockingServerCallbackSingleThreaded() throws Exception {
+		testClientServer("testClientBlockingServerCallbackSingleThreaded", ExampleType.BLOCKING, ExampleType.CALLBACK,
+				false);
+	}
 
-    /**
-     * Test that Blocking Client works with Blocking Single-Threaded Server
-     *
-     * @throws java.lang.Exception
-     */
-    private void testClientBlockingServerCallbackMultiThreaded() throws Exception {
-        testClientServer("testClientBlockingServerCallbackMultiThreaded",
-                ExampleType.BLOCKING,
-                ExampleType.CALLBACK,
-                true);
-    }
+//	/**
+//	 * Test that Blocking Client works with Blocking Single-Threaded Server
+//	 *
+//	 * @throws java.lang.Exception
+//	 */
+//	private void testClientBlockingServerCallbackMultiThreaded() throws Exception {
+//		testClientServer("testClientBlockingServerCallbackMultiThreaded", ExampleType.BLOCKING, ExampleType.CALLBACK,
+//				true);
+//	}
 
-    /**
-     * Test of stringToProgram method, of class CRCLSocket.
-     *
-     * @throws java.lang.Exception
-     */
-    @Test
-    public void testStringToProgram() throws Exception {
-        System.out.println("stringToProgram");
-        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<CRCLProgram\n"
-                + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "  xsi:noNamespaceSchemaLocation=\"../xmlSchemas/CRCLProgramInstance.xsd\">\n"
-                + "  <InitCanon>\n"
-                + "    <CommandID>1</CommandID>\n"
-                + "  </InitCanon>\n"
-                + "  <MiddleCommand xsi:type=\"SetLengthUnitsType\">\n"
-                + "    <CommandID>2</CommandID>\n"
-                + "    <UnitName>meter</UnitName>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetTransSpeedType\">\n"
-                + "    <CommandID>3</CommandID>\n"
-                + "    <TransSpeed xsi:type=\"TransSpeedAbsoluteType\">\n"
-                + "      <Setting>1.0</Setting>\n"
-                + "    </TransSpeed>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetTransAccelType\">\n"
-                + "    <CommandID>4</CommandID>\n"
-                + "    <TransAccel xsi:type=\"TransAccelRelativeType\">\n"
-                + "      <Fraction>0.80</Fraction>\n"
-                + "    </TransAccel>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndPoseToleranceType\">\n"
-                + "    <CommandID>5</CommandID>\n"
-                + "    <Tolerance>\n"
-                + "      <XPointTolerance>0.002</XPointTolerance>\n"
-                + "      <YPointTolerance>0.002</YPointTolerance>\n"
-                + "      <ZPointTolerance>0.002</ZPointTolerance>\n"
-                + "    </Tolerance>\n"
-                + "   </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetIntermediatePoseToleranceType\">\n"
-                + "    <CommandID>6</CommandID>\n"
-                + "    <Tolerance>\n"
-                + "      <XPointTolerance>0.01</XPointTolerance>\n"
-                + "      <YPointTolerance>0.01</YPointTolerance>\n"
-                + "      <ZPointTolerance>0.01</ZPointTolerance>\n"
-                + "    </Tolerance>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>7</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>8</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>1.5</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>1.5</X> <Y>1</Y> <Z>0.0001</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>2</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>9</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>10</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>1.5</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>0.5001</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>11</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>12</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>0.4</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"OpenToolChangerType\">\n"
-                + "    <CommandID>13</CommandID>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>14</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"CloseToolChangerType\">\n"
-                + "    <CommandID>15</CommandID>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>16</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>1.1</Y> <Z>1.8</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>1.1</Y> <Z>0.1501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>17</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>18</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>1.1</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>1.07</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>1.07</Y> <Z>0.6501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>19</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>20</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>1.07</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>0.9</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>0.9</Y> <Z>0.1501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>21</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>22</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>5.659</X> <Y>0.9</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>0.93</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>0.93</Y> <Z>0.6501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>23</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>24</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>3.86</X> <Y>0.93</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>6.42</X> <Y>1</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>6.42</X> <Y>1</Y> <Z>0.1501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>25</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>26</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>6.42</X> <Y>1</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>0.93</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>0.93</Y> <Z>0.6501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>27</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>28</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>0.93</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>7.61</X> <Y>1.02</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>7.61</X> <Y>1.02</Y> <Z>0.1501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>29</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>30</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>7.61</X> <Y>1.02</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>1.07</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>1.07</Y> <Z>0.6501</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>31</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>32</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4.14</X> <Y>1.07</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>0.475</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"OpenToolChangerType\">\n"
-                + "    <CommandID>33</CommandID>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>34</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>0.5</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"CloseToolChangerType\">\n"
-                + "    <CommandID>35</CommandID>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>36</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>0.5001</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>37</CommandID>\n"
-                + "    <Setting>1</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>38</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>2.5</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>2.5</X> <Y>1</Y> <Z>0.0001</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>3</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
-                + "    <CommandID>39</CommandID>\n"
-                + "    <Setting>0</Setting>\n"
-                + "  </MiddleCommand>\n"
-                + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
-                + "    <CommandID>40</CommandID>\n"
-                + "    <MoveStraight>false</MoveStraight>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>2.5</X> <Y>1</Y> <Z>1</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <Waypoint>\n"
-                + "      <Point>\n"
-                + "        <X>0.5</X> <Y>0</Y> <Z>2</Z>\n"
-                + "      </Point>\n"
-                + "      <XAxis>\n"
-                + "        <I>1</I> <J>0</J> <K>0</K>\n"
-                + "      </XAxis>\n"
-                + "      <ZAxis>\n"
-                + "        <I>0</I> <J>0</J> <K>-1</K>\n"
-                + "      </ZAxis>\n"
-                + "    </Waypoint>\n"
-                + "    <NumPositions>2</NumPositions>\n"
-                + "  </MiddleCommand>\n"
-                + "  <EndCanon>\n"
-                + "    <CommandID>41</CommandID>\n"
-                + "  </EndCanon>\n"
-                + "</CRCLProgram>";
-        boolean validate = false;
-        CRCLSocket instance = new CRCLSocket();
-        CRCLProgramType result = instance.stringToProgram(str, validate);
-        final InitCanonType initCanon = result.getInitCanon();
-        assertNotNull(initCanon);
-        if (null != initCanon) {
-            assertEquals(1, initCanon.getCommandID());
-        }
-        final List<MiddleCommandType> middleCommandList = CRCLUtils.getNonNullFilteredList(result.getMiddleCommand());
-        assertNotNull(middleCommandList);
-        if (null != middleCommandList) {
-            assertEquals(middleCommandList.size(), 39);
-        }
-        final EndCanonType endCanon = result.getEndCanon();
-        assertNotNull(endCanon);
-        if (null != endCanon) {
-            assertEquals(41, endCanon.getCommandID());
-        }
+	/**
+	 * Test of stringToProgram method, of class CRCLSocket.
+	 *
+	 * @throws java.lang.Exception
+	 */
+	@Test
+	public void testStringToProgram() throws Exception {
+		System.out.println("stringToProgram");
+		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<CRCLProgram\n"
+				+ "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+				+ "  xsi:noNamespaceSchemaLocation=\"../xmlSchemas/CRCLProgramInstance.xsd\">\n" + "  <InitCanon>\n"
+				+ "    <CommandID>1</CommandID>\n" + "  </InitCanon>\n"
+				+ "  <MiddleCommand xsi:type=\"SetLengthUnitsType\">\n" + "    <CommandID>2</CommandID>\n"
+				+ "    <UnitName>meter</UnitName>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetTransSpeedType\">\n" + "    <CommandID>3</CommandID>\n"
+				+ "    <TransSpeed xsi:type=\"TransSpeedAbsoluteType\">\n" + "      <Setting>1.0</Setting>\n"
+				+ "    </TransSpeed>\n" + "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"SetTransAccelType\">\n"
+				+ "    <CommandID>4</CommandID>\n" + "    <TransAccel xsi:type=\"TransAccelRelativeType\">\n"
+				+ "      <Fraction>0.80</Fraction>\n" + "    </TransAccel>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndPoseToleranceType\">\n" + "    <CommandID>5</CommandID>\n"
+				+ "    <Tolerance>\n" + "      <XPointTolerance>0.002</XPointTolerance>\n"
+				+ "      <YPointTolerance>0.002</YPointTolerance>\n"
+				+ "      <ZPointTolerance>0.002</ZPointTolerance>\n" + "    </Tolerance>\n" + "   </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetIntermediatePoseToleranceType\">\n" + "    <CommandID>6</CommandID>\n"
+				+ "    <Tolerance>\n" + "      <XPointTolerance>0.01</XPointTolerance>\n"
+				+ "      <YPointTolerance>0.01</YPointTolerance>\n" + "      <ZPointTolerance>0.01</ZPointTolerance>\n"
+				+ "    </Tolerance>\n" + "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n"
+				+ "    <CommandID>7</CommandID>\n" + "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>8</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>1.5</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>1.5</X> <Y>1</Y> <Z>0.0001</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>2</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>9</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>10</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>1.5</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n"
+				+ "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4</X> <Y>1</Y> <Z>0.5001</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>11</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>12</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>4</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>0.4</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"OpenToolChangerType\">\n" + "    <CommandID>13</CommandID>\n"
+				+ "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
+				+ "    <CommandID>14</CommandID>\n" + "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n"
+				+ "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>0.5</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"CloseToolChangerType\">\n" + "    <CommandID>15</CommandID>\n"
+				+ "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
+				+ "    <CommandID>16</CommandID>\n" + "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n"
+				+ "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>5.659</X> <Y>1.1</Y> <Z>1.8</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>5.659</X> <Y>1.1</Y> <Z>0.1501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>17</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>18</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>5.659</X> <Y>1.1</Y> <Z>0.5</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>3.86</X> <Y>1.07</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>3.86</X> <Y>1.07</Y> <Z>0.6501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>19</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>20</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>3.86</X> <Y>1.07</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>5.659</X> <Y>0.9</Y> <Z>0.5</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>5.659</X> <Y>0.9</Y> <Z>0.1501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>21</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>22</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>5.659</X> <Y>0.9</Y> <Z>0.5</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>3.86</X> <Y>0.93</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>3.86</X> <Y>0.93</Y> <Z>0.6501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>23</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>24</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>3.86</X> <Y>0.93</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>6.42</X> <Y>1</Y> <Z>0.5</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>6.42</X> <Y>1</Y> <Z>0.1501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>25</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>26</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>6.42</X> <Y>1</Y> <Z>0.5</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4.14</X> <Y>0.93</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4.14</X> <Y>0.93</Y> <Z>0.6501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>27</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>28</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>4.14</X> <Y>0.93</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>7.61</X> <Y>1.02</Y> <Z>0.5</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>7.61</X> <Y>1.02</Y> <Z>0.1501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>29</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>30</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>7.61</X> <Y>1.02</Y> <Z>0.5</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4.14</X> <Y>1.07</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4.14</X> <Y>1.07</Y> <Z>0.6501</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>31</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>32</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>4.14</X> <Y>1.07</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>0.475</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"OpenToolChangerType\">\n" + "    <CommandID>33</CommandID>\n"
+				+ "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
+				+ "    <CommandID>34</CommandID>\n" + "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n"
+				+ "      <Point>\n" + "        <X>8.75</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>0.5</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"CloseToolChangerType\">\n" + "    <CommandID>35</CommandID>\n"
+				+ "  </MiddleCommand>\n" + "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n"
+				+ "    <CommandID>36</CommandID>\n" + "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n"
+				+ "      <Point>\n" + "        <X>8.25</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n"
+				+ "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>4</X> <Y>1</Y> <Z>0.5001</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>37</CommandID>\n"
+				+ "    <Setting>1</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>38</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>4</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>2.5</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n"
+				+ "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>2.5</X> <Y>1</Y> <Z>0.0001</Z>\n"
+				+ "      </Point>\n" + "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n"
+				+ "      <ZAxis>\n" + "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>3</NumPositions>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"SetEndEffectorType\">\n" + "    <CommandID>39</CommandID>\n"
+				+ "    <Setting>0</Setting>\n" + "  </MiddleCommand>\n"
+				+ "  <MiddleCommand xsi:type=\"MoveThroughToType\">\n" + "    <CommandID>40</CommandID>\n"
+				+ "    <MoveStraight>false</MoveStraight>\n" + "    <Waypoint>\n" + "      <Point>\n"
+				+ "        <X>2.5</X> <Y>1</Y> <Z>1</Z>\n" + "      </Point>\n" + "      <XAxis>\n"
+				+ "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <Waypoint>\n" + "      <Point>\n" + "        <X>0.5</X> <Y>0</Y> <Z>2</Z>\n" + "      </Point>\n"
+				+ "      <XAxis>\n" + "        <I>1</I> <J>0</J> <K>0</K>\n" + "      </XAxis>\n" + "      <ZAxis>\n"
+				+ "        <I>0</I> <J>0</J> <K>-1</K>\n" + "      </ZAxis>\n" + "    </Waypoint>\n"
+				+ "    <NumPositions>2</NumPositions>\n" + "  </MiddleCommand>\n" + "  <EndCanon>\n"
+				+ "    <CommandID>41</CommandID>\n" + "  </EndCanon>\n" + "</CRCLProgram>";
+		boolean validate = false;
+		try (CRCLSocket instance = new CRCLSocket()) {
+			CRCLProgramType result = instance.stringToProgram(str, validate);
+			final InitCanonType initCanon = result.getInitCanon();
+			assertNotNull(initCanon);
+			if (null != initCanon) {
+				assertEquals(1, initCanon.getCommandID());
+			}
+			final List<MiddleCommandType> middleCommandList = CRCLUtils
+					.getNonNullFilteredList(result.getMiddleCommand());
+			assertNotNull(middleCommandList);
+			if (null != middleCommandList) {
+				assertEquals(middleCommandList.size(), 39);
+			}
+			final EndCanonType endCanon = result.getEndCanon();
+			assertNotNull(endCanon);
+			if (null != endCanon) {
+				assertEquals(41, endCanon.getCommandID());
+			}
+		}
+	}
 
-    }
-
-    /**
-     * Test of statusToString method, of class CRCLSocket.
-     */
+	/**
+	 * Test of statusToString method, of class CRCLSocket.
+	 */
 //    @Test
 //    public void testStatusToString() throws Exception {
 //        System.out.println("statusToPrettyString");
@@ -1196,6 +687,5 @@ public class CRCLSocketIT {
 ////        System.out.println("expResultPart = " + expResultPart);
 //        assertEquals(expResult, result);
 //    }
-    private static final Logger LOG = Logger.getLogger(CRCLSocketIT.class.getName());
 
 }

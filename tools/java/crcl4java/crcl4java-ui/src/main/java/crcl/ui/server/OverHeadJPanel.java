@@ -21,8 +21,6 @@
 package crcl.ui.server;
 
 import crcl.utils.kinematics.SimRobotEnum;
-import static crcl.utils.kinematics.SimRobotEnum.PLAUSIBLE;
-import static crcl.utils.kinematics.SimRobotEnum.SIMPLE;
 import crcl.utils.kinematics.SimulatedKinematicsPlausible;
 import crcl.utils.kinematics.SimulatedKinematicsSimple;
 import java.awt.Color;

@@ -129,5 +129,4 @@ public class CmdLineClient {
             Logger.getLogger(CmdLineClient.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
-    private static final Logger LOG = Logger.getLogger(CmdLineClient.class.getName());
 }

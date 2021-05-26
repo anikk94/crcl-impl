@@ -106,20 +106,20 @@ class PerfTest {
         return stat;
     }
 
-    private static void main(String[] args) {
-        MinMaxAvg ft0 = runPerfTest(false, true, 200);
-        MinMaxAvg ff0 = runPerfTest(false, false, 200);
-        MinMaxAvg ft = runPerfTest(false, true, 25000);
-        MinMaxAvg ff = runPerfTest(false, false, 25000);
-
-        if (null != ft) {
-            System.out.println("false, true,    " + ft.toStringCsv());
-        }
-        if (null != ff) {
-            System.out.println("false, false,   " + ff.toStringCsv());
-        }
-        System.exit(0);
-    }
+//    private static void main(String[] args) {
+//        MinMaxAvg ft0 = runPerfTest(false, true, 200);
+//        MinMaxAvg ff0 = runPerfTest(false, false, 200);
+//        MinMaxAvg ft = runPerfTest(false, true, 25000);
+//        MinMaxAvg ff = runPerfTest(false, false, 25000);
+//
+//        if (null != ft) {
+//            System.out.println("false, true,    " + ft.toStringCsv());
+//        }
+//        if (null != ff) {
+//            System.out.println("false, false,   " + ff.toStringCsv());
+//        }
+//        System.exit(0);
+//    }
 
     public static class MinMaxAvg {
 
@@ -164,11 +164,11 @@ class PerfTest {
                 Thread.sleep(100);
             } catch (Exception ignored) {
             }
-            CRCLSocket csTst = new CRCLSocket();
-            csTst.setReplaceHeader(true);
-            CRCLStatusType stat0 = createStatus();
-            String xmlS = csTst.statusToString(stat0, validate);
-
+//            try(CRCLSocket csTst = new CRCLSocket()) {
+//            csTst.setReplaceHeader(true);
+//            CRCLStatusType stat0 = createStatus();
+//			String xmlS = csTst.statusToString(stat0, validate);
+//            }
             final List<Socket> sockets = new ArrayList<>();
             final ExecutorService exServ = Executors.newCachedThreadPool();
             ss = new ServerSocket(44004);

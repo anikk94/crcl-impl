@@ -49,9 +49,8 @@ import static crcl.utils.CRCLPosemath.vector;
 public class CRCLSocketBlockingClientExample {
 
     public static void main(String[] args) {
-        try {
-            // Connect to the server
-            CRCLSocket s = new CRCLSocket("localhost", CRCLSocket.DEFAULT_PORT);
+    	// Connect to the server
+        try (CRCLSocket s = new CRCLSocket("localhost", CRCLSocket.DEFAULT_PORT)) {
 
             // Create an instance to wrap all commands.
             CRCLCommandInstanceType instance = new CRCLCommandInstanceType();
@@ -110,5 +109,4 @@ public class CRCLSocketBlockingClientExample {
             Logger.getLogger(CRCLSocketBlockingClientExample.class.getName()).log(Level.SEVERE, "Example Main failed.", ex);
         }
     }
-    private static final Logger LOG = Logger.getLogger(CRCLSocketBlockingClientExample.class.getName());
 }
