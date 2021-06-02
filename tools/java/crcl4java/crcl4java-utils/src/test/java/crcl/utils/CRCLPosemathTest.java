@@ -52,7 +52,7 @@ import rcs.posemath.PmRotationVector;
 import rcs.posemath.PmRpy;
 import rcs.posemath.Posemath;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings({"all","serial"})
 public class CRCLPosemathTest {
 
     public CRCLPosemathTest() {

@@ -219,8 +219,8 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
 
 //    private static final Comparator<File> LAST_MODIFIED_COMPARATOR
 //            = (File o1, File o2) -> Long.compare(o1.lastModified(), o2.lastModified());
-    private static final Comparator<File> LAST_MODIFIED_COMPARATOR
-            = Comparator.comparing(File::lastModified);
+//    private static final Comparator<File> LAST_MODIFIED_COMPARATOR
+//            = Comparator.comparing(File::lastModified);
 
 //    private void sortFileArrayByLastModified(File[] sub_fa) {
 //        if (null != sub_fa) {

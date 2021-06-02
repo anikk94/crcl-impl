@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import org.junit.Test;
 
 
-@SuppressWarnings("ALL")
+@SuppressWarnings({"all","serial"})
 public class ObjTableJPanelTest {
     
     public ObjTableJPanelTest() {

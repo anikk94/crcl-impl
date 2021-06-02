@@ -1999,7 +1999,6 @@ public class CRCLSocket implements AutoCloseable {
 //    }
     private static class XmlToCsvHandler extends DefaultHandler {
 
-        @SuppressWarnings({"deprecation", "JdkObsolete"})
         private final StringBuffer buffer = new StringBuffer();
 
         private int fields = 0;

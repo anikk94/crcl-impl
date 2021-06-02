@@ -338,7 +338,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
 
         private final CRCLSocket socket;
 
-        private final STATE_TYPE state;
+//        private final STATE_TYPE state;
 
         private final @Nullable
         Future<?> future;
@@ -355,7 +355,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         CRCLServerClientInfo(CRCLSocket socket, @Nullable Future<?> future, STATE_TYPE state) {
             this.socket = socket;
             this.future = future;
-            this.state = state;
+//            this.state = state;
         }
 
         @Override

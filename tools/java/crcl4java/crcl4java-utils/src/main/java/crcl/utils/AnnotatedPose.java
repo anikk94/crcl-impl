@@ -25,7 +25,6 @@ package crcl.utils;
 
 
 import crcl.base.CRCLStatusType;
-import java.util.logging.Logger;
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmPose;
 import rcs.posemath.PmQuaternion;

@@ -30,7 +30,6 @@ import crcl.base.MoveThroughToType;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -5181,16 +5181,15 @@ public class CrclSwingClientJPanel
         }
     }//GEN-LAST:event_jButtonEditProgramItemActionPerformed
 
-    @SuppressWarnings("rawtypes")
     private static DefaultTableModel getCommandStatusLogModel() {
         return new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 CrclSwingClientInner.COMMAND_STATUS_LOG_HEADINGS
         ) {
-            final Class[] types = CrclSwingClientInner.COMMAND_STATUS_LOG_TYPES;
+            final Class<?>[] types = CrclSwingClientInner.COMMAND_STATUS_LOG_TYPES;
 //            boolean[] canEdit = CrclSwingClientInner.COMMAND_STATUS_LOG_CAN_EDITS;
 
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 if (types.length != CrclSwingClientInner.COMMAND_STATUS_LOG_HEADINGS.length) {
                     System.out.println("types.length=" + types.length);
                     System.out.println("CrclSwingClientInner.COMMAND_STATUS_LOG_HEADINGS.length = " + CrclSwingClientInner.COMMAND_STATUS_LOG_HEADINGS.length);

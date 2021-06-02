@@ -30,8 +30,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -61,12 +59,10 @@ import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
@@ -251,39 +247,39 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
         };
     }
 
-    @SuppressWarnings("serial")
-    private class NewDeletePanel extends JPanel {
+//    @SuppressWarnings("serial")
+//    private class NewDeletePanel extends JPanel {
+//
+//        private final JButton jButtonNew = new JButton("New");
+//        private final JButton jButtonDelete = new JButton("Delete");
+//
+//        NewDeletePanel() {
+//            super();
+//
+////                this.setPreferredSize(new Dimension(400,400));
+////                this.setSize(new Dimension(400,400));
+////                this.setMinimumSize(new Dimension(400,400));
+//            jButtonNew.addActionListener(new ActionListener() {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    setNewTableItem();
+//                }
+//            });
+//            jButtonDelete.addActionListener(new ActionListener() {
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    //setNewTableItem();
+//                    System.err.println("FIXME: implement delete");
+//                }
+//            });
+//            this.add(jButtonNew);
+//            this.add(jButtonDelete);
+//        }
+//    };
 
-        private final JButton jButtonNew = new JButton("New");
-        private final JButton jButtonDelete = new JButton("Delete");
-
-        NewDeletePanel() {
-            super();
-
-//                this.setPreferredSize(new Dimension(400,400));
-//                this.setSize(new Dimension(400,400));
-//                this.setMinimumSize(new Dimension(400,400));
-            jButtonNew.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setNewTableItem();
-                }
-            });
-            jButtonDelete.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //setNewTableItem();
-                    System.err.println("FIXME: implement delete");
-                }
-            });
-            this.add(jButtonNew);
-            this.add(jButtonDelete);
-        }
-    };
-
-    final Map<Integer, NewDeletePanel> pnlMap = new HashMap<>();
+//    final Map<Integer, NewDeletePanel> pnlMap = new HashMap<>();
     
 //    @SuppressWarnings("serial")
 //    private class MyTableCellRenderer extends DefaultTableCellRenderer {

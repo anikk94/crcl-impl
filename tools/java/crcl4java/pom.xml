@@ -175,13 +175,10 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
-                    <showDeprecation>true</showDeprecation>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <release>${maven.compiler.release}</release>
                     <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                    <verbose>true</verbose>
                 </configuration>
             </plugin>
         </plugins>
@@ -222,6 +219,8 @@
                                 <arg>-Werror</arg>
                                 <arg>-parameters</arg>
                             </compilerArgs>
+                            <showDeprecation>true</showDeprecation>
+                            <verbose>true</verbose>
                         </configuration>
                     </plugin>
                 </plugins>

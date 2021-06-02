@@ -85,10 +85,8 @@ import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import static crcl.utils.CRCLPosemath.getNullablePose;
 import static crcl.utils.CRCLPosemath.maxDiffDoubleArray;
-import static crcl.utils.CRCLPosemath.multiply;
 import static crcl.utils.CRCLPosemath.point;
 import static crcl.utils.CRCLPosemath.pose;
-import static crcl.utils.CRCLPosemath.shift;
 import static crcl.utils.CRCLPosemath.toPmCartesian;
 import static crcl.utils.CRCLPosemath.toPmRotationVector;
 import static crcl.utils.CRCLPosemath.toPoseType;
@@ -107,8 +105,6 @@ import crcl.utils.ThreadLockedHolder;
 import crcl.utils.XFuture;
 import crcl.utils.XpathUtils;
 import crcl.utils.kinematics.SimRobotEnum;
-import static crcl.utils.kinematics.SimRobotEnum.PLAUSIBLE;
-import static crcl.utils.kinematics.SimRobotEnum.SIMPLE;
 import crcl.utils.kinematics.SimulatedKinematicsPlausible;
 import crcl.utils.kinematics.SimulatedKinematicsSimple;
 import crcl.utils.outer.interfaces.SimServerMenuOuter;
@@ -937,76 +933,76 @@ public class SimServerInner {
         return pose.getZAxis();
     }
 
-    private boolean handleContinueMoveScrew(MoveScrewType moveScrew, AngleUnitEnumType angleType) {
-        switch (moveScrewStep) {
-            case 0:
-                setCommandState(CRCL_WORKING);
-                ;
-                if (moveScrew.getStartPosition() != null) {
-                    setGoalPose(moveScrew.getStartPosition());
-                    moveScrewStep = 1;
-                } else {
-                    moveScrewStep = 2;
-                }
-                break;
-
-            case 1:
-                if (isFinishedMove()) {
-                    PoseType pose = getPose();
-                    if (null == pose) {
-                        multiStepCommand = null;
-                        setCommandState(CRCL_ERROR, "pose is null ");
-                        return false;
-                    } else if (null == goalPose) {
-                        multiStepCommand = null;
-                        setCommandState(CRCL_ERROR, "goalPose is null ");
-                        return false;
-                    } else if (!PoseToleranceChecker.isInTolerance(pose, goalPose,
-                            expectedEndPoseTolerance, angleType)) {
-                        multiStepCommand = null;
-                        String checkToleranceString = PoseToleranceChecker.checkToleranceString(pose, goalPose, expectedEndPoseTolerance, angleType);
-                        setCommandState(CRCL_ERROR, "pose not in tolerance : " + checkToleranceString);
-                        return false;
-                    }
-                }
-                break;
-
-            case 2:
-                final Double axialDistanceFree = moveScrew.getAxialDistanceFree();
-                if (axialDistanceFree != null && axialDistanceFree > 0) {
-                    PoseType pose = requireNonNull(getPose(), "getPose()");
-                    VectorType xAxis = requireNonNull(getXAxis(), "getXAxis()");
-                    PoseType newGoalPose = shift(pose,
-                            multiply(axialDistanceFree, xAxis));
-                    setGoalPose(newGoalPose);
-                    setMoveStraight(true);
-                    moveScrewStep = 3;
-                } else {
-                    moveScrewStep = 4;
-                }
-                break;
-
-            case 3:
-                if (isFinishedMove()) {
-                    moveScrewStep = 4;
-                }
-                break;
-
-            case 4:
-                moveScriptTurnComplete = BigDecimal.ZERO;
-                moveScrewStep = 5;
-                break;
-
-            case 5:
-                multiStepCommand = null;
-                setCommandState(CRCL_DONE);
-                return false;
-        }
-        return true;
-//        setCommandState(CommandStateEnumType.CRCL_DONE);
-//        multiStepCommand = null;
-//        return false;
-    }
+//    private boolean handleContinueMoveScrew(MoveScrewType moveScrew, AngleUnitEnumType angleType) {
+//        switch (moveScrewStep) {
+//            case 0:
+//                setCommandState(CRCL_WORKING);
+//                ;
+//                if (moveScrew.getStartPosition() != null) {
+//                    setGoalPose(moveScrew.getStartPosition());
+//                    moveScrewStep = 1;
+//                } else {
+//                    moveScrewStep = 2;
+//                }
+//                break;
+//
+//            case 1:
+//                if (isFinishedMove()) {
+//                    PoseType pose = getPose();
+//                    if (null == pose) {
+//                        multiStepCommand = null;
+//                        setCommandState(CRCL_ERROR, "pose is null ");
+//                        return false;
+//                    } else if (null == goalPose) {
+//                        multiStepCommand = null;
+//                        setCommandState(CRCL_ERROR, "goalPose is null ");
+//                        return false;
+//                    } else if (!PoseToleranceChecker.isInTolerance(pose, goalPose,
+//                            expectedEndPoseTolerance, angleType)) {
+//                        multiStepCommand = null;
+//                        String checkToleranceString = PoseToleranceChecker.checkToleranceString(pose, goalPose, expectedEndPoseTolerance, angleType);
+//                        setCommandState(CRCL_ERROR, "pose not in tolerance : " + checkToleranceString);
+//                        return false;
+//                    }
+//                }
+//                break;
+//
+//            case 2:
+//                final Double axialDistanceFree = moveScrew.getAxialDistanceFree();
+//                if (axialDistanceFree != null && axialDistanceFree > 0) {
+//                    PoseType pose = requireNonNull(getPose(), "getPose()");
+//                    VectorType xAxis = requireNonNull(getXAxis(), "getXAxis()");
+//                    PoseType newGoalPose = shift(pose,
+//                            multiply(axialDistanceFree, xAxis));
+//                    setGoalPose(newGoalPose);
+//                    setMoveStraight(true);
+//                    moveScrewStep = 3;
+//                } else {
+//                    moveScrewStep = 4;
+//                }
+//                break;
+//
+//            case 3:
+//                if (isFinishedMove()) {
+//                    moveScrewStep = 4;
+//                }
+//                break;
+//
+//            case 4:
+//                moveScriptTurnComplete = BigDecimal.ZERO;
+//                moveScrewStep = 5;
+//                break;
+//
+//            case 5:
+//                multiStepCommand = null;
+//                setCommandState(CRCL_DONE);
+//                return false;
+//        }
+//        return true;
+////        setCommandState(CommandStateEnumType.CRCL_DONE);
+////        multiStepCommand = null;
+////        return false;
+//    }
 
 //    private boolean handleMultiStepCommand(SimServerClientState clientState) {
 //        if (null == multiStepCommand) {
