@@ -232,6 +232,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
         jMenuTools.add(jCheckBoxMenuItemShowPressureOutput);
 
         jMenuItemLaunchWeb.setText("Launch Web Server/Application");
+        jMenuItemLaunchWeb.setEnabled(false);
         jMenuItemLaunchWeb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemLaunchWebActionPerformed(evt);
@@ -317,7 +318,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
     }//GEN-LAST:event_jCheckBoxMenuItemStartClientActionPerformed
 
     private void jMenuItemLaunchWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLaunchWebActionPerformed
-        launchWebServer();
+//        launchWebServer();
     }//GEN-LAST:event_jMenuItemLaunchWebActionPerformed
 
     private void jCheckBoxMenuItemDebugActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemDebugActionPerformed
@@ -328,9 +329,9 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
         fanucCRCLServerJPanel1.shutDown();
     }
 
-    private void launchWebServer() {
-        fanucCRCLServerJPanel1.launchWebServer();
-    }
+//    private void launchWebServer() {
+//        fanucCRCLServerJPanel1.launchWebServer();
+//    }
 
     public JTextField getjTextFieldHostName() {
         return fanucCRCLServerJPanel1.getjTextFieldHostName();

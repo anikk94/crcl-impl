@@ -128,9 +128,9 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
 //    private void shutDown() {
 //        fanucCRCLServerJPanel1.shutDown();
 //    }
-    private void launchWebServer() {
-        fanucCRCLServerJPanel1.launchWebServer();
-    }
+//    private void launchWebServer() {
+//        fanucCRCLServerJPanel1.launchWebServer();
+//    }
 
     @Override
     public JTextField getjTextFieldHostName() {
@@ -356,6 +356,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
         jMenuTools.add(jCheckBoxMenuItemShowPressureOutput);
 
         jMenuItemLaunchWeb.setText("Launch Web Server/Application");
+        jMenuItemLaunchWeb.setEnabled(false);
         jMenuItemLaunchWeb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemLaunchWebActionPerformed(evt);
@@ -428,7 +429,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
     }//GEN-LAST:event_jCheckBoxMenuItemShowPressureOutputActionPerformed
 
     private void jMenuItemLaunchWebActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLaunchWebActionPerformed
-        launchWebServer();
+//        launchWebServer();
     }//GEN-LAST:event_jMenuItemLaunchWebActionPerformed
 
     private void jCheckBoxMenuItemStartClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemStartClientActionPerformed

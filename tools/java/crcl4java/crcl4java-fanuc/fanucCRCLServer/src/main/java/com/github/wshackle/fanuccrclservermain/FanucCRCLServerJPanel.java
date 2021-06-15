@@ -39,7 +39,6 @@ import crcl.base.SetLengthUnitsType;
 import crcl.base.SetTransSpeedType;
 import crcl.base.TransSpeedAbsoluteType;
 import crcl.ui.client.CrclSwingClientJFrame;
-import crcl.ui.misc.WebServerJFrame;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;
@@ -1018,10 +1017,10 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //                fingerSensorServerCmd = serverSensorJFrame.getCommandString();
 //                fingerSensorServerDirectory = serverSensorJFrame.getDirectoryString();
 //            }
-            if (null != webServerJFrame) {
-                webServerCmd = webServerJFrame.getCommandString();
-                webServerDirectory = webServerJFrame.getDirectoryString();
-            }
+//            if (null != webServerJFrame) {
+//                webServerCmd = webServerJFrame.getCommandString();
+//                webServerDirectory = webServerJFrame.getDirectoryString();
+//            }
             props.setProperty("keepMoveToLog", Boolean.toString(main.isKeepMoveToLog()));
             if (null != fingerSensorServerCmd) {
                 props.setProperty("fingerSensorServerCmd", fingerSensorServerCmd);
@@ -1059,12 +1058,12 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //            serverSensorJFrame.dispose();
 //            serverSensorJFrame = null;
 //        }
-        if (null != webServerJFrame) {
-            webServerJFrame.stop();
-            webServerJFrame.setVisible(false);
-            webServerJFrame.dispose();
-            webServerJFrame = null;
-        }
+//        if (null != webServerJFrame) {
+//            webServerJFrame.stop();
+//            webServerJFrame.setVisible(false);
+//            webServerJFrame.dispose();
+//            webServerJFrame = null;
+//        }
 
         FanucCRCLMain.stop();
     }
@@ -1108,27 +1107,27 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 //        }
     }
 
-    private @Nullable
-    WebServerJFrame webServerJFrame = null;
+//    private @Nullable
+//    WebServerJFrame webServerJFrame = null;
 
-    public void launchWebServer() {
-        try {
-//            if (null != webServerJFrame) {
-//                webServerCmd = webServerJFrame.getCommandString();
-//                webServerDirectory = webServerJFrame.getDirectoryString();
-//                webServerJFrame.stop();
-//                webServerJFrame.setVisible(false);
-//                webServerJFrame.dispose();
-//                saveProperties();
-//            }
-            webServerJFrame = new WebServerJFrame();
-            webServerJFrame.setVisible(true);
-            webServerJFrame.start();
-        } catch (Exception ex) {
-            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
-            main.showError(ex.toString());
-        }
-    }
+//    public void launchWebServer() {
+//        try {
+////            if (null != webServerJFrame) {
+////                webServerCmd = webServerJFrame.getCommandString();
+////                webServerDirectory = webServerJFrame.getDirectoryString();
+////                webServerJFrame.stop();
+////                webServerJFrame.setVisible(false);
+////                webServerJFrame.dispose();
+////                saveProperties();
+////            }
+//            webServerJFrame = new WebServerJFrame();
+//            webServerJFrame.setVisible(true);
+//            webServerJFrame.start();
+//        } catch (Exception ex) {
+//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
+//            main.showError(ex.toString());
+//        }
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
