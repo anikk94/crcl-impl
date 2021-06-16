@@ -4369,8 +4369,15 @@ public class CrclSwingClientInner {
             }
             System.out.println("");
             System.out.flush();
+            System.err.println("runProgram: newExMsg = " + newExMsg);
             System.err.println("runProgram: threadCreateCallStack = " + XFuture.traceToString(threadCreateCallStack));
-            throw new RuntimeException(newExMsg, ex);
+            System.err.println("");
+            System.err.flush();
+            if(ex instanceof  RuntimeException) {
+                throw (RuntimeException) ex;
+            } else {
+                throw new RuntimeException(ex.getMessage()+newExMsg, ex);
+            }
         } finally {
             setOutgoingProgramIndex(-1);
             long runProgramEndTime = System.currentTimeMillis();

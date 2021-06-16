@@ -701,6 +701,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
 
     public void setCommandStateEnum(CommandStateEnumType newCommandStateEnum) {
 
+        if(initialized) {
         if (this.commandStateEnum == CommandStateEnumType.CRCL_ERROR) {
             System.out.println("");
             System.err.println("");
@@ -717,6 +718,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             System.err.println("");
             System.out.flush();
             System.err.flush();
+        }
         }
         if (this.commandStateEnum != newCommandStateEnum) {
             switch (newCommandStateEnum) {
@@ -752,7 +754,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         }
         if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR) {
             this.lastErrorCmdId = this.lastCommandEventCommandId;
-            if (this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
+            if (initialized && this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
                 System.out.println("");
                 System.err.println("");
                 System.out.flush();
@@ -1695,6 +1697,10 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     private final AtomicInteger guardTriggerCount = new AtomicInteger();
     private volatile int currentCmdStartGuardTriggerCount = 0;
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+    
     private void completeHandleEvent(final CRCLServerSocketEvent<STATE_TYPE> event) throws InterruptedException {
         if (event.getEventType() == CRCLServerSocketEventType.CRCL_COMMAND_RECIEVED) {
             CRCLCommandInstanceType instanceIn = event.getInstance();
