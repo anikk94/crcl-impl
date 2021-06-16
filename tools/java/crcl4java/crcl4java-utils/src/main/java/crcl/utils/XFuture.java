@@ -633,41 +633,41 @@ public class XFuture<T> extends CompletableFuture<T> {
         return retXF;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        XFuture.supplyAsync(() -> 2)
-                .thenApplyAsync(x -> {
-                    System.out.println("here");
-                    throw new RuntimeException();
-                })
-                .thenAccept(x -> {
-                    System.out.println("thenAccept : x = " + x);
-                })
-                .exceptionally((Throwable u) -> {
-                    System.out.println("exceptionally u = " + u);
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                })
-                .handle((Object t, Throwable u) -> {
-                    System.out.println("handle1 t = " + t);
-                    System.out.println("handle1 u = " + u);
-                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                })
-                .handle((Object t, Throwable u) -> {
-                    System.out.println("handle2 t = " + t);
-                    System.out.println("handle2 u = " + u);
-                    return 3;
-
+//    public static void oldTest_main(String[] args) throws InterruptedException {
+//        XFuture.supplyAsync(() -> 2)
+//                .thenApplyAsync(x -> {
+//                    System.out.println("here");
+//                    throw new RuntimeException();
+//                })
+//                .thenAccept(x -> {
+//                    System.out.println("thenAccept : x = " + x);
+//                })
+//                .exceptionally((Throwable u) -> {
+//                    System.out.println("exceptionally u = " + u);
 //                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                })
-                .thenAccept(x -> {
-                    System.out.println("thenAccept2 : x = " + x);
-                });
-
-//                        (int x,Throwable t) -> {
-//                    System.out.println("t = " + t);
-//                    return x;
+//                })
+//                .handle((Object t, Throwable u) -> {
+//                    System.out.println("handle1 t = " + t);
+//                    System.out.println("handle1 u = " + u);
+//                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//                })
+//                .handle((Object t, Throwable u) -> {
+//                    System.out.println("handle2 t = " + t);
+//                    System.out.println("handle2 u = " + u);
+//                    return 3;
+//
+////                    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//                })
+//                .thenAccept(x -> {
+//                    System.out.println("thenAccept2 : x = " + x);
 //                });
-        Thread.sleep(2000);
-    }
+//
+////                        (int x,Throwable t) -> {
+////                    System.out.println("t = " + t);
+////                    return x;
+////                });
+//        Thread.sleep(2000);
+//    }
 
     private final ConcurrentLinkedDeque<CompletableFuture<?>> alsoCancel = new ConcurrentLinkedDeque<>();
 
