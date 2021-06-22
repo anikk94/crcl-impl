@@ -2481,7 +2481,9 @@ public class SimServerInner {
                     this.setWaypoints(null);
                 }
                 if (!menuOuter().isInitializedSelected()
-                        && !(cmd instanceof EndCanonType)) {
+                        && !(cmd instanceof InitCanonType)
+                        && !(cmd instanceof EndCanonType)
+                        && !(cmd instanceof StopMotionType)) {
                     String className = cmd.getClass().getCanonicalName();
                     if (null == className) {
                         className = cmd.getClass().getName();

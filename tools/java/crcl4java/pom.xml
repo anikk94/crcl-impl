@@ -386,7 +386,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <executable>C:\Program Files (x86)\GNU\GnuPG\gpg2.exe</executable>
+                            <executable>C:\Program Files (x86)\GnuPG\bin\gpg.exe</executable>
                         </configuration>
                     </plugin>
                 </plugins>

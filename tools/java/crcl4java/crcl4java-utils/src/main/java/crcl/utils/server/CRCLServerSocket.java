@@ -33,6 +33,7 @@ import crcl.base.ConfigureStatusReportType;
 import crcl.base.CountSensorStatusType;
 import crcl.base.DisableSensorType;
 import crcl.base.EnableSensorType;
+import crcl.base.EndCanonType;
 import crcl.base.ForceTorqueSensorStatusType;
 import crcl.base.GetStatusType;
 import crcl.base.GuardLimitEnumType;
@@ -1806,7 +1807,9 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             initialized = true;
             setStateDescription("");
             setCommandStateEnum(CommandStateEnumType.CRCL_DONE);
-        } else if (!initialized) {
+        } else if (!initialized
+                && !(cmd instanceof EndCanonType)
+                && !(cmd instanceof StopMotionType)) {
             if (this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
                 final String errorString = "Not initialized when cmd=" + CRCLSocket.cmdToString(cmd) + " received.";
                 setCommandStateError(errorString);

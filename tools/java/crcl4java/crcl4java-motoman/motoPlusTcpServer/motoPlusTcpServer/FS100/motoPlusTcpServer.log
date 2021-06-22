@@ -1,14 +1,23 @@
-﻿  ------ Now building project: motoPlusTcpServer------
-  Compiling mpMain.c
-  Compiling remoteFunctions.c
-..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c(67): warning : In file included from ..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c
-..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.h(208): warning : type qualifiers ignored on function return type
-..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c(1183): warning : type qualifiers ignored on function return type
-  Compiling tcpSvr.c
-..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c(70): warning : In file included from ..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c
-..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.h(208): warning : type qualifiers ignored on function return type
-..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c : warning : In function 'runAcceptTcpClientsTask'
-..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c(146): warning : unused variable 'exceptCount'
-  Building motoPlusTcpServer.out
-  Build Successful!  Check 'FS100\motoPlusTcpServer' folder for motoPlusTcpServer.out
-  ------
+﻿Build started 6/21/2021 11:21:07 AM.
+     1>Project "C:\Users\shackle\Documents\NetBeansProjects\crcl\tools\java\crcl4java\crcl4java-motoman\motoPlusTcpServer\motoPlusTcpServer\motoPlusTcpServer.vcxproj" on node 2 (Rebuild target(s)).
+     1>Rebuild:
+         mpbuilder.exe -c FS100 -p "C:\Users\shackle\Documents\NetBeansProjects\crcl\tools\java\crcl4java\crcl4java-motoman\motoPlusTcpServer\motoPlusTcpServer\\" -n "motoPlusTcpServer" -b "C:\Users\shackle\Documents\NetBeansProjects\crcl\tools\java\crcl4java\crcl4java-motoman\motoPlusTcpServer\FS100\\" -o rebuild
+         ------ Now building project: motoPlusTcpServer------
+         Compiling mpMain.c
+         Compiling remoteFunctions.c
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c(67): warning : In file included from ..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.h(208): warning : type qualifiers ignored on function return type
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.c(1183): warning : type qualifiers ignored on function return type
+         Compiling tcpSvr.c
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c(70): warning : In file included from ..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\remoteFunctions.h(208): warning : type qualifiers ignored on function return type
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c : warning : In function 'runAcceptTcpClientsTask'
+     1>..\..\NetBeansProjects\MotoPlusTcpSvr\tcpSvr.c(146): warning : unused variable 'exceptCount'
+         Building motoPlusTcpServer.out
+         Build Successful!  Check 'FS100\motoPlusTcpServer' folder for motoPlusTcpServer.out
+         ------
+     1>Done Building Project "C:\Users\shackle\Documents\NetBeansProjects\crcl\tools\java\crcl4java\crcl4java-motoman\motoPlusTcpServer\motoPlusTcpServer\motoPlusTcpServer.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.49
