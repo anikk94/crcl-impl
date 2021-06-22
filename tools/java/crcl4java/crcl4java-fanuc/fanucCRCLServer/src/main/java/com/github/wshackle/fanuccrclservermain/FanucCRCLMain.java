@@ -1765,7 +1765,9 @@ public class FanucCRCLMain {
 //            }
             PmCartesian cart2 = getCartDirect();
             System.out.println("FanucCrclMain.internalStopMotion cart2 = " + cart2);
-            setCommandState(CommandStateEnumType.CRCL_DONE);
+            if (this.status.getLockThread() == null || this.status.getLockThread() == Thread.currentThread()) {
+                setCommandState(CommandStateEnumType.CRCL_DONE);
+            }
             isMovingLastCheckTime = -1;
             int movingChecks = 0;
             while (isMoving()) {

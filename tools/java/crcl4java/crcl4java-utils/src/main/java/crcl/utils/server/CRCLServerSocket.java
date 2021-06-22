@@ -841,10 +841,18 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                         throw new NullPointerException("source");
                     }
                     this.lastCheckingGuards = checkingGuards;
-                    if (null != updateStatusSupplier) {
-                        XFuture<CRCLStatusType> supplierFuture = updateStatusSupplier.get();
+                    final Supplier<XFuture<CRCLStatusType>> updateStatusSupplierLocal = updateStatusSupplier;
+                    final StackTraceElement setUpdateStatusSupplierTrace[] = this.setUpdateStatusSupplierTrace;
+                    if (null != updateStatusSupplierLocal) {
+                        XFuture<CRCLStatusType> supplierFuture = updateStatusSupplierLocal.get();
                         lastUpdateSupplierFuture = supplierFuture;
                         final XFutureVoid supplierAcceptedFuture = supplierFuture.thenAccept((CRCLStatusType suppliedStatus) -> {
+                            if(null == suppliedStatus) {
+                                System.err.println("suppliedStatus = " + suppliedStatus);
+                                System.err.println("updateStatusSupplierLocal = " + updateStatusSupplierLocal);
+                                System.err.println("setUpdateStatusSupplierTrace = " + setUpdateStatusSupplierTrace);
+                                throw new RuntimeException("suppliedStatus== null");
+                            }
                             finishWriteStatus(state, suppliedStatus, source, event, commandStatus);
                         });
                         this.lastUpdateSupplierAcceptedFuture = supplierAcceptedFuture;
@@ -2251,6 +2259,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                         }
                         clients.add(new CRCLServerClientInfo(crclSocket, null, state));
                         socketToStateMap.put(crclSocket, state);
+                        System.out.println("CRCL Server Socket new client : state = " + state+", crclSocket="+crclSocket);
                         handleEvent(CRCLServerSocketEvent.newClient(state));
                     }
                 } else {
@@ -2266,6 +2275,8 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                         try {
                             ByteBuffer bb = ByteBuffer.allocate(4096);
                             int readbytes = s.read(bb);
+//                            System.out.println("readBytes="+readbytes+" from state = " + state+", crclSocket="+crclSocket);
+                    
                             if (readbytes > 0) {
                                 String string = new String(bb.array(), 0, readbytes);
                                 cmdInstances = crclSocket.parseMultiCommandString(string, validate);
@@ -2530,8 +2541,11 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return updateStatusSupplier;
     }
 
+    private volatile StackTraceElement setUpdateStatusSupplierTrace @Nullable  [] = null;
+    
     public void setUpdateStatusSupplier(Supplier<XFuture<CRCLStatusType>> updateStatusSupplier) {
         this.updateStatusSupplier = updateStatusSupplier;
+        this.setUpdateStatusSupplierTrace = Thread.currentThread().getStackTrace();
     }
 
 //    private volatile int updateStatusRunCount = 0;

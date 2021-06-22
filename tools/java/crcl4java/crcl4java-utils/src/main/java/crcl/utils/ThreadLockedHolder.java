@@ -42,6 +42,9 @@ public class ThreadLockedHolder<T> implements Supplier<T> {
     private final AtomicInteger getCountAI = new AtomicInteger();
     private final AtomicInteger releaseCountAI = new AtomicInteger();
 
+    public @Nullable Thread getLockThread() {
+        return lockThread;
+    }
     public ThreadLockedHolder(String name, T object) {
         this.name = name;
         this.object = object;

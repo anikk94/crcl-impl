@@ -716,6 +716,13 @@ public class CrclSwingClientInner {
         request_status_count++;
 //        LOGGER.log(Level.FINEST, () -> "PendantClientInner.requestStatus() : request_status_count=" + request_status_count);
         setCommandId(getStatusMsg, commandId.get());
+//        CRCLCommandInstanceType inst = new CRCLCommandInstanceType();
+//        inst.setCRCLCommand(getStatusMsg);
+//        try {
+//            System.out.println(this.crclSocket.commandToString(inst, false));
+//        } catch (CRCLException ex) {
+//            Logger.getLogger(CrclSwingClientInner.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         boolean result = this.sendCommand(getStatusMsg, crclRequestSocket);
 //        LOGGER.log(Level.FINEST, () -> "PendantClientInner.requestStatus() : returning from RequestStatus() " + request_status_count);
         return result;
