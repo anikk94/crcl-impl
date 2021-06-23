@@ -1459,6 +1459,7 @@ public class CrclSwingClientJPanel
 
     public void openXmlProgramFile(File f) {
         try {
+            showProgram(null, null, 0);
             this.clearProgramTimesDistances();
             this.clearRecordedPoints();
             internal.openXmlProgramFile(f, true);
@@ -1530,9 +1531,7 @@ public class CrclSwingClientJPanel
         if (javax.swing.SwingUtilities.isEventDispatchThread()) {
             prevSetProgramProgram = null;
             showProgramCopy = null;
-            if (null != program) {
-                this.showProgram(program, Collections.emptyList(), 0);
-            }
+            this.showProgram(program, Collections.emptyList(), 0);
             return;
         }
 
@@ -1545,14 +1544,12 @@ public class CrclSwingClientJPanel
             showProgramCopy = copy(program);
             prevSetProgramProgram = program;
             prevSetProgramLength = middleCommands(program).size();
-        }
-        if (null != showProgramCopy) {
-            CRCLProgramType programToShow = showProgramCopy;
-            try {
-                javax.swing.SwingUtilities.invokeLater(() -> this.showProgram(programToShow, Collections.emptyList(), 0));
-            } catch (Exception ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
-            }
+        } 
+        CRCLProgramType programToShow = showProgramCopy;
+        try {
+            javax.swing.SwingUtilities.invokeLater(() -> this.showProgram(programToShow, Collections.emptyList(), 0));
+        } catch (Exception ex) {
+            Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
     }
 
@@ -3318,6 +3315,7 @@ public class CrclSwingClientJPanel
     }
 
     public void browseOpenProgramXml() {
+        setProgram(null);
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "XML Program Files", "xml");
