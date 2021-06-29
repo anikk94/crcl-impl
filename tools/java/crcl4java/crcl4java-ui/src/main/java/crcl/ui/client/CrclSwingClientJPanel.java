@@ -362,16 +362,17 @@ public class CrclSwingClientJPanel
     private void finishShowCurrentProgramLine(final int line, final CRCLProgramType newProgram, @Nullable CRCLStatusType status, List<ProgramRunData> progRunDataList, StackTraceElement ste[]) {
         final List<MiddleCommandType> middleCommandsList
                 = CRCLUtils.getNonNullFilteredList(newProgram.getMiddleCommand());
+        final CRCLProgramType programShowingLocal = programShowing;
 
-        if (programShowing == null) {
+        if (programShowingLocal == null) {
             showProgram(newProgram, progRunDataList, line);
-        } else if (newProgram != programShowing) {
+        } else if (newProgram != programShowingLocal) {
             final List<MiddleCommandType> programShowingMiddleCommandsList
-                    = CRCLUtils.getNonNullFilteredList(programShowing.getMiddleCommand());
+                    = CRCLUtils.getNonNullFilteredList(programShowingLocal.getMiddleCommand());
             final int newProgramSize = Objects.requireNonNull(middleCommandsList, "program.getMiddleCommand()").size();
-            final InitCanonType showingInit = programShowing.getInitCanon();
+            final InitCanonType showingInit = programShowingLocal.getInitCanon();
             final InitCanonType newInit = newProgram.getInitCanon();
-            final EndCanonType showingEnd = programShowing.getEndCanon();
+            final EndCanonType showingEnd = programShowingLocal.getEndCanon();
             final EndCanonType newEnd = newProgram.getEndCanon();
             if (null != newEnd && null != newInit && newProgramSize > 0) {
                 if (programShowingMiddleCommandsList == null
@@ -464,6 +465,7 @@ public class CrclSwingClientJPanel
                 && lastshowSelectedProgramLineProgram == program) {
             return;
         }
+        
         lastShowSelectedProgramLineLine = line;
         lastshowSelectedProgramLineProgram = program;
         final List<MiddleCommandType> middleCommandsList
@@ -1544,7 +1546,7 @@ public class CrclSwingClientJPanel
             showProgramCopy = copy(program);
             prevSetProgramProgram = program;
             prevSetProgramLength = middleCommands(program).size();
-        } 
+        }
         CRCLProgramType programToShow = showProgramCopy;
         try {
             javax.swing.SwingUtilities.invokeLater(() -> this.showProgram(programToShow, Collections.emptyList(), 0));
@@ -3467,21 +3469,21 @@ public class CrclSwingClientJPanel
         }
     }
 
-    private volatile @MonotonicNonNull
+    private volatile @Nullable
     CRCLProgramType programShowing = null;
 
     public void showProgram(
-            CRCLProgramType program,
+            @Nullable CRCLProgramType program,
             @Nullable List<ProgramRunData> progRunDataList,
             int line) {
         try {
-            programShowing = program;
-            logShowProgramInfo(program, progRunDataList, line);
             DefaultTableModel dtm = (DefaultTableModel) this.jTableProgram.getModel();
+            programShowing = program;
             if (null == program) {
                 dtm.setRowCount(0);
                 return;
             }
+            logShowProgramInfo(program, progRunDataList, line);
             InitCanonType init
                     = Objects.requireNonNull(program.getInitCanon(), "program.getInitCanon()");
             List<MiddleCommandType> middleCommands
