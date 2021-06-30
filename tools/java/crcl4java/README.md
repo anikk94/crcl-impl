@@ -8,6 +8,33 @@ validation are stored in the main crcl repository:  https://github.com/ros-indus
 
 This repository contains Java libraries and tools related to CRCL.
 
+Install ATINetFT-1.0.jar(If needed)
+-----
+
+ATINetFT-1.0.jar is a third party jar which is not in maven central and will be needed only if using the motomanfanuc profile or the ATI force/torque sensor. If you need to use install it:
+
+Download jar from 
+      
+      https://www.ati-ia.com/Library/software/net_ft/ATINetFT.jar
+      
+      or from the webpage on the device itself.
+
+      Or get the source and compile from
+
+      https://www.ati-ia.com/Library/software/net_ft/src.zip
+      
+      
+      On Windows PC OPTIMUS install with this command(Paths will differ on other computers)
+
+SET  JAVA_HOME=C:\Users\Public\Documents\Downloaded_Tools\AdoptOpenJDK\jdk-11.0.2+7
+C:\Users\Public\Documents\Downloaded_Tools\ApacheNetbeans10.0\netbeans\java\maven\bin\mvn.cmd install:install-file -Dfile=C:\Users\Public\Documents\Downloaded_Tools\ATINetFT.jar -DgroupId=com.ati-ia -DartifactId=ATINetFT -Dversion=1.0 -Dpackaging=jar
+          
+    On linux with the source compiled in /home/shackle/NetBeansProjects/ATINetFT/ 
+it could be installed with
+
+wget -P /tmp/ https://www.ati-ia.com/Library/software/net_ft/ATINetFT.jar
+mvn install:install-file -Dfile=/tmp/ATINetFT.jar -DgroupId=com.ati-ia -DartifactId=ATINetFT -Dversion=1.0 -Dpackaging=jar
+
 
 Build
 -----
