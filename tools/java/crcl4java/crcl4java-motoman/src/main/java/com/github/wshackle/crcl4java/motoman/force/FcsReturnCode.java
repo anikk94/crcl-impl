@@ -76,7 +76,11 @@ public enum FcsReturnCode {
     }
 
     public static FcsReturnCode fromInt(int i) {
-        return map.get(i);
+        final FcsReturnCode ret = map.get(i);
+        if(null == ret) {
+            throw new RuntimeException("i="+i +" is NOT a valid FcsReturnCode");
+        }
+        return ret;
     }
 
     public int getId() {

@@ -36,6 +36,7 @@ public class TelnetJFrame extends javax.swing.JFrame {
     /**
      * Creates new form TelnetJFrame
      */
+    @SuppressWarnings({"nullness","initialization"})
     public TelnetJFrame() {
         initComponents();
     }

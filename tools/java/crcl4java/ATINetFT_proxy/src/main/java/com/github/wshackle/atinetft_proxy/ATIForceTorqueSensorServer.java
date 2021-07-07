@@ -74,7 +74,7 @@ public class ATIForceTorqueSensorServer implements SensorServerInterface {
                 return param.getParameterValue();
             }
         }
-        return null;
+        throw new RuntimeException("parameter "+name+" not found in "+sensorParameterSetting);
     }
 
     public ATIForceTorqueSensorServer(String sensorId, List<ParameterSettingType> sensorParameterSetting) throws UnknownHostException, IOException {

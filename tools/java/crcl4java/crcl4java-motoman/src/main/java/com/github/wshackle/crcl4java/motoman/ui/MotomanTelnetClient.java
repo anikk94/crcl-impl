@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.net.telnet.TelnetClient;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -40,9 +41,7 @@ public class MotomanTelnetClient {
 
         final InputStream localInputStream = System.in;
         final PrintStream localPrintStream = System.out;
-        MotomanTelnetClient telnet;
-
-        telnet = defaultMotoman(localPrintStream, localInputStream);
+        MotomanTelnetClient telnet = defaultMotoman(localPrintStream, localInputStream);
 
 //        }, "localToRemote");
 //        IOUtil.readWrite(open.getInputStream(), open.getOutputStream(),
@@ -61,9 +60,10 @@ public class MotomanTelnetClient {
     public static final String DEFAULT_MOTOMAN_PASSWD = "MOTOMANrobot";
     public static final String DEFAULT_MOTOMAN_HOST = "10.0.0.2";
     public static final int DEFAULT_PORT = 23;
-    TelnetClient telnet;
-    Thread remoteToLocalThread;
-    Thread localToRemoteThread;
+    
+    private @Nullable TelnetClient telnet;
+    private @Nullable Thread remoteToLocalThread;
+    private @Nullable Thread localToRemoteThread;
 
     public void disconnect() {
         if (null != telnet) {

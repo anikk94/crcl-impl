@@ -820,14 +820,14 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
     private JDialog dialog = null;
     private boolean cancelled = false;
-    private Function<T, XFuture<Boolean>> isValid = null;
-    private volatile CRCLSocket crclSocket;
+    private @Nullable Function<T, XFuture<Boolean>> isValid = null;
+    private volatile @Nullable CRCLSocket crclSocket;
 
     private static <T> T editObjectPriv(JDialog _dialog, T _obj,
-            XpathUtils xpu,
+            @Nullable XpathUtils xpu,
             File schemaFiles @Nullable [],
-            Function<T, XFuture<Boolean>> isValid,
-            CRCLSocket crclSocket) {
+            @Nullable Function<T, XFuture<Boolean>> isValid,
+            @Nullable CRCLSocket crclSocket) {
         ObjTableJPanel<T> panel = new ObjTableJPanel<>();
         panel.dialog = _dialog;
         panel.setObj(_obj);
@@ -915,10 +915,10 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             @Nullable Frame _owner,
             String _title,
             boolean _modal,
-            XpathUtils xpu,
+            @Nullable XpathUtils xpu,
             File schemaFiles @Nullable [],
-            Function<T, XFuture<Boolean>> isValid,
-            CRCLSocket crclSocket) {
+            @Nullable Function<T, XFuture<Boolean>> isValid,
+            @Nullable CRCLSocket crclSocket) {
         JDialog dialog = new JDialog(_owner, _obj.getClass().getCanonicalName() + ":" + _title, _modal);
         return editObjectPriv(dialog, _obj, xpu, schemaFiles, isValid, crclSocket);
     }

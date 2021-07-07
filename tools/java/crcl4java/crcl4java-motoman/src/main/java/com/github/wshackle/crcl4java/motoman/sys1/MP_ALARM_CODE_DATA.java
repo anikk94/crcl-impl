@@ -25,6 +25,7 @@ package com.github.wshackle.crcl4java.motoman.sys1;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -50,7 +51,7 @@ public class MP_ALARM_CODE_DATA {
                     + ", usAlarmData=" + Arrays.toString(usAlarmData) + '}';
         }
 
-        public String[] getAlarmNoComments() {
+        public @Nullable  String[] getAlarmNoComments() {
             return MP_ALARM_CODE_DATA.getAlarmNoComments(usAlarmNo);
         }
 
@@ -70,12 +71,12 @@ public class MP_ALARM_CODE_DATA {
         alarmCommentMap.put((short) 4677, "IMPOSSIBLE LINEAR MOTION");
     }
 
-    public static String getAlarmNoComment(short alarmNo) {
+    public static @Nullable String getAlarmNoComment(short alarmNo) {
         return alarmCommentMap.get(alarmNo);
     }
 
-    public static String[] getAlarmNoComments(short alarmNos[]) {
-        String comments[] = new String[alarmNos.length];
+    public static @Nullable String[] getAlarmNoComments(short alarmNos[]) {
+        @Nullable String comments[] = new String[alarmNos.length];
         for (int i = 0; i < alarmNos.length; i++) {
             comments[i] = getAlarmNoComment(alarmNos[i]);
         }

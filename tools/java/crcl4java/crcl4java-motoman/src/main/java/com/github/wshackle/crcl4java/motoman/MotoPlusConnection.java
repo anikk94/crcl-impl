@@ -69,9 +69,11 @@ import com.github.wshackle.crcl4java.motoman.sys1.MP_VAR_INFO;
 import com.github.wshackle.crcl4java.motoman.sys1.ModeEnum;
 import com.github.wshackle.crcl4java.motoman.sys1.RemoteSys1FunctionType;
 import com.github.wshackle.crcl4java.motoman.sys1.UnitType;
+import com.github.wshackle.crcl4java.motoman.sys1.VarType;
 import crcl.base.CommandStateEnumType;
 import static crcl.base.CommandStateEnumType.CRCL_ERROR;
 import static crcl.base.CommandStateEnumType.CRCL_WORKING;
+import crcl.utils.CRCLUtils;
 import crcl.utils.XFuture;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -92,6 +94,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -135,9 +138,9 @@ public class MotoPlusConnection implements AutoCloseable {
         return DefaultHostHolder.DEFAULT_HOST;
     }
 
-    private Socket socket;
-    private DataOutputStream dos;
-    private DataInputStream dis;
+    private @Nullable Socket socket;
+    private @Nullable DataOutputStream dos;
+    private @Nullable DataInputStream dis;
     public static final int NO_WAIT = 0;
     private static final int WAIT_FOREVER = -1; // This is not allowed to avoid hanging server.
 
@@ -152,9 +155,9 @@ public class MotoPlusConnection implements AutoCloseable {
 
     public synchronized static MotoPlusConnection connectionFromSocket(Socket socket) throws IOException {
         MotoPlusConnection mpc = new MotoPlusConnection(socket);
+        final InetAddress socketInetAddress = CRCLUtils.requireNonNull(socket.getInetAddress(), "socket.getInetAddress()");
         Map<Integer, Collection<MotoPlusConnection>> hostMpcMap
-                = mpcConnections.computeIfAbsent(
-                        socket.getInetAddress().getHostAddress(),
+                = mpcConnections.computeIfAbsent(socketInetAddress.getHostAddress(),
                         (String addrString) -> new ConcurrentHashMap<>()
                 );
         Collection<MotoPlusConnection> mpcHostPortCollection
@@ -223,20 +226,22 @@ public class MotoPlusConnection implements AutoCloseable {
         return null != socket && socket.isConnected();
     }
 
-    private String host;
+    private @Nullable String host;
     private int port;
 
     public void connect(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
-        if (null != socket) {
-            socket.close();
+        if (null != this.socket) {
+            this.socket.close();
+            this.socket = null;
         }
         System.out.println("Connecting to " + host + ", port=" + port + " . . .");
-        socket = new Socket(host, port);
+        final Socket newSocket = new Socket(host, port);
         System.out.println("Connection successful.");
-        dos = new DataOutputStream(socket.getOutputStream());
-        dis = new DataInputStream(socket.getInputStream());
+        this.socket = newSocket;
+        dos = new DataOutputStream(newSocket.getOutputStream());
+        dis = new DataInputStream(newSocket.getInputStream());
     }
 
     public void reconnect() throws IOException {
@@ -330,8 +335,8 @@ public class MotoPlusConnection implements AutoCloseable {
         }
     }
 
-    private volatile Thread lastThreadUsed = null;
-    private volatile StackTraceElement lastThreadSetTrace[] = null;
+    private volatile @Nullable Thread lastThreadUsed = null;
+    private volatile StackTraceElement lastThreadSetTrace @Nullable []  = null;
 
     private void writeDataOutputStream(ByteBuffer bb) throws IOException {
         final Thread t = Thread.currentThread();
@@ -346,6 +351,9 @@ public class MotoPlusConnection implements AutoCloseable {
             lastThreadUsed = t;
         }
         final byte[] array = bb.array();
+        if (null == dos) {
+            throw new NullPointerException("dos");
+        }
         dos.write(array);
         if (debug) {
             printDebug("wrote " + array.length + " bytes.\n");
@@ -364,6 +372,9 @@ public class MotoPlusConnection implements AutoCloseable {
             }
             lastThreadSetTrace = Thread.currentThread().getStackTrace();
             lastThreadUsed = t;
+        }
+        if (null == dis) {
+            throw new NullPointerException("dis");
         }
         dis.readFully(inbuf);
         if (debug) {
@@ -739,7 +750,11 @@ public class MotoPlusConnection implements AutoCloseable {
             bb.putInt(8, RemoteSys1FunctionType.SYS1_PUT_VAR_DATA.getId()); // type of function remote server will call
             bb.putInt(12, num);
             for (int i = 0; i < num; i++) {
-                bb.putShort(16 + (i * 8), sData[i].usType.getId());
+                final VarType usTypeI = sData[i].usType;
+                if(null == usTypeI) {
+                    throw new IllegalArgumentException("sData["+i+"].usType==null");
+                }
+                bb.putShort(16 + (i * 8), usTypeI.getId());
                 bb.putShort(18 + (i * 8), sData[i].usIndex);
                 bb.putInt(20 + (i * 8), sData[i].ulValue);
             }
@@ -754,7 +769,11 @@ public class MotoPlusConnection implements AutoCloseable {
             bb.putInt(8, RemoteSys1FunctionType.SYS1_PUT_VAR_DATA.getId()); // type of function remote server will call
             bb.putInt(12, num);
             for (int i = 0; i < num; i++) {
-                bb.putShort(16 + (i * 8), sData[i].usType.getId());
+                final VarType usTypeI = sData[i].usType;
+                if(null == usTypeI) {
+                    throw new IllegalArgumentException("sData["+i+"].usType==null");
+                }
+                bb.putShort(16 + (i * 8), usTypeI.getId());
                 bb.putShort(18 + (i * 8), sData[i].usIndex);
                 bb.put(sData[i].ucValue);
             }
@@ -783,7 +802,11 @@ public class MotoPlusConnection implements AutoCloseable {
             bb.putInt(8, RemoteSys1FunctionType.SYS1_GET_VAR_DATA.getId()); // type of function remote server will call
             bb.putInt(12, num);
             for (int i = 0; i < num; i++) {
-                bb.putShort(16 + (4 * i), sData[i].usType.getId());
+                final VarType usTypeI = sData[i].usType;
+                if (null == usTypeI) {
+                    throw new IllegalArgumentException("sdata[" + i + "].usType == null");
+                }
+                bb.putShort(16 + (4 * i), usTypeI.getId());
                 bb.putShort(18 + (4 * i), sData[i].usIndex);
             }
             writeDataOutputStream(bb);
@@ -797,7 +820,11 @@ public class MotoPlusConnection implements AutoCloseable {
             bb.putInt(8, RemoteSys1FunctionType.SYS1_GET_SVAR_INFO.getId()); // type of function remote server will call
             bb.putInt(12, num);
             for (int i = 0; i < num; i++) {
-                bb.putShort(16 + (4 * i), sData[i].usType.getId());
+                final VarType usTypeI = sData[i].usType;
+                if (null == usTypeI) {
+                    throw new IllegalArgumentException("sdata[" + i + "].usType == null");
+                }
+                bb.putShort(16 + (4 * i), usTypeI.getId());
                 bb.putShort(18 + (4 * i), sData[i].usIndex);
             }
             writeDataOutputStream(bb);
@@ -1840,7 +1867,7 @@ public class MotoPlusConnection implements AutoCloseable {
 
     private volatile int lastMpMotSetCoordGrpNo = -99;
     private volatile int lastMpMotSetCoordAux = -99;
-    private volatile MP_COORD_TYPE lastMpMotSetCoordType;
+    private volatile @Nullable MP_COORD_TYPE lastMpMotSetCoordType;
     private volatile long lastMpMotSetCoordTime;
     private volatile int lastMpMotSetCoordAlarmCount = -1;
 
@@ -1976,11 +2003,12 @@ public class MotoPlusConnection implements AutoCloseable {
         return returner.getSysReadIOReturn(iorData);
     }
 
-    private volatile MP_CART_POS_RSP_DATA cachedGetPosData = null;
+    private volatile @Nullable MP_CART_POS_RSP_DATA cachedGetPosData = null;
     private volatile int lastGetCartPosGrp = -1;
     private volatile long lastGetCartPosTime = -1;
 
-    public MP_CART_POS_RSP_DATA cachedGetCartPos(int grp, int time) throws MotoPlusConnectionException, IOException {
+    public @Nullable
+    MP_CART_POS_RSP_DATA cachedGetCartPos(int grp, int time) throws MotoPlusConnectionException, IOException {
         if (grp != lastGetCartPosGrp || null == cachedGetPosData) {
             return getCartPos(grp);
         }
@@ -2029,17 +2057,17 @@ public class MotoPlusConnection implements AutoCloseable {
     private final AtomicInteger alarmCount = new AtomicInteger();
 
     private final long maxReadMpcStatusTime = -1;
-    private volatile long maxReadMpcStatusTimeDiffArray[] = null;
+    private volatile long maxReadMpcStatusTimeDiffArray @Nullable []  = null;
     private final long maxReadMpcStatusTimeAfterMove = -1;
-    private volatile long maxReadMpcStatusTimeDiffArrayAfterMove[] = null;
+    private volatile long maxReadMpcStatusTimeDiffArrayAfterMove @Nullable []  = null;
     private volatile boolean afterMove = false;
-    private volatile COORD_POS lastCoordTargetDest;
+    private volatile @Nullable COORD_POS lastCoordTargetDest;
 
-    public long[] getMaxReadMpcStatusTimeDiffArray() {
+    public long @Nullable [] getMaxReadMpcStatusTimeDiffArray() {
         return maxReadMpcStatusTimeDiffArray;
     }
 
-    public long[] getMaxReadMpcStatusTimeDiffArrayAfterMove() {
+    public long @Nullable [] getMaxReadMpcStatusTimeDiffArrayAfterMove() {
         return maxReadMpcStatusTimeDiffArrayAfterMove;
     }
 

@@ -28,6 +28,7 @@ import com.github.wshackle.crcl4java.motoman.sys1.MP_ALARM_STATUS_DATA;
 import com.github.wshackle.crcl4java.motoman.sys1.MP_CART_POS_RSP_DATA;
 import com.github.wshackle.crcl4java.motoman.sys1.MP_MODE_DATA;
 import com.github.wshackle.crcl4java.motoman.sys1.MP_PULSE_POS_RSP_DATA;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -35,18 +36,28 @@ import com.github.wshackle.crcl4java.motoman.sys1.MP_PULSE_POS_RSP_DATA;
  */
 public class MpcStatus {
 
-    private final MP_CART_POS_RSP_DATA pos;
-    private final MP_PULSE_POS_RSP_DATA pulseData;
-    private final MotCtrlReturnEnum motTargetReceiveRet;
-    private final MP_MODE_DATA modeData;
-    private final MP_ALARM_CODE_DATA alarmCodeData;
-    private final MP_ALARM_STATUS_DATA alarmStatusData;
+    private final @Nullable MP_CART_POS_RSP_DATA pos;
+    private final @Nullable MP_PULSE_POS_RSP_DATA pulseData;
+    private final @Nullable MotCtrlReturnEnum motTargetReceiveRet;
+    private final @Nullable MP_MODE_DATA modeData;
+    private final @Nullable MP_ALARM_CODE_DATA alarmCodeData;
+    private final @Nullable MP_ALARM_STATUS_DATA alarmStatusData;
     private final int recvId;
     private final int statusCount;
     private final double targetPosDiff;
     private final double targetRotDiffMax;
 
-    public MpcStatus(MP_CART_POS_RSP_DATA pos, MP_PULSE_POS_RSP_DATA pulseData, MotCtrlReturnEnum motTargetReceiveRet, MP_MODE_DATA modeData, MP_ALARM_CODE_DATA alarmCodeData, MP_ALARM_STATUS_DATA alarmStatusData, int recvId, int statusCount, double targetPosDiff, double targetRotDiffMax) {
+    public MpcStatus(
+            @Nullable MP_CART_POS_RSP_DATA pos,
+            @Nullable MP_PULSE_POS_RSP_DATA pulseData,
+            @Nullable MotCtrlReturnEnum motTargetReceiveRet,
+            @Nullable MP_MODE_DATA modeData,
+            @Nullable MP_ALARM_CODE_DATA alarmCodeData,
+            @Nullable MP_ALARM_STATUS_DATA alarmStatusData,
+            int recvId,
+            int statusCount,
+            double targetPosDiff,
+            double targetRotDiffMax) {
         this.pos = pos;
         this.pulseData = pulseData;
         this.motTargetReceiveRet = motTargetReceiveRet;
@@ -63,27 +74,27 @@ public class MpcStatus {
         return targetPosDiff;
     }
 
-    public MP_CART_POS_RSP_DATA getPos() {
+    public @Nullable MP_CART_POS_RSP_DATA getPos() {
         return pos;
     }
 
-    public MP_PULSE_POS_RSP_DATA getPulseData() {
+    public @Nullable MP_PULSE_POS_RSP_DATA getPulseData() {
         return pulseData;
     }
 
-    public MotCtrlReturnEnum getMotTargetReceiveRet() {
+    public @Nullable MotCtrlReturnEnum getMotTargetReceiveRet() {
         return motTargetReceiveRet;
     }
 
-    public MP_MODE_DATA getModeData() {
+    public @Nullable MP_MODE_DATA getModeData() {
         return modeData;
     }
 
-    public MP_ALARM_CODE_DATA getAlarmCodeData() {
+    public @Nullable MP_ALARM_CODE_DATA getAlarmCodeData() {
         return alarmCodeData;
     }
 
-    public MP_ALARM_STATUS_DATA getAlarmStatusData() {
+    public @Nullable MP_ALARM_STATUS_DATA getAlarmStatusData() {
         return alarmStatusData;
     }
 
@@ -100,5 +111,4 @@ public class MpcStatus {
         return "MpcStatus{" + "pos=" + pos + ",\n pulseData=" + pulseData + ",\n motTargetReceiveRet=" + motTargetReceiveRet + ",\n modeData=" + modeData + ",\n alarmCodeData=" + alarmCodeData + ",\n alarmStatusData=" + alarmStatusData + ",\n recvId=" + recvId + ",\n statusCount=" + statusCount + ",\n targetPosDiff=" + targetPosDiff + ",\n targetRotDiffMax=" + targetRotDiffMax + '}';
     }
 
-    
 }

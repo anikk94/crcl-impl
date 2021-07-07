@@ -691,7 +691,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             setCommandId(initCmd);
             crclProg.setInitCanon(initCmd);
             Map<Integer, PmXyzWpr> posMap = new TreeMap<>();
-            IRobot2 localMainRobot = Objects.requireNonNull(main.getRobot(), "main.getRobot()");
+            IRobot2 localMainRobot = CRCLUtils.requireNonNull(main.getRobot(), "main.getRobot()");
             for (Com4jObject posObj : localMainRobot.regPositions()) {
                 ISysPosition pos = posObj.queryInterface(ISysPosition.class);
                 Optional.ofNullable(pos)
@@ -905,7 +905,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                     if (rhs.startsWith("(") && rhs.endsWith(")")) {
                         double value = Double.parseDouble(rhs.substring(1, rhs.length() - 1));
                         final PmXyzWpr posMapLhsValue
-                                = Objects.requireNonNull(posMap.get(lhs_id), "posMap.get(lhs_id)");
+                                = CRCLUtils.requireNonNull(posMap.get(lhs_id), "posMap.get(lhs_id)");
                         posMapLhsValue.setOne(el_index, value);
                     }
                 } else {
@@ -913,9 +913,9 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
                     if (rhs.startsWith("PR[") && rhs.endsWith("]")) {
                         Integer rhs_id = Integer.parseInt(rhs.substring(3, rhs.length() - 1));
                         final PmXyzWpr posMapLhsValue
-                                = Objects.requireNonNull(posMap.get(lhs_id), "posMap.get(lhs_id)");
+                                = CRCLUtils.requireNonNull(posMap.get(lhs_id), "posMap.get(lhs_id)");
                         final PmXyzWpr posMapRhsValue
-                                = Objects.requireNonNull(posMap.get(rhs_id), "posMap.get(rhs_id)");
+                                = CRCLUtils.requireNonNull(posMap.get(rhs_id), "posMap.get(rhs_id)");
                         posMapLhsValue.setAll(posMapRhsValue);
                     }
                 }
@@ -1656,12 +1656,12 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextFieldRobotNeighborhoodPathActionPerformed
 
     private void jTextFieldSysVarNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSysVarNameActionPerformed
-        final IRobot2 localMainRobot = Objects.requireNonNull(main.getRobot(), "main.getRobot()");
+        final IRobot2 localMainRobot = CRCLUtils.requireNonNull(main.getRobot(), "main.getRobot()");
         this.updateWatchVar(localMainRobot);
     }//GEN-LAST:event_jTextFieldSysVarNameActionPerformed
 
     private void jButtonAbortAllTasksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbortAllTasksActionPerformed
-        final IRobot2 localMainRobot = Objects.requireNonNull(main.getRobot(), "main.getRobot()");
+        final IRobot2 localMainRobot = CRCLUtils.requireNonNull(main.getRobot(), "main.getRobot()");
         localMainRobot.tasks().abortAll(true);
     }//GEN-LAST:event_jButtonAbortAllTasksActionPerformed
 

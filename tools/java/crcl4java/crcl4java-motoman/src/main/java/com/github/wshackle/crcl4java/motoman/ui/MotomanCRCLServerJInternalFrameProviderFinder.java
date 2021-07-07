@@ -23,6 +23,7 @@
 package com.github.wshackle.crcl4java.motoman.ui;
 
 import crcl.utils.server.ServerJInternalFrameProviderFinderInterface;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -31,7 +32,7 @@ import crcl.utils.server.ServerJInternalFrameProviderFinderInterface;
 public class MotomanCRCLServerJInternalFrameProviderFinder implements ServerJInternalFrameProviderFinderInterface {
 
     @Override
-    public MotomanCRCLServerJInternalFrameProvider findJInternalFrameProvider(String name, Object... args) {
+    public @Nullable MotomanCRCLServerJInternalFrameProvider findJInternalFrameProvider(String name, Object... args) {
         if(name.startsWith("MotomanCRCLServer")) {
             return new MotomanCRCLServerJInternalFrameProvider();
         } else {

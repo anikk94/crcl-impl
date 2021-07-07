@@ -50,7 +50,7 @@ public enum ModeEnum {
     }
     
     public static ModeEnum fromId(int id) {
-        return map.get(id);
+        return map.getOrDefault(id,ModeEnum.INVALID_MODE);
     }
     
     public int getId() { 

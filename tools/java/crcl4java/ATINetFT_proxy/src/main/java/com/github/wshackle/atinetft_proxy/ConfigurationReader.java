@@ -33,6 +33,7 @@ import java.net.URL;
  *
  *@author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings({"nullness","initialization"})
 public class ConfigurationReader {
 
     private final double[] m_daftMaxes = {100, 100, 100, 100, 100, 100};

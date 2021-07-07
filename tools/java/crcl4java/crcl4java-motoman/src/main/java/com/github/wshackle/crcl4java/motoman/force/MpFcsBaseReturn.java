@@ -22,6 +22,8 @@
  */
 package com.github.wshackle.crcl4java.motoman.force;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
@@ -29,7 +31,7 @@ package com.github.wshackle.crcl4java.motoman.force;
 public class MpFcsBaseReturn {
 
     public int returnInt;
-    public FcsReturnCode returnCode;
+    public @Nullable FcsReturnCode returnCode;
 
     @Override
     public String toString() {

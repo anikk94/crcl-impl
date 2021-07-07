@@ -25,9 +25,9 @@ package com.github.wshackle.fanuccrclservermain;
 import static com.github.wshackle.fanuccrclservermain.FanucCRCLMain.DEFAULT_AGILITY_FANUC_NEIGHBORHOOD_NAME;
 import static com.github.wshackle.fanuccrclservermain.FanucCRCLMain.DEFAULT_AGILITY_LAB_REMOTE_ROBOT_HOST;
 import crcl.utils.CRCLSocket;
+import crcl.utils.CRCLUtils;
 import crcl.utils.server.ServerJInternalFrameProviderInterface;
 import java.io.File;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -143,33 +143,33 @@ public class FanucCRCLServerJInternalFrameProvider implements ServerJInternalFra
 
     @Override
     public void setPropertiesFile(File propertiesFile) {
-        final FanucCRCLMain localFanucCRCLMain = Objects.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
+        final FanucCRCLMain localFanucCRCLMain = CRCLUtils.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
         localFanucCRCLMain.setPropertiesFile(propertiesFile);
-        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = Objects.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
+        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = CRCLUtils.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
         localFanucCRCLServerJInternalFrame.setPropertiesFile(propertiesFile);
     }
 
     @Override
     public void saveProperties() {
-        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = Objects.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
+        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = CRCLUtils.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
         localFanucCRCLServerJInternalFrame.saveProperties();
     }
 
     @Override
     public void loadProperties() {
-        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = Objects.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
+        final FanucCRCLServerJInternalFrame localFanucCRCLServerJInternalFrame = CRCLUtils.requireNonNull(fanucCRCLServerJInternalFrame, "fanucCRCLServerJInternalFrame");
         localFanucCRCLServerJInternalFrame.loadProperties();
     }
 
     @Override
     public void setCrclPort(int crclPort) {
-        final FanucCRCLMain localFanucCRCLMain = Objects.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
+        final FanucCRCLMain localFanucCRCLMain = CRCLUtils.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
         localFanucCRCLMain.setLocalPort(crclPort);
     }
 
     @Override
     public int getCrclPort() {
-        final FanucCRCLMain localFanucCRCLMain = Objects.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
+        final FanucCRCLMain localFanucCRCLMain = CRCLUtils.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
         return localFanucCRCLMain.getLocalPort();
     }
 
@@ -185,7 +185,7 @@ public class FanucCRCLServerJInternalFrameProvider implements ServerJInternalFra
 
     @Override
     public void setRemotRobotHost(String remoteRobotHost) {
-        final FanucCRCLMain localFanucCRCLMain = Objects.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
+        final FanucCRCLMain localFanucCRCLMain = CRCLUtils.requireNonNull(fanucCRCLMain, "fanucCRCLMain");
         localFanucCRCLMain.setRemoteRobotHost(remoteRobotHost);
     }
 

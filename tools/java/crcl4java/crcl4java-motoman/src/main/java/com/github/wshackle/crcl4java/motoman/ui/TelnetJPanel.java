@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -38,11 +39,12 @@ import java.util.logging.Logger;
  */
 public class TelnetJPanel extends javax.swing.JPanel {
 
-    private MotomanTelnetClient tc = null;
+    private @Nullable MotomanTelnetClient tc = null;
 
     /**
      * Creates new form TelnetJPanel
      */
+    @SuppressWarnings({"nullness","initialization"})
     public TelnetJPanel() {
         initComponents();
         Font font = this.jTextArea1.getFont();
@@ -264,7 +266,7 @@ public class TelnetJPanel extends javax.swing.JPanel {
 
     private class TelnetJPanelInputStream extends InputStream {
 
-        private String curString = null;
+        private @Nullable String curString = null;
         private int curPos = -1;
 
         @Override

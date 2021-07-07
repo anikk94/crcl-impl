@@ -73,7 +73,9 @@ public enum MotCtrlReturnEnum {
     
     public static MotCtrlReturnEnum fromId(int id) {
         MotCtrlReturnEnum ret =  map.get(id);
-        if(ret != SUCCESS) {
+        if(null == ret) { 
+            throw new IllegalArgumentException("id="+id+" is NOT a valid id for MotCtrlReturnEnum");
+        } else if(ret != SUCCESS) {
             System.out.println("");
             System.out.flush();
             StackTraceElement trace[] = Thread.currentThread().getStackTrace();

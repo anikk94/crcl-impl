@@ -33,6 +33,7 @@ public class MotomanCRCLServerJFrame extends javax.swing.JFrame {
     /**
      * Creates new form MotomanCrclServerJFrame
      */
+    @SuppressWarnings({"nullness","initialization"})
     public MotomanCRCLServerJFrame() {
         initComponents();
     }

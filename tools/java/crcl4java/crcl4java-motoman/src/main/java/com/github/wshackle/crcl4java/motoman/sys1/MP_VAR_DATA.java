@@ -22,12 +22,14 @@
  */
 package com.github.wshackle.crcl4java.motoman.sys1;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
 public class MP_VAR_DATA {
-    public VarType usType;
+    public @Nullable VarType usType;
     public short usIndex;
     public int ulValue;
 

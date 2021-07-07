@@ -29,6 +29,7 @@ import crcl.utils.server.SensorServerInterface;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 public class MotoFitTorqueSensorFinder implements SensorServerFinderInterface {
 
     @Override
-    public SensorServerInterface findSensorServer(String sensorId, List<ParameterSettingType> parameterList) {
+    public @Nullable SensorServerInterface findSensorServer(String sensorId, List<ParameterSettingType> parameterList) {
         if (sensorId.startsWith("MotoFit")) {
             try {
                 final String hostParam = findParam(parameterList, "host");
@@ -61,7 +62,7 @@ public class MotoFitTorqueSensorFinder implements SensorServerFinderInterface {
         return null;
     }
 
-    private static String findParam(List<ParameterSettingType> sensorParameterSetting, String name) {
+    private static @Nullable String findParam(List<ParameterSettingType> sensorParameterSetting, String name) {
         for (ParameterSettingType param : sensorParameterSetting) {
             if (param.getParameterName().equals(name)) {
                 return param.getParameterValue();

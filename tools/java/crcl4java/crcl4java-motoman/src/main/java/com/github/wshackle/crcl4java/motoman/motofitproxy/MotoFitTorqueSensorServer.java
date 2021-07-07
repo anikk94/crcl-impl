@@ -46,6 +46,8 @@ public class MotoFitTorqueSensorServer implements SensorServerInterface {
 
     private final String sensorId;
     private final List<ParameterSettingType> sensorParameterSetting;
+    
+    @SuppressWarnings({"nullness","initialization"})
     private final ThreadLocal<MotoPlusConnection> mpc = new ThreadLocal<>();
     private final ConcurrentLinkedDeque<MotoPlusConnection> allMpcs = new ConcurrentLinkedDeque<>();
     
@@ -57,6 +59,9 @@ public class MotoFitTorqueSensorServer implements SensorServerInterface {
             @Nullable String host, int port) throws IOException, MotoPlusConnection.MotoPlusConnectionException {
         this.sensorId = sensorId;
         this.sensorParameterSetting = sensorParameterSetting;
+        if(null == host) {
+            throw new IllegalArgumentException("host==null,sensorId="+sensorId);
+        }
         this.host = host;
         this.port = port;
         MotoPlusConnection mpcInit = MotoPlusConnection.connectionFromSocket(new Socket(host, port));

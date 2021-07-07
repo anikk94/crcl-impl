@@ -22,6 +22,8 @@
  */
 package com.github.wshackle.crcl4java.motoman.kinematics;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
@@ -29,7 +31,7 @@ package com.github.wshackle.crcl4java.motoman.kinematics;
 public class MpKinBaseReturn {
 
     public int returnInt;
-    public KinReturnCode returnCode;
+    public @Nullable KinReturnCode returnCode = null;
 
     @Override
     public String toString() {

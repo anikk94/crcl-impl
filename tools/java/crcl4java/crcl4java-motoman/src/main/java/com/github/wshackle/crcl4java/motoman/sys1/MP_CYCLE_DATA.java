@@ -22,12 +22,14 @@
  */
 package com.github.wshackle.crcl4java.motoman.sys1;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
 public class MP_CYCLE_DATA {
-    public CycleEnum cycle;
+    public @Nullable CycleEnum cycle;
 
     @Override
     public String toString() {

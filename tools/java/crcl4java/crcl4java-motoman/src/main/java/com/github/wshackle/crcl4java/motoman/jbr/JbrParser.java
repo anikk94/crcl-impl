@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmException;
@@ -69,7 +70,7 @@ public class JbrParser {
                     System.out.println("fa = " + Arrays.toString(fa));
 
                     PmCartesian cart = new PmCartesian(Double.parseDouble(fa[0]), Double.parseDouble(fa[1]), Double.parseDouble(fa[2]));
-                    PmRpy rpy = new PmRpy(Math.toRadians(Double.parseDouble(fa[5])), Math.toRadians(Double.parseDouble(fa[4])), Math.toRadians(Double.parseDouble(fa[3])+Math.PI));
+                    PmRpy rpy = new PmRpy(Math.toRadians(Double.parseDouble(fa[5])), Math.toRadians(Double.parseDouble(fa[4])), Math.toRadians(Double.parseDouble(fa[3]) + Math.PI));
                     PoseType pose = CRCLPosemath.toPoseType(cart, rcs.posemath.Posemath.toRot(rpy));
                     JbrPose jbrPose = new JbrPose("", index, pose);
                     System.out.println("jbrPose = " + jbrPose);
@@ -92,7 +93,7 @@ public class JbrParser {
                     jobStarted = false;
                     System.out.println("jobStarted = " + jobStarted);
                 }
-                if (jobStarted) {
+                if (jobStarted && null != curJobName) {
                     List<String> l = progMap.get(curJobName);
                     if (null != l) {
                         l.add(line);
@@ -116,13 +117,28 @@ public class JbrParser {
             }
         }
     }
+    private static class GetPoseException extends Exception {
 
-    JbrPose getPose(String poseNameOrId) {
+        public GetPoseException(String msg) {
+            super(msg);
+        }
+        
+    }
+
+    private JbrPose getJbrPose(String poseNameOrId) throws GetPoseException {
         if (poseNameOrId.matches("P\\d\\d\\d.* [^ ]*")) {
             int index = Integer.parseInt(poseNameOrId.substring(1));
-            return jbrIndexMap.get(index);
+            JbrPose ret =  jbrIndexMap.get(index);
+            if(null == ret) {
+                throw new GetPoseException("no pose in map for index="+index+", jbrIndexMap="+jbrIndexMap);
+            }
+            return ret;
         } else {
-            return jbrNameMap.get(poseNameOrId);
+            JbrPose ret = jbrNameMap.get(poseNameOrId);
+            if(null == ret) {
+                throw new GetPoseException("no pose in map for poseNameOrId="+poseNameOrId+", jbrNameMap="+jbrNameMap);
+            }
+            return ret;
         }
     }
 
@@ -133,115 +149,63 @@ public class JbrParser {
         program.setInitCanon(initCanon);
         EndCanonType endCanon = new EndCanonType();
         List<String> l = progMap.get(progName);
-        for (String line : l) {
-            if (line.startsWith("MOVJ")) {
-                String fa[] = line.substring(1).split("[ ]+");
-                JbrPose jbPose = getPose(fa[1]);
-                System.out.println("jbPose = " + jbPose);
-                MoveToType moveTo = new MoveToType();
-                moveTo.setCommandID(program.getMiddleCommand().size() + 2);
-                moveTo.setEndPosition(jbPose.getPose());
-                program.getMiddleCommand().add(moveTo);
-
-            } else if (line.startsWith("MOVL")) {
-                String fa[] = line.substring(1).split("[ ]+");
-                JbrPose jbPose = getPose(fa[1]);
-                    System.out.println("jbPose = " + jbPose);
-                    MoveToType moveTo = new MoveToType();
-                    moveTo.setMoveStraight(true);
-                    moveTo.setCommandID(program.getMiddleCommand().size() + 2);
-                    moveTo.setEndPosition(jbPose.getPose());
-                    program.getMiddleCommand().add(moveTo);
-            } else if (line.startsWith("SET")) {
-                String fa[] = line.substring(1).split("[ ]+");
-                JbrPose jbPose1 = getPose(fa[1]);
-                JbrPose jbPose2 = getPose(fa[2]);
-                jbPose1.setPose(jbPose2.getPose());
-            }  else if (line.startsWith("ADD")) {
-                String fa[] = line.substring(1).split("[ ]+");
-                JbrPose jbPose1 = getPose(fa[1]);
-                JbrPose jbPose2 = getPose(fa[2]);
-                jbPose1.setPose(CRCLPosemath.multiply(jbPose1.getPose(),jbPose2.getPose()));
-            } else if (line.equals("CALL JOB:GRIPCLOSE")) {
-                SetEndEffectorType seeCmd = new SetEndEffectorType();
-                seeCmd.setCommandID(program.getMiddleCommand().size() + 2);
-                seeCmd.setSetting(0.0);
-                program.getMiddleCommand().add(seeCmd);
-            } else if (line.equals("CALL JOB:GRIPPEROPEN")) {
-                SetEndEffectorType seeCmd = new SetEndEffectorType();
-                seeCmd.setCommandID(program.getMiddleCommand().size() + 2);
-                seeCmd.setSetting(1.0);
-                program.getMiddleCommand().add(seeCmd);
-            } else if (line.equals("CALL JOB:HOME")) {
-                JbrPose jbPose = jbrNameMap.get("HOMEPOS");
-                System.out.println("jbPose = " + jbPose);
-                MoveToType moveTo = new MoveToType();
-                moveTo.setCommandID(program.getMiddleCommand().size() + 2);
-                moveTo.setEndPosition(jbPose.getPose());
-                program.getMiddleCommand().add(moveTo);
+        if (null != l) {
+            for (String line : l) {
+                try {
+                    if (line.startsWith("MOVJ")) {
+                        String fa[] = line.substring(1).split("[ ]+");
+                        JbrPose jbPose = getJbrPose(fa[1]);
+                        System.out.println("jbPose = " + jbPose);
+                        MoveToType moveTo = new MoveToType();
+                        moveTo.setCommandID(program.getMiddleCommand().size() + 2);
+                        moveTo.setEndPosition(jbPose.getPose());
+                        program.getMiddleCommand().add(moveTo);
+                        
+                    } else if (line.startsWith("MOVL")) {
+                        String fa[] = line.substring(1).split("[ ]+");
+                        JbrPose jbPose = getJbrPose(fa[1]);
+                        System.out.println("jbPose = " + jbPose);
+                        MoveToType moveTo = new MoveToType();
+                        moveTo.setMoveStraight(true);
+                        moveTo.setCommandID(program.getMiddleCommand().size() + 2);
+                        moveTo.setEndPosition(jbPose.getPose());
+                        program.getMiddleCommand().add(moveTo);
+                    } else if (line.startsWith("SET")) {
+                        String fa[] = line.substring(1).split("[ ]+");
+                        JbrPose jbPose1 = getJbrPose(fa[1]);
+                        JbrPose jbPose2 = getJbrPose(fa[2]);
+                        jbPose1.setPose(jbPose2.getPose());
+                    } else if (line.startsWith("ADD")) {
+                        String fa[] = line.substring(1).split("[ ]+");
+                        JbrPose jbPose1 = getJbrPose(fa[1]);
+                        JbrPose jbPose2 = getJbrPose(fa[2]);
+                        jbPose1.setPose(CRCLPosemath.multiply(jbPose1.getPose(), jbPose2.getPose()));
+                    } else if (line.equals("CALL JOB:GRIPCLOSE")) {
+                        SetEndEffectorType seeCmd = new SetEndEffectorType();
+                        seeCmd.setCommandID(program.getMiddleCommand().size() + 2);
+                        seeCmd.setSetting(0.0);
+                        program.getMiddleCommand().add(seeCmd);
+                    } else if (line.equals("CALL JOB:GRIPPEROPEN")) {
+                        SetEndEffectorType seeCmd = new SetEndEffectorType();
+                        seeCmd.setCommandID(program.getMiddleCommand().size() + 2);
+                        seeCmd.setSetting(1.0);
+                        program.getMiddleCommand().add(seeCmd);
+                    } else if (line.equals("CALL JOB:HOME")) {
+                        JbrPose jbPose = getJbrPose("HOMEPOS");
+                        System.out.println("jbPose = " + jbPose);
+                        MoveToType moveTo = new MoveToType();
+                        moveTo.setCommandID(program.getMiddleCommand().size() + 2);
+                        moveTo.setEndPosition(jbPose.getPose());
+                        program.getMiddleCommand().add(moveTo);
+                    }
+                } catch (GetPoseException getPoseException) {
+                    System.err.println("l="+l);
+                    getPoseException.printStackTrace();
+                }
             }
         }
         endCanon.setCommandID(program.getMiddleCommand().size() + 2);
         program.setEndCanon(endCanon);
         return program;
     }
-
-    public JbrPose getByName(String name) {
-        return jbrNameMap.get(name);
-    }
-
-//    public static void main(String[] args) throws IOException, PmException, CRCLException, JAXBException {
-//
-//        JbrParser jp = new JbrParser();
-//        jp.parse(new File(Utils.getCrclUserHomeDir(), "MOVELGEAR.JBR"));
-//
-//        System.out.println("Generating program");
-//        CRCLProgramType program = jp.getProgram("MOVELGEAR");
-//        String programString = CRCLSocket.getUtilSocket().programToPrettyDocString(program, true);
-//        System.out.println("programString = " + programString);
-//        Files.write(Paths.get(Utils.getCrclUserHomeDir(), "MOVELGEAR_CRLC.xml"),
-//                programString.getBytes(), StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING);
-//        if (true) {
-//            return;
-//        }
-////        CRCLProgramType program = new CRCLProgramType();
-//        InitCanonType initCanon = new InitCanonType();
-//        initCanon.setCommandID(1);
-//        program.setInitCanon(initCanon);
-//        EndCanonType endCanon = new EndCanonType();
-//        MoveToType moveTo = new MoveToType();
-//        moveTo.setCommandID(2);
-//        PoseType pose = jp.getByName("HOMEPOS").getPose();
-//        moveTo.setEndPosition(pose);
-//        endCanon.setCommandID(3);
-//        program.setEndCanon(endCanon);
-//
-//        CRCLSocket socket = new CRCLSocket("localhost", CRCLSocket.DEFAULT_PORT);
-//        CRCLCommandInstanceType inst = new CRCLCommandInstanceType();
-//        inst.setCRCLCommand(initCanon);
-//        socket.writeCommand(inst);
-//        CRCLStatusType status = null;
-//        while (status == null || status.getCommandStatus().getCommandState() == CRCL_WORKING) {
-//            CRCLCommandInstanceType getStatusInst = new CRCLCommandInstanceType();
-//            GetStatusType getStatus = new GetStatusType();
-//            getStatus.setCommandID(4);
-//            getStatusInst.setCRCLCommand(getStatus);
-//            socket.writeCommand(getStatusInst);
-//            status = socket.readStatus();
-////            System.out.println("status = " + socket.statusToPrettyString(status, true));
-//        }
-//        moveTo.setCommandID(5);
-//        inst.setCRCLCommand(moveTo);
-//        socket.writeCommand(inst);
-//        status = null;
-//        while (status == null || status.getCommandStatus().getCommandState() == CRCL_WORKING) {
-//            CRCLCommandInstanceType getStatusInst = new CRCLCommandInstanceType();
-//            GetStatusType getStatus = new GetStatusType();
-//            getStatus.setCommandID(6);
-//            getStatusInst.setCRCLCommand(getStatus);
-//            socket.writeCommand(getStatusInst);
-//            status = socket.readStatus();
-////            System.out.println("status = " + socket.statusToPrettyString(status, true));
-//        }
-//    }
 }

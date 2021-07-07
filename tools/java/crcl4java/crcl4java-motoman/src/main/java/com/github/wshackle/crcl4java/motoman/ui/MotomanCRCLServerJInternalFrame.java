@@ -36,6 +36,7 @@ public class MotomanCRCLServerJInternalFrame extends javax.swing.JInternalFrame 
     /**
      * Creates new form MotomanCrclServerJInternalFrame
      */
+    @SuppressWarnings({"nullness","initialization"})
     public MotomanCRCLServerJInternalFrame() {
         initComponents();
     }

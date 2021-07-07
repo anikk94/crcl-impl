@@ -36,6 +36,7 @@ import crcl.utils.XFuture;
 import crcl.utils.server.CRCLServerSocket;
 import crcl.utils.server.GuardHistoryElement;
 import java.awt.Container;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -59,6 +60,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -69,6 +71,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
     /**
      * Creates new form MotomanCrclServerJPanel
      */
+    @SuppressWarnings({"nullness", "initialization"})
     public MotomanCRCLServerJPanel() {
         initComponents();
     }
@@ -355,11 +358,11 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private MotomanCRCLServer motomanCrclServer = null;
+    private @Nullable MotomanCRCLServer motomanCrclServer = null;
     private int motomanPort = MotomanCRCLServer.DEFAULT_MOTOMAN_PORT;
     private int crclPort = CRCLSocket.DEFAULT_PORT;
     private String motomanHost = MotomanCRCLServer.DEFAULT_MOTOMAN_HOST;
-    private Thread crclThread = null;
+    private @Nullable Thread crclThread = null;
 
     private int connectTimeoutMillis = 2000;
     private int readTimeoutMillis = 2000;
@@ -424,7 +427,10 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
 
     private final int LOG_SIZE_LIMIT = 50000;
 
-    private void appendLog(String s) {
+    private void appendLog(@Nullable String s) {
+        if (s == null) {
+            return;
+        }
         jTextAreaErrLog.append(s + '\n');
         String fullString = jTextAreaErrLog.getText();
         if (fullString.length() > LOG_SIZE_LIMIT) {
@@ -447,6 +453,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         appendLog(s);
     }
 
+    @SuppressWarnings({"nullness", "initialization"})
     private final Consumer<String> logConsumer = this::appendLog;
 
     public void connectCrclMotoplus() throws IOException {
@@ -465,7 +472,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
 
     private void enableMotomanCrclServerControls() {
         if (null == motomanCrclServer) {
-            throw new IllegalStateException("motomanCrclServer="+motomanCrclServer);
+            throw new IllegalStateException("motomanCrclServer=" + motomanCrclServer);
         }
         jButtonSendRequest.setEnabled(true);
         jButtonStatus.setEnabled(true);
@@ -473,11 +480,12 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
 
     private void disableMotomanCrclServerControls() {
         if (null != motomanCrclServer) {
-            throw new IllegalStateException("motomanCrclServer="+motomanCrclServer);
+            throw new IllegalStateException("motomanCrclServer=" + motomanCrclServer);
         }
         jButtonSendRequest.setEnabled(false);
         jButtonStatus.setEnabled(false);
     }
+
     public void disconnectCrclMotoplus() {
         if (jCheckBoxConnect.isSelected()) {
             jCheckBoxConnect.setSelected(false);
@@ -496,24 +504,25 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
             }
             motomanCrclServer = null;
         }
-        if (null != crclThread) {
-            if (crclThread.isAlive()) {
+        final Thread crclThreadLocal = this.crclThread;
+        if (null != crclThreadLocal) {
+            if (crclThreadLocal.isAlive()) {
                 errLogPrintln("Interrupting Motoman CRCL server thread");
                 try {
-                    crclThread.join(100);
+                    crclThreadLocal.join(100);
                 } catch (InterruptedException ex) {
                     LOGGER.log(Level.SEVERE, "", ex);
                 }
-                if (crclThread.isAlive()) {
-                    crclThread.interrupt();
+                if (crclThreadLocal.isAlive()) {
+                    crclThreadLocal.interrupt();
                     try {
-                        crclThread.join(100);
+                        crclThreadLocal.join(100);
                     } catch (InterruptedException ex) {
                         LOGGER.log(Level.SEVERE, "", ex);
                     }
                 }
             }
-            crclThread = null;
+            this.crclThread = null;
         }
     }
 
@@ -543,7 +552,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                 }
                 String methodNames[] = methodMap.keySet().toArray(new String[0]);
                 Arrays.sort(methodNames, 0, methodNames.length);
-                String selectedMethodName = (String) JOptionPane.showInputDialog(this, "Mpc Method", "Send Request", JOptionPane.QUESTION_MESSAGE, null, methodNames, null);
+                String selectedMethodName = queryMethodName(methodNames);
                 logPrintln("selectedMethodName = " + selectedMethodName);
                 if (null == selectedMethodName || selectedMethodName.length() < 1) {
                     // User probably cancelled.
@@ -551,6 +560,12 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                 }
                 Method selectedMethod = methodMap.get(selectedMethodName);
                 logPrintln("selectedMethod = " + selectedMethod);
+                if (null == selectedMethod) {
+                    errLogPrintln("selectedMethod = " + selectedMethod);
+                    errLogPrintln("methodMap = " + methodMap);
+                    JOptionPane.showMessageDialog(this, selectedMethodName + " not found in methodMap");
+                    return;
+                }
                 Object objectParams[] = new Object[selectedMethod.getParameterCount()];
                 Container container = getParent();
                 JFrame parentJFrame = null;
@@ -573,7 +588,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                     String queryString = selectedMethodName + " (parameter " + i + ") " + paramName;
                     Object objectParam;
                     if (parameterType.isArray()) {
-                        int arrayLength = Integer.parseInt(JOptionPane.showInputDialog(parentJFrame, "Length of " + queryString, 1));
+                        int arrayLength = queryArrayLength(parentJFrame, queryString);
                         Class<?> compenentType = parameterType.getComponentType();
                         if (compenentType.isPrimitive()) {
                             if (compenentType == byte.class) {
@@ -607,15 +622,14 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                         Object editedObjectParam = ObjTableJPanel.editObject(objectParam, parentJFrame, queryString, true, null, null, null, null);
                         objectParams[i] = editedObjectParam;
                     } else if (parameterType.isEnum()) {
-                        Object[] enumConstants = (Object[]) parameterType.getEnumConstants();
-                        objectParam = JOptionPane.showInputDialog(parentJFrame, queryString, queryString, JOptionPane.QUESTION_MESSAGE, null, enumConstants, enumConstants[0]);
+                        objectParam = queryEnumChoice(parameterType, parentJFrame, queryString);
                         objectParams[i] = objectParam;
                     } else if (parameterType.isPrimitive()) {
                         if (parameterType == int.class) {
-                            int paramInt = Integer.parseInt(JOptionPane.showInputDialog(parentJFrame, queryString, 0));
+                            int paramInt = queryInt(parentJFrame, queryString);
                             objectParams[i] = paramInt;
                         } else if (parameterType == double.class) {
-                            double paramDouble = Double.parseDouble(JOptionPane.showInputDialog(parentJFrame, queryString, 0.0));
+                            double paramDouble = queryDouble(parentJFrame, queryString);
                             objectParams[i] = paramDouble;
                         } else {
                             objectParam = parameterType.getConstructor().newInstance();
@@ -644,17 +658,54 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonSendRequestActionPerformed
 
+    @SuppressWarnings("nullness")
+    private double queryDouble(@Nullable JFrame parentJFrame, String queryString) throws NumberFormatException {
+        double paramDouble = Double.parseDouble(JOptionPane.showInputDialog(parentJFrame, queryString, 0.0));
+        return paramDouble;
+    }
+
+    @SuppressWarnings("nullness")
+    private int queryInt(@Nullable JFrame parentJFrame, String queryString) throws NumberFormatException {
+        int paramInt = Integer.parseInt(JOptionPane.showInputDialog(parentJFrame, queryString, 0));
+        return paramInt;
+    }
+
+    @SuppressWarnings("nullness")
+    private Object queryEnumChoice(Class<?> parameterType, @Nullable JFrame parentJFrame, String queryString) throws HeadlessException {
+        Object objectParam;
+        Object[] enumConstants = (Object[]) parameterType.getEnumConstants();
+        objectParam = JOptionPane.showInputDialog(parentJFrame, queryString, queryString, JOptionPane.QUESTION_MESSAGE, null, enumConstants, enumConstants[0]);
+        return objectParam;
+    }
+
+    @SuppressWarnings("nullness")
+    private int queryArrayLength(@Nullable JFrame parentJFrame, String queryString) throws NumberFormatException {
+        int arrayLength = Integer.parseInt(JOptionPane.showInputDialog(parentJFrame, "Length of " + queryString, 1));
+        return arrayLength;
+    }
+
+    @SuppressWarnings("nullness")
+    private String queryMethodName(String[] methodNames) throws HeadlessException {
+        String selectedMethodName = (String) JOptionPane.showInputDialog(this, "Mpc Method", "Send Request", JOptionPane.QUESTION_MESSAGE, null, methodNames, null);
+        return selectedMethodName;
+    }
+
     private void jButtonStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStatusActionPerformed
         long t0 = System.currentTimeMillis();
-        motomanCrclServer
+        final MotomanCRCLServer motomanCrclServerLocal = motomanCrclServer;
+        if (null == motomanCrclServerLocal) {
+            JOptionPane.showMessageDialog(this.getParent(), "Motoman CRCL Server not initialized.");
+            return;
+        }
+        motomanCrclServerLocal
                 .getCrclStatusFuture(testWithJoints, testWithAlarms, 0)
                 .thenAccept((CRCLStatusType status) -> {
                     try {
                         String text = CRCLSocket.getUtilSocket().statusToPrettyString(status, false);
                         long timeDiff = System.currentTimeMillis() - t0;
-                        String lastCommandText = motomanCrclServer.getLastCommandText();
-                        String lastCheckMoveCommandText = motomanCrclServer.getLastCheckMoveCommandText();
-                        long lastCheckMoveTime = motomanCrclServer.getLastCheckMoveTime();
+                        String lastCommandText = motomanCrclServerLocal.getLastCommandText();
+                        String lastCheckMoveCommandText = motomanCrclServerLocal.getLastCheckMoveCommandText();
+                        long lastCheckMoveTime = motomanCrclServerLocal.getLastCheckMoveTime();
                         long timeSinceCheckMove = t0 - lastCheckMoveTime;
                         appendLog("\njButtonStatusActionPerformed: \n" + text + "\nlastCommand=\n" + lastCommandText + "\nlastCheckMoveCommand=\n" + lastCheckMoveCommandText + "\timeSinceCheckMove=" + timeSinceCheckMove + "\ntimeDiff=" + timeDiff + "\n");
                         MultiLineStringJPanel.showText(text, null, "Motoman Status", false);
@@ -704,7 +755,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         }
         XFuture.allOfWithName("allTests", testFutures).thenRun(() -> {
             long t1 = System.currentTimeMillis();
-            JOptionPane.showMessageDialog(null, "done " + (t1 - t0));
+            JOptionPane.showMessageDialog(this.getParent(), "done " + (t1 - t0));
         });
     }//GEN-LAST:event_jButtonMpcStatusOnlyActionPerformed
 
@@ -718,7 +769,9 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonUpdatePerfInfoActionPerformed
 
     private void jTextFieldStatCacheTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldStatCacheTimeActionPerformed
-        motomanCrclServer.setStatCacheTime(Integer.parseInt(jTextFieldStatCacheTime.getText().trim()));
+        if (null != motomanCrclServer) {
+            motomanCrclServer.setStatCacheTime(Integer.parseInt(jTextFieldStatCacheTime.getText().trim()));
+        }
     }//GEN-LAST:event_jTextFieldStatCacheTimeActionPerformed
 
     private void jTextFieldConnectTimeoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldConnectTimeoutActionPerformed
@@ -733,10 +786,12 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         try {
             diagapplet.plotter.plotterJFrame plotJFrame
                     = new diagapplet.plotter.plotterJFrame();
-            final List<GuardHistoryElement> guardHistoryList = motomanCrclServer.getCrclServerSocket().getGuardHistoryList();
-            plotJFrame.LoadObjectsList("", guardHistoryList);
-            plotJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            plotJFrame.setVisible(true);
+            if (null != motomanCrclServer) {
+                final List<GuardHistoryElement> guardHistoryList = motomanCrclServer.getCrclServerSocket().getGuardHistoryList();
+                plotJFrame.LoadObjectsList("", guardHistoryList);
+                plotJFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                plotJFrame.setVisible(true);
+            }
         } catch (Exception ex) {
             Logger.getLogger(SimServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
         }
@@ -778,10 +833,14 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
 
         long t0 = System.currentTimeMillis();
         int count = 0;
+        final MotomanCRCLServer motomanCrclServerLocal = motomanCrclServer;
+        if(null == motomanCrclServerLocal) {
+            return -1;
+        }
         try (MotoPlusConnection mpc = MotoPlusConnection.connectionFromSocket(new Socket(motomanHost, motomanPort))) {
             final CommandStateEnumType commandState = CommandStateEnumType.CRCL_DONE;
-            int lastSentId = motomanCrclServer.getLastSentTargetId();
-            int lastRecvdTargetId = motomanCrclServer.getLastRecvdTargetId();
+            int lastSentId = motomanCrclServerLocal.getLastSentTargetId();
+            int lastRecvdTargetId = motomanCrclServerLocal.getLastRecvdTargetId();
             int startcount = mpc.readMpcStatusOnly(commandState, withJoints, withAlarms, lastSentId, lastRecvdTargetId).getStatusCount();
             for (int i = 0; i < maxcount; i++) {
                 MpcStatus mpcStatus = mpc.readMpcStatusOnly(commandState, withJoints, withAlarms, lastSentId, lastRecvdTargetId);
@@ -798,7 +857,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
             System.out.println(finalI + " (timediff/countdiff) = " + perCountTime);
             return perCountTime;
         } catch (ConnectException ex) {
-            final String msg = "Failed to connect to host "+motomanHost+" on port "+ motomanPort;
+            final String msg = "Failed to connect to host " + motomanHost + " on port " + motomanPort;
             Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, msg, ex);
             MultiLineStringJPanel.showText(msg);
             MultiLineStringJPanel.showException(ex);
@@ -870,12 +929,13 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
         props.put("debug", Boolean.toString(jCheckBoxDebug.isSelected()));
         props.put("connectTimeoutMillis", Integer.toString(connectTimeoutMillis));
         props.put("readTimeoutMillis", Integer.toString(readTimeoutMillis));
-        if (null != motomanCrclServer) {
+        final MotomanCRCLServer motomanCrclServerLocal = motomanCrclServer;
+        if (null != motomanCrclServerLocal) {
             try {
-                motomanCrclServer.setStatCacheTime(Integer.parseInt(jTextFieldStatCacheTime.getText().trim()));
+                motomanCrclServerLocal.setStatCacheTime(Integer.parseInt(jTextFieldStatCacheTime.getText().trim()));
             } catch (Throwable ignored) {
             }
-            props.put("statCacheTime", Integer.toString(motomanCrclServer.getStatCacheTime()));
+            props.put("statCacheTime", Integer.toString(motomanCrclServerLocal.getStatCacheTime()));
         }
         logPrintln("MotomanCrclServerJPanel saving properties to " + propertiesFile.getCanonicalPath());
         PropertiesUtils.saveProperties(propertiesFile, props);

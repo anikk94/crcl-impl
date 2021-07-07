@@ -54,7 +54,11 @@ public enum KinReturnCode {
     }
 
     public static KinReturnCode fromInt(int i) {
-        return map.get(i);
+        final KinReturnCode ret = map.get(i);
+        if(null == ret) {
+            throw new RuntimeException("i="+i+ " is NOT a valid KinReturnCode");
+        }
+        return ret;
     }
 
     public int getId() {
