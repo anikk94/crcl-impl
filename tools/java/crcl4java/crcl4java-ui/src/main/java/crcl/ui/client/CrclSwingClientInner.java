@@ -708,7 +708,6 @@ public class CrclSwingClientInner {
 //    private void setCommandId(CRCLCommandType cmd) {
 //        setCommandId(cmd, commandId.incrementAndGet());
 //    }
-
     private boolean requestStatus(@Nullable CRCLSocket crclRequestSocket) throws JAXBException {
         if (null == crclRequestSocket) {
             throw new IllegalArgumentException("null == crclRequestSocket");
@@ -1156,7 +1155,7 @@ public class CrclSwingClientInner {
         }
         String str
                 = cs.programToPrettyString(programToSave, validateXmlSchema);
-        try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
+        try ( PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             pw.println(str);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "", ex);
@@ -2145,7 +2144,7 @@ public class CrclSwingClientInner {
                         .orElse(false);
 
         final PmRpy rpyZero = new PmRpy();
-        try (PrintWriter pw = new PrintWriter(new FileWriter(poseFileName))) {
+        try ( PrintWriter pw = new PrintWriter(new FileWriter(poseFileName))) {
             String headers = "time,relTime,cmdIdFromStatus,lastSentCmdId,State,cmdName,x,y,z,roll,pitch,yaw,"
                     + (havePos ? jointIds.stream().map((x) -> "Joint" + x + "Pos").collect(Collectors.joining(",")) : "")
                     + (haveVel ? "," + jointIds.stream().map((x) -> "Joint" + x + "Vel").collect(Collectors.joining(",")) : "")
@@ -2401,7 +2400,7 @@ public class CrclSwingClientInner {
 
     public void printCommandStatusLog(Appendable appendable, boolean clearLog, String headers[]) throws IOException {
         @SuppressWarnings("resource")
-		CSVPrinter printer = new CSVPrinter(appendable, CSVFormat.DEFAULT);
+        CSVPrinter printer = new CSVPrinter(appendable, CSVFormat.DEFAULT);
         if (!CRCLUtils.equals(lastPrintCommandStatusAppendable, appendable)) {
             printer.printRecord((Object[]) headers);
             lastPrintCommandStatusAppendable = appendable;
@@ -2486,7 +2485,7 @@ public class CrclSwingClientInner {
             boolean headerAtStart,
             String headers[],
             int headerRepeat) throws IOException {
-        try (CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f, append)), CSVFormat.DEFAULT)) {
+        try ( CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f, append)), CSVFormat.DEFAULT)) {
             int i = 0;
             if (headerAtStart && null != headers && headers.length > 0) {
                 printer.printRecord((Object[]) headers);
@@ -2691,7 +2690,7 @@ public class CrclSwingClientInner {
                             File triggerLogFile = new File(System.getProperty("user.home"), "trigger_log.csv");
                             System.out.println("triggerLogFile = " + triggerLogFile);
                             boolean alreadyExists = triggerLogFile.exists();
-                            try (PrintWriter pw = new PrintWriter(new FileWriter(triggerLogFile, true))) {
+                            try ( PrintWriter pw = new PrintWriter(new FileWriter(triggerLogFile, true))) {
                                 if (!alreadyExists) {
                                     pw.println("time_ms,date,count,x,y,z,closeX,closeY,closeZ,diffCloseX,diffCloseY,diffCloseZ");
                                 }
@@ -3959,7 +3958,7 @@ public class CrclSwingClientInner {
     }
 
     public void saveProgramRunDataListToCsv(File f, List<ProgramRunData> list) throws IOException {
-        try (CSVPrinter printer = new CSVPrinter(new FileWriter(f), CSVFormat.DEFAULT)) {
+        try ( CSVPrinter printer = new CSVPrinter(new FileWriter(f), CSVFormat.DEFAULT)) {
             printer.printRecord("time", "dist", "result", "id", "cmdString");
             for (ProgramRunData prd : list) {
                 if (null != prd) {
@@ -4360,7 +4359,7 @@ public class CrclSwingClientInner {
                 System.err.println("tempStatusSaveFile = " + tempStatusSaveFile);
                 String s = statusToPrettyString();
                 System.err.println("status = " + s);
-                try (FileWriter fw = new FileWriter(tempStatusSaveFile)) {
+                try ( FileWriter fw = new FileWriter(tempStatusSaveFile)) {
                     fw.write(s);
                 }
             } catch (Exception ex2) {
@@ -4380,10 +4379,10 @@ public class CrclSwingClientInner {
             System.err.println("runProgram: threadCreateCallStack = " + XFuture.traceToString(threadCreateCallStack));
             System.err.println("");
             System.err.flush();
-            if(ex instanceof  RuntimeException) {
+            if (ex instanceof RuntimeException) {
                 throw (RuntimeException) ex;
             } else {
-                throw new RuntimeException(ex.getMessage()+newExMsg, ex);
+                throw new RuntimeException(ex.getMessage() + newExMsg, ex);
             }
         } finally {
             setOutgoingProgramIndex(-1);
@@ -4512,7 +4511,6 @@ public class CrclSwingClientInner {
 //    private boolean isCrclSocketActionThreadAlive() {
 //        return null != crclSocketActionThread && crclSocketActionThread.isAlive();
 //    }
-
     private boolean isRunProgramFutureNotCompleted() {
         return null != runProgramFuture && !runProgramFuture.isDone() && !runProgramFuture.isCancelled()
                 && !runProgramFuture.isCompletedExceptionally();
@@ -4673,31 +4671,31 @@ public class CrclSwingClientInner {
             final Double testJointMoveSpeed;
             final Double testJointMoveAccel;
             final double xyzAxisIncrement;
-            if(null != testProperies) {
+            if (null != testProperies) {
                 String jointTolString = testProperies.get("jointTol");
-                if(null != jointTolString && jointTolString.length() > 0) {
+                if (null != jointTolString && jointTolString.length() > 0) {
                     setJointTol(Double.parseDouble(jointTolString));
                 }
                 String jointPosIncrementString = testProperies.get("jointPosIncrement");
-                if(null != jointPosIncrementString && jointPosIncrementString.length() > 0) {
+                if (null != jointPosIncrementString && jointPosIncrementString.length() > 0) {
                     jointPosIncrement = Double.parseDouble(jointPosIncrementString);
                 } else {
                     jointPosIncrement = jointJogIncrement;
                 }
                 String jointMoveSpeedString = testProperies.get("jointMoveSpeed");
-                if(null != jointMoveSpeedString && jointMoveSpeedString.length() > 0) {
+                if (null != jointMoveSpeedString && jointMoveSpeedString.length() > 0) {
                     testJointMoveSpeed = Double.valueOf(jointMoveSpeedString);
                 } else {
                     testJointMoveSpeed = null;
                 }
                 String jointMoveAccelString = testProperies.get("jointMoveAccel");
-                if(null != jointMoveAccelString && jointMoveAccelString.length() > 0) {
+                if (null != jointMoveAccelString && jointMoveAccelString.length() > 0) {
                     testJointMoveAccel = Double.valueOf(jointMoveAccelString);
                 } else {
                     testJointMoveAccel = null;
                 }
                 String xyzAxisIncrementString = testProperies.get("xyzAxisIncrement");
-                if(null != xyzAxisIncrementString && xyzAxisIncrementString.length() > 0) {
+                if (null != xyzAxisIncrementString && xyzAxisIncrementString.length() > 0) {
                     xyzAxisIncrement = Double.parseDouble(xyzAxisIncrementString);
                 } else {
                     xyzAxisIncrement = this.getXyzJogIncrement();
@@ -5761,6 +5759,9 @@ public class CrclSwingClientInner {
         } catch (Exception e) {
             final String errString = "Exception executing command " + CRCLSocket.commandToSimpleString(cmd);
             LOGGER.log(Level.SEVERE, errString + "\n", e);
+            if (null != e.getCause()) {
+                LOGGER.log(Level.SEVERE, errString + " cause: \n", e.getCause());
+            }
             throw new RuntimeException(errString, e);
         } finally {
             long tcEndTime = System.currentTimeMillis();
@@ -6151,7 +6152,7 @@ public class CrclSwingClientInner {
     public void saveStatusAs(File f) {
         try {
             String s = statusToPrettyString();
-            try (FileWriter fw = new FileWriter(f)) {
+            try ( FileWriter fw = new FileWriter(f)) {
                 fw.write(s);
             }
         } catch (Exception ex) {

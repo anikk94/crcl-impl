@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 
 /**
  *
@@ -61,7 +62,7 @@ public class ATIForceTorqueSensorServer implements SensorServerInterface {
         this.sensorParameterSetting = sensorParameterSetting;
         this.netFtSensor = netFtSensor;
         this.configurationReader = configurationReader;
-        this.logFileName = findParam(sensorParameterSetting, "logFileName");
+        this.logFileName = findParam(sensorParameterSetting, "logFileName",null);
     }
 
     public ATIForceTorqueSensorServer(String sensorId, List<ParameterSettingType> sensorParameterSetting, String host) throws UnknownHostException, IOException, IOException, IOException {
@@ -75,6 +76,15 @@ public class ATIForceTorqueSensorServer implements SensorServerInterface {
             }
         }
         throw new RuntimeException("parameter "+name+" not found in "+sensorParameterSetting);
+    }
+    
+    private static @PolyNull String findParam(List<ParameterSettingType> sensorParameterSetting, String name, @PolyNull String defaultValue) {
+        for (ParameterSettingType param : sensorParameterSetting) {
+            if (param.getParameterName().equals(name)) {
+                return param.getParameterValue();
+            }
+        }
+        return defaultValue;
     }
 
     public ATIForceTorqueSensorServer(String sensorId, List<ParameterSettingType> sensorParameterSetting) throws UnknownHostException, IOException {
