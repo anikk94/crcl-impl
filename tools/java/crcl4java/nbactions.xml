@@ -118,4 +118,22 @@
                 <activatedProfile>release</activatedProfile>
             </activatedProfiles>
         </action>
+    <action>
+            <actionName>CUSTOM-checkall8</actionName>
+            <displayName>checkall8</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>test</goal>
+                <goal>generate-sources</goal>
+                <goal>javadoc:javadoc</goal>
+                <goal>package</goal>
+                <goal>install</goal>
+                <goal>verify</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>checkerframework_jdk8</activatedProfile>
+                <activatedProfile>motomanfanuc</activatedProfile>
+                <activatedProfile>add_sources_jar</activatedProfile>
+            </activatedProfiles>
+        </action>
 </actions>
