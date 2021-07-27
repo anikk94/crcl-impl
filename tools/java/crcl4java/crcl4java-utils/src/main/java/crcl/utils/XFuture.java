@@ -2048,7 +2048,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     public XFuture<T> alwaysComposeAsyncToInput(String name, Supplier<XFutureVoid> supplier, ExecutorService service) {
-        return alwaysCompose(name, supplier)
+        return alwaysComposeAsync(name, supplier,service)
                 .thenApply((ComposedPair<T, Void> pair) -> pair.getInput());
     }
 
