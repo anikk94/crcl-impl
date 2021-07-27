@@ -5,7 +5,7 @@
  */
 package crcl.ui.forcetorquesensorsimulator;
 
-import javax.swing.JFrame;
+import java.awt.GraphicsEnvironment;
 
 /**
  *
@@ -17,19 +17,24 @@ public class ValueJPanel extends javax.swing.JPanel {
     /**
      * Creates new form ValueJPanel
      */
-    @SuppressWarnings({"nullness","initialization"})
+    @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel() {
-        initComponents();
-        jLabelName.setText(super.getName());
+        if (!GraphicsEnvironment.isHeadless()) {
+            initComponents();
+            jLabelName.setText(super.getName());
+        }
     }
 
     /**
      * Creates new form ValueJPanel
      */
-    @SuppressWarnings({"nullness","initialization"})
+    @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel(String name) {
-        initComponents();
-        jLabelName.setText(name);
+        if (!GraphicsEnvironment.isHeadless()) {
+            initComponents();
+            jLabelName.setText(name);
+        }
+        super.setName(name);
     }
 
     /**
@@ -152,11 +157,16 @@ public class ValueJPanel extends javax.swing.JPanel {
         setValue(v);
     }//GEN-LAST:event_jTextFieldFxMax1ActionPerformed
 
+    private double maxValue = 1000;
+    private double minValue = 0;
+    private double value = 500;
+
     /**
      * Get the value of name
      *
      * @return the value of name
      */
+    @Override
     public String getName() {
         if (null == jLabelName) {
             return super.getName();
@@ -169,9 +179,12 @@ public class ValueJPanel extends javax.swing.JPanel {
      *
      * @param name new value of name
      */
+    @Override
     public void setName(String name) {
         super.setName(name);
-        jLabelName.setText(name);
+        if (null != jLabelName) {
+            jLabelName.setText(name);
+        }
     }
 
     /**
@@ -180,7 +193,13 @@ public class ValueJPanel extends javax.swing.JPanel {
      * @return the value of minValue
      */
     public double getMinValue() {
-        return Double.parseDouble(jTextFieldFxMin1.getText());
+        if (null != jTextFieldFxMax1) {
+            double v = Double.parseDouble(jTextFieldFxMin1.getText());
+            this.minValue = v;
+            return v;
+        } else {
+            return this.minValue;
+        }
     }
 
     /**
@@ -189,7 +208,10 @@ public class ValueJPanel extends javax.swing.JPanel {
      * @param minValue new value of minValue
      */
     public void setMinValue(double minValue) {
-        jTextFieldFxMin1.setText(Double.toString(minValue));
+        if (null != jTextFieldFxMin1) {
+            jTextFieldFxMin1.setText(Double.toString(minValue));
+        }
+        this.minValue = minValue;
     }
 
     /**
@@ -198,16 +220,25 @@ public class ValueJPanel extends javax.swing.JPanel {
      * @return the value of minValue
      */
     public double getMaxValue() {
-        return Double.parseDouble(jTextFieldFxMax1.getText());
+        if (null != jTextFieldFxMax1) {
+            double v = Double.parseDouble(jTextFieldFxMax1.getText());
+            this.maxValue = v;
+            return v;
+        } else {
+            return this.maxValue;
+        }
     }
 
     /**
-     * Set the value of minValue
+     * Set the value of maxValue
      *
-     * @param minValue new value of minValue
+     * @param maxValue new value of maxValue
      */
-    public void setMaxValue(double minValue) {
-        jTextFieldFxMax1.setText(Double.toString(minValue));
+    public void setMaxValue(double maxValue) {
+        if (null != jTextFieldFxMax1) {
+            jTextFieldFxMax1.setText(Double.toString(maxValue));
+        }
+        this.maxValue = maxValue;
     }
 
     /**
@@ -216,8 +247,14 @@ public class ValueJPanel extends javax.swing.JPanel {
      * @return the value of value
      */
     public double getValue() {
-        int sliderValue = jSliderFx1.getValue();
-        return sliderValueToDoubleValue(sliderValue);
+        if (null != jSliderFx1) {
+            int sliderValue = jSliderFx1.getValue();
+            double v = sliderValueToDoubleValue(sliderValue);
+            this.value = v;
+            return v;
+        } else {
+            return this.value;
+        }
     }
 
     private double sliderValueToDoubleValue(int sliderValue) {
@@ -237,29 +274,32 @@ public class ValueJPanel extends javax.swing.JPanel {
      * @param value new value of value
      */
     public void setValue(final double value) {
-        int sliderMax = jSliderFx1.getMaximum();
-        int sliderMin = jSliderFx1.getMinimum();
-        double minValue = getMinValue();
-        double maxValue = getMaxValue();
-        double sliderMaxMinDiff = sliderMax - sliderMin;
-        double maxMinDiff = maxValue - minValue;
-        double valueMinDff = value - minValue;
-        double newValue = sliderMin + valueMinDff / maxMinDiff * sliderMaxMinDiff;
-        int newValueInt = (int) newValue;
-        final double newDoubleSliderValue = sliderValueToDoubleValue(newValueInt);
-        final String valueText = Double.toString(newDoubleSliderValue);
-        jSliderFx1.setValue(newValueInt);
-        jTextFieldFxValue1.setText(valueText);
+        if (null != jSliderFx1) {
+            int sliderMax = jSliderFx1.getMaximum();
+            int sliderMin = jSliderFx1.getMinimum();
+            double minValue = getMinValue();
+            double maxValue = getMaxValue();
+            double sliderMaxMinDiff = sliderMax - sliderMin;
+            double maxMinDiff = maxValue - minValue;
+            double valueMinDff = value - minValue;
+            double newValue = sliderMin + valueMinDff / maxMinDiff * sliderMaxMinDiff;
+            int newValueInt = (int) newValue;
+            final double newDoubleSliderValue = sliderValueToDoubleValue(newValueInt);
+            final String valueText = Double.toString(newDoubleSliderValue);
+            jSliderFx1.setValue(newValueInt);
+            jTextFieldFxValue1.setText(valueText);
+        }
+        this.value = value;
     }
 
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
-            frame.add(new ValueJPanel());
-            frame.pack();
-            frame.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        javax.swing.SwingUtilities.invokeLater(() -> {
+//            JFrame frame = new JFrame();
+//            frame.add(new ValueJPanel());
+//            frame.pack();
+//            frame.setVisible(true);
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel7;
