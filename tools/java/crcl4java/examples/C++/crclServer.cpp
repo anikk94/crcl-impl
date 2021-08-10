@@ -5,6 +5,7 @@
 using namespace crclj;
 using namespace crclj::crcl::base;
 using namespace crclj::crcl::utils;
+using namespace crclj::crcl::utils::server;
 using namespace crclj::java::math;
 using namespace crclj::java::util;
 using namespace crclj::java::lang;
@@ -28,8 +29,7 @@ int main(int argc, const char **argv) {
         PoseStatusType poseStatus;
 
         // Create as Server Socket object bound to the default port.
-
-        CRCLServerSocket serverSocket(CRCLSocket::getDEFAULT_PORT());
+        DefaultCrclServerSocket serverSocket(CRCLSocket::getDEFAULT_PORT());
 
         // Enable queuing of events so we don't need a callback.
         serverSocket.setQueueEvents(true);

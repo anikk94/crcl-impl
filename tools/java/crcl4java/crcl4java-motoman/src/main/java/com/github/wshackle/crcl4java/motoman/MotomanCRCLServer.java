@@ -376,7 +376,8 @@ public class MotomanCRCLServer implements AutoCloseable {
     }
 
     private final ThreadLockedHolder<CRCLStatusType> crclStatus
-            = new ThreadLockedHolder<>("MotomanCRCLServer.crclSTatus", CRCLPosemath.newFullCRCLStatus());
+            = new ThreadLockedHolder<>("MotomanCRCLServer.crclSTatus", 
+                    CRCLPosemath.newFullCRCLStatus());
 
     private long last_status_update_time = -1;
 

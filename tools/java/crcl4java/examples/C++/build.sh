@@ -9,38 +9,20 @@ if test "x${DIR}" != "x" ; then
     fi
 fi
 
+(cd ../.. ; mvn install )
+
 
 ## This will need to be edited on most systems that do NOT already have JAVA_HOME set.
-JAVA_HOME_DEFAULT="/usr/lib/jvm/java-8-oracle/";
+JAVA_HOME_DEFAULT="/usr/lib/jvm/default-java";
 
 if test "x${JAVA_HOME}" = "x" -a -d "${JAVA_HOME_DEFAULT}"; then
     export JAVA_HOME="${JAVA_HOME_DEFAULT}";
 fi
 
-if ! "${JAVA_HOME}/bin/java" -version 2>&1 | grep java | grep version | grep 1.[789] >/dev/null 2>/dev/null ; then
-    echo "Java 8 not found. Would you like to try to automatically install Oracle java 8(y/N)?";
-    read confirm;
-    if test "${confirm}x" = "yx" ; then
-        sudo add-apt-repository ppa:webupd8team/java -y
-        sudo apt-get update
-        sudo apt-get install oracle-java8-installer
-        sudo apt-get install oracle-java8-set-default
-    fi
-    if test "x${JAVA_HOME}" = "x" -a -d "${JAVA_HOME_DEFAULT}"; then
-        export JAVA_HOME="${JAVA_HOME_DEFAULT}";
-    fi
-fi
-
-if ! "${JAVA_HOME}/bin/java" -version 2>&1 | grep java | grep version | grep 1.[789] >/dev/null 2>/dev/null ; then
-    echo "Please install JDK 1.8 or higher and set JAVA_HOME to this directory";
-    exit 1;
-fi
-
-
 
 CRCL4JAVA_UTILS_JAR=`ls -1t crcl4java-utils*.jar ../../crcl4java-utils/target/crcl4java-utils*with-dependencies.jar | head -n 1`;
 if test "x${CRCL4JAVA_UTILS_JAR}" = "x" ; then 
-    wget "https://raw.github.com/usnistgov/crcl/mvn-repo/com/github/wshackle/crcl4java-utils/1.4/crcl4java-utils-1.4-jar-with-dependencies.jar"
+    wget "https://repo.maven.apache.org/maven2/com/github/wshackle/crcl4java-utils/1.4/crcl4java-utils-1.4-jar-with-dependencies.jar"
     #wget "https://oss.sonatype.org/content/repositories/snapshots/com/github/wshackle/crcl4java-utils/1.5-SNAPSHOT/crcl4java-utils-1.4-20160505.202933-4-jar-with-dependencies.jar"
     CRCL4JAVA_UTILS_JAR=`ls -1t crcl4java-utils*.jar | head -n 1`
 fi
@@ -52,8 +34,7 @@ mkdir generated;
     cd generated;
     JAVA4CPP_JAR=`ls -1t java4cpp*.jar | head -n 1`;
     if test "x${JAVA4CPP_JAR}" = "x" ; then
-        wget "http://repo.maven.apache.org/maven2/com/github/wshackle/java4cpp/1.5/java4cpp-1.5-jar-with-dependencies.jar"
-        #wget "http://repo.maven.apache.org/maven2/com/github/wshackle/java4cpp/1.4/java4cpp-1.4-jar-with-dependencies.jar"
+        wget "https://repo.maven.apache.org/maven2/com/github/wshackle/java4cpp/1.5/java4cpp-1.5-jar-with-dependencies.jar"
         JAVA4CPP_JAR=`ls -1t java4cpp*.jar | head -n 1`;
     fi
     "${JAVA_HOME}/bin/java" -jar "${JAVA4CPP_JAR}" -p crcl -n crclj -j "../${CRCL4JAVA_UTILS_JAR}" || exit 1;

@@ -2834,7 +2834,7 @@ public class FanucCRCLMain {
             utilCrclSocket = new CRCLSocket();
             CRCLStatusType stat = this.status.get();
             CRCLPosemath.setPose(stat, CRCLPosemath.identityPose());
-            crclServerSocket = new CRCLServerSocket<>(FANUC_STATE_GENERATOR);
+            crclServerSocket = new CRCLServerSocket<>(CRCLSocket.DEFAULT_PORT, FANUC_STATE_GENERATOR);
             crclServerSocket.addListener(crclSocketEventListener);
             setDefaultJointReports();
         } catch (Exception exception) {

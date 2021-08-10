@@ -71,7 +71,8 @@ public class CRCLServerSocketPollingExample {
         status.setCommandStatus(cmdStatus);
         final PoseStatusType poseStatus = new PoseStatusType();
 
-        try (final CRCLServerSocket<PollingExampleClientState> serverSocket = new CRCLServerSocket<>(POLLING_EXAMPLE_STATE_GENERATOR)) {
+        try (final CRCLServerSocket<PollingExampleClientState> serverSocket 
+                = new CRCLServerSocket<>(CRCLSocket.DEFAULT_PORT,POLLING_EXAMPLE_STATE_GENERATOR)) {
             serverSocket.setQueueEvents(true);
             serverSocket.start();
             int requestCount = 1;
