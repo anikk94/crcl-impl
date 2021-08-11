@@ -1540,6 +1540,7 @@ public class CrclSwingClientJPanel
         if (null == program) {
             prevSetProgramProgram = null;
             showProgramCopy = null;
+            internal.setOutgoingProgramFile(null);
         } else if (showProgramCopy == null
                 || prevSetProgramProgram != program
                 || Objects.requireNonNull(program.getMiddleCommand(), "program.getMiddleCommand()").size() != prevSetProgramLength) {
@@ -2384,23 +2385,27 @@ public class CrclSwingClientJPanel
         return internal.getLastMessage();
     }
 
-    public void updateTitle(CommandStatusType ccst, String stateString, String stateDescription) {
-
-        String ccstProgramFile = ccst.getProgramFile();
-        Integer ccstProgramIndex = ccst.getProgramIndex();
-        String program = (null != ccstProgramFile && null != ccstProgramIndex)
-                ? " " + ccstProgramFile + ":" + ccstProgramIndex.toString() : "";
-        final Integer ccstProgramLength = ccst.getProgramLength();
-
-        if (!program.isEmpty() && null != ccstProgramLength) {
-            program += "/" + ccstProgramLength.toString();
-        }
-        if (program.length() > 1) {
-            program = " " + program.trim() + " ";
-        }
+    public void updateTitle(@Nullable CommandStatusType ccst, @Nullable String stateString, @Nullable String stateDescription) {
+        String program="";
+        if(null != ccst) {
+            String ccstProgramFile = ccst.getProgramFile();
+            Integer ccstProgramIndex = ccst.getProgramIndex();
+            program = (null != ccstProgramFile && null != ccstProgramIndex)
+                    ? " " + ccstProgramFile + ":" + ccstProgramIndex.toString() : "";
+            final Integer ccstProgramLength = ccst.getProgramLength();
+            if (!program.isEmpty() && null != ccstProgramLength) {
+                program += "/" + ccstProgramLength.toString();
+            }
+            if (program.length() > 1) {
+                program = " " + program.trim() + " ";
+            }
+        } 
         JInternalFrame internalFrame = null;
         if (outerContainer instanceof JInternalFrame) {
             internalFrame = (JInternalFrame) outerContainer;
+        }
+        if (stateString == null) {
+            stateString = "";
         }
         String stateDescriptionString = stateDescription;
         if (stateDescriptionString == null) {
@@ -3481,6 +3486,7 @@ public class CrclSwingClientJPanel
             programShowing = program;
             if (null == program) {
                 dtm.setRowCount(0);
+                updateTitle(null, null,null);
                 return;
             }
             logShowProgramInfo(program, progRunDataList, line);

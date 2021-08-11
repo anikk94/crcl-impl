@@ -35,6 +35,6 @@ public interface UpdateTitleListener {
     public void titleChanged(
             CommandStatusType ccst,
             @Nullable Container container, 
-           String stateString, 
-           String stateDescription);
+           @Nullable String stateString, 
+           @Nullable String stateDescription);
 }

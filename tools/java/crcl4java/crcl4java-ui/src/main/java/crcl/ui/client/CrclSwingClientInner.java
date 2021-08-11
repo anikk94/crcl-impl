@@ -1289,12 +1289,12 @@ public class CrclSwingClientInner {
                 }
                 if (null != outgoingProgramFile) {
                     cmdInstance.setProgramFile(outgoingProgramFile);
-                }
-                if (null != outgoingProgramIndex) {
-                    cmdInstance.setProgramIndex(outgoingProgramIndex);
-                }
-                if (null != outgoingProgramLength) {
-                    cmdInstance.setProgramLength(outgoingProgramLength);
+                    if (null != outgoingProgramIndex) {
+                        cmdInstance.setProgramIndex(outgoingProgramIndex);
+                    }
+                    if (null != outgoingProgramLength) {
+                        cmdInstance.setProgramLength(outgoingProgramLength);
+                    }
                 }
             }
             final long id = cmd.getCommandID();
