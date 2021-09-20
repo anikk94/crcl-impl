@@ -36,21 +36,25 @@ import java.net.InetAddress;
  */
 public class DefaultCrclServerSocket extends CRCLServerSocket<CRCLServerClientState> {
     
+    @SuppressWarnings("nullness")
     public DefaultCrclServerSocket() throws IOException{
         super(CRCLSocket.DEFAULT_PORT,DEFAULT_STATE_GENERATOR);
         super.setServerSideStatus(crclStatus);
     }
     
+    @SuppressWarnings("nullness")
     public DefaultCrclServerSocket(int port) throws IOException {
         super(port,DEFAULT_STATE_GENERATOR);
         super.setServerSideStatus(crclStatus);
     }
     
+    @SuppressWarnings("nullness")
     public DefaultCrclServerSocket(int port, int backlog, InetAddress addr) throws IOException {
         super(port,backlog,addr,DEFAULT_STATE_GENERATOR);
         super.setServerSideStatus(crclStatus);
     }
     
+    @SuppressWarnings("nullness")
     public DefaultCrclServerSocket(int port, int backlog, InetAddress addr, boolean multithreaded) throws IOException {
         super(port,backlog,addr,multithreaded,DEFAULT_STATE_GENERATOR);
         super.setServerSideStatus(crclStatus);

@@ -986,7 +986,7 @@ public class CrclSwingClientJPanel
         if (null != internal) {
             CRCLStatusType status = internal.getStatus();
             if (null != status) {
-                PoseType pose = CRCLPosemath.getNullablePose(status);
+                PoseType pose = CRCLPosemath.pose(status);
                 if (pose != null) {
                     this.recordPoint(pose);
                 }
@@ -2030,7 +2030,7 @@ public class CrclSwingClientJPanel
             String stateDescription,
             boolean isRunning) {
         if (needInitPoint && null != curInternalStatus) {
-            PointType pt = CRCLPosemath.getNullablePoint(curInternalStatus);
+            PointType pt = CRCLPosemath.point(curInternalStatus);
             if (null != pt) {
                 pt = copy(pt);
                 setPlottersInitPoint(pt);
@@ -2230,7 +2230,7 @@ public class CrclSwingClientJPanel
             }
         }
         PoseType p
-                = CRCLPosemath.getNullablePose(curInternalStatus);
+                = CRCLPosemath.pose(curInternalStatus);
         if (null != p) {
             updatePoseTable(p, this.jTablePose, getCurrentPoseDisplayMode());
             PointType pt = p.getPoint();
@@ -2843,7 +2843,7 @@ public class CrclSwingClientJPanel
                         VectorType endPosZAxis = new VectorType();
                         endPos.setZAxis(endPosZAxis);
                         moveToCmd.setEndPosition(endPos);
-                        PoseType pose = (null != internal) ? CRCLPosemath.getNullablePose(internal.getStatus()) : null;
+                        PoseType pose = (null != internal) ? CRCLPosemath.pose(internal.getStatus()) : null;
                         if (null != pose) {
                             final PointType posePoint = requireNonNull(pose.getPoint(), "pose.getPoint()");
                             endPosPoint.setX(posePoint.getX());

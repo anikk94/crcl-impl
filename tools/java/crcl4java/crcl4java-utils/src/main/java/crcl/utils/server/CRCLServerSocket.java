@@ -2762,7 +2762,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             guardsStatuses.setTriggerCount(newGuardTriggerCount);
             guardsStatuses.setTriggerValue(value);
             if (null != localServerSideStatus.getPoseStatus()) {
-                final PoseType serverSidePose = CRCLPosemath.getNullablePose(localServerSideStatus);
+                final PoseType serverSidePose = CRCLPosemath.pose(localServerSideStatus);
                 if (null != serverSidePose) {
                     final PoseType serverSidePoseCopy = copy(serverSidePose);
                     if (null == serverSidePoseCopy) {

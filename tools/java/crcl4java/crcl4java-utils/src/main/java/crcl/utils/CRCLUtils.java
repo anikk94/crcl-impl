@@ -49,10 +49,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+
 
 /**
  *
@@ -102,7 +103,6 @@ public class CRCLUtils {
      * @throws NullPointerException if {@code ref} is {@code null}
      */
     @SuppressWarnings("nullness")
-    @EnsuresNonNull("#1")
     public static <T extends Object> T requireNonNull(@Nullable T ref) {
         return Objects.requireNonNull(ref);
     }

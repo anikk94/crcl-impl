@@ -83,7 +83,6 @@ import crcl.copier.CRCLCopier;
 import static crcl.copier.CRCLCopier.copy;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
-import static crcl.utils.CRCLPosemath.getNullablePose;
 import static crcl.utils.CRCLPosemath.maxDiffDoubleArray;
 import static crcl.utils.CRCLPosemath.point;
 import static crcl.utils.CRCLPosemath.pose;
@@ -152,6 +151,7 @@ import rcs.posemath.PmCartesian;
 import rcs.posemath.PmException;
 import rcs.posemath.PmRotationVector;
 import rcs.posemath.Posemath;
+import static crcl.utils.CRCLPosemath.pose;
 
 /**
  *
@@ -851,7 +851,7 @@ public class SimServerInner {
         if (null == stat) {
             return false;
         }
-        final PoseType currentPose = getNullablePose(stat);
+        final PoseType currentPose = pose(stat);
         if (null == currentPose) {
             return false;
         }

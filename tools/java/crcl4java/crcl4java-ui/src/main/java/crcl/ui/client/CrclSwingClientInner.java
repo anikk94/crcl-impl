@@ -2054,7 +2054,7 @@ public class CrclSwingClientInner {
         if (stat == null) {
             throw new IllegalStateException("status==null");
         }
-        return requireNonNull(CRCLPosemath.getNullablePose(stat), "CRCLPosemath.getPose(status)");
+        return requireNonNull(CRCLPosemath.pose(stat), "CRCLPosemath.getPose(status)");
     }
 
     public PointType currentStatusPoint() {
@@ -2066,7 +2066,7 @@ public class CrclSwingClientInner {
             throw new IllegalStateException("status==null");
         }
         return requireNonNull(
-                CRCLPosemath.getNullablePoint(stat),
+                CRCLPosemath.point(stat),
                 "CRCLPosemath.getNullablePoint(status)");
     }
 
@@ -2255,7 +2255,7 @@ public class CrclSwingClientInner {
         if (null == lastLogMoveToCmdPoint) {
             return null;
         }
-        PointType pt = CRCLPosemath.getNullablePoint(status);
+        PointType pt = CRCLPosemath.point(status);
         if (null == pt) {
             return null;
         }
@@ -2326,7 +2326,7 @@ public class CrclSwingClientInner {
         } else if (el instanceof StatusLogElement) {
             StatusLogElement sel = (StatusLogElement) el;
             CRCLStatusType localStatus = sel.getStatus();
-            PointType point = CRCLPosemath.getNullablePoint(localStatus);
+            PointType point = CRCLPosemath.point(localStatus);
             final long timeSinceCmdStart = sel.getTime() - lastLogCmdTime;
             final long timeSinceLastStat = sel.getTime() - lastLogStatTime;
             double distanceFromlastStat = lastLogStatusPoint != null && point != null
@@ -2654,7 +2654,7 @@ public class CrclSwingClientInner {
             if (null == commandStatus) {
                 throw new NullPointerException("commandStatus");
             }
-            final PoseType curStatusCopyPose = CRCLPosemath.getNullablePose(curStatusCopy);
+            final PoseType curStatusCopyPose = CRCLPosemath.pose(curStatusCopy);
             if (menuOuterLocal.isRecordPoseSelected()
                     && null != curStatusCopyPose) {
 
@@ -3452,7 +3452,7 @@ public class CrclSwingClientInner {
             return true;
         }
         CRCLStatusType origStatus = requireNonNull(this.testCommandStartStatus, "testCommandStartStatus");
-        PointType origPoint = requireNonNull(CRCLPosemath.getNullablePoint(origStatus), "CRCLPosemath.getPoint(testCommandStartStatus)");
+        PointType origPoint = requireNonNull(CRCLPosemath.point(origStatus), "CRCLPosemath.getPoint(testCommandStartStatus)");
         PointType curPoint = this.currentStatusPoint();
         final LengthUnitEnumType sluUnitName
                 = Objects.requireNonNull(slu.getUnitName(), "slu.getUnitName()");
@@ -4438,7 +4438,7 @@ public class CrclSwingClientInner {
             return new PmCartesian();
         }
         CRCLStatusType stat = this.status.get();
-        PointType point = CRCLPosemath.getNullablePoint(stat);
+        PointType point = CRCLPosemath.point(stat);
         if (null != point) {
             return CRCLPosemath.toPmCartesian(point);
         } else {
@@ -4785,7 +4785,7 @@ public class CrclSwingClientInner {
             setUnitType = new SetLengthUnitsType();
             setUnitType.setUnitName(LengthUnitEnumType.MILLIMETER);
             testProgramMiddleCommandsList.add(setUnitType);
-            PoseType pose = CRCLCopier.copy(CRCLPosemath.getNullablePose(this.getStatus()));
+            PoseType pose = CRCLCopier.copy(CRCLPosemath.pose(this.getStatus()));
 //            PoseType pose = Optional.ofNullable(this)
 //                    .map(CrclSwingClientInner::getStatus)
 //                    .map(CRCLPosemath::getNullablePose)

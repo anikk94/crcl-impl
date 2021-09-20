@@ -782,7 +782,7 @@ public class FanucCRCLMain {
             return null;
         }
         CRCLStatusType stat = this.status.get();
-        return CRCLPosemath.getNullablePose(stat);
+        return CRCLPosemath.pose(stat);
     }
 
     public void setPose(PoseType newPose) {
@@ -2371,7 +2371,7 @@ public class FanucCRCLMain {
 
     public double distTransFrom(PoseType pose) {
         CRCLStatusType localStatus = this.status.get();
-        PmCartesian cart = CRCLPosemath.toPmCartesian(CRCLUtils.requireNonNull(CRCLPosemath.getNullablePoint(localStatus)));
+        PmCartesian cart = CRCLPosemath.toPmCartesian(CRCLUtils.requireNonNull(CRCLPosemath.point(localStatus)));
         return cart.distFrom(CRCLPosemath.toPmCartesian(pose.getPoint()));
     }
 
