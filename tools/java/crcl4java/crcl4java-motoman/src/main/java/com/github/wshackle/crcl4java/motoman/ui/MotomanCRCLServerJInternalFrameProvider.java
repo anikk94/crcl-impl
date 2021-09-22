@@ -37,6 +37,14 @@ public class MotomanCRCLServerJInternalFrameProvider implements ServerJInternalF
     private volatile @Nullable MotomanCRCLServerJInternalFrame motomanCRCLServerJInternalFrame;
 
     @Override
+    public void disconnnectAllAndClose() {
+        if(null != motomanCRCLServerJInternalFrame) {
+            motomanCRCLServerJInternalFrame.disconnectCrclMotoplus();
+            motomanCRCLServerJInternalFrame.doDefaultCloseAction();
+        }
+    }
+    
+    @Override
     public void start(Object... args) {
         try {
             MotomanCRCLServerJInternalFrame newMotomanCRCLServerJInternalFrame =

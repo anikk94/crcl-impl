@@ -165,6 +165,7 @@ public class MotoPlusConnection implements AutoCloseable {
                         socket.getPort(),
                         (Integer port) -> new ConcurrentLinkedDeque<>());
         mpcHostPortCollection.add(mpc);
+        mpc.turnOnAir();
         return mpc;
     }
 
@@ -252,6 +253,14 @@ public class MotoPlusConnection implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        try {
+            mpMotStop(0);
+        } catch (IOException iOException) {
+        }
+        try {
+            clearToolChangerGripperIO();
+        } catch (IOException iOException) {
+        }
         if (null != dos) {
             try {
                 dos.close();
@@ -572,6 +581,12 @@ public class MotoPlusConnection implements AutoCloseable {
             writeDataOutputStream(bb);
         }
 
+        /**
+         * Send the request to stop the operation.
+         * 
+         * @param options always set at zero ( Motoman is gives no comment on its use. )
+         * @throws IOException
+         */
         public void startMpMotStop(int options) throws IOException {
             final int inputSize = 16;
             ByteBuffer bb = ByteBuffer.allocate(inputSize);
@@ -2627,18 +2642,26 @@ public class MotoPlusConnection implements AutoCloseable {
 //        ioData[2].ulValue = 1;
 //        boolean b = mpWriteIO(ioData, 3);
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException ex) {
             Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
         }
         boolean c = clearToolChangerGripperIO();
-        return a && b && c;
+        boolean d = turnOnAir();
+        return a && b && c && d;
     }
 
     public boolean closeGripper() throws Exception {
         boolean a = clearToolChangerGripperIOAndWait();
         boolean b = writeConsecutiveI0(10010, 0, 1, 1);
-        return a && b;
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
+        }
+        boolean c = clearToolChangerGripperIO();
+        boolean d = turnOnAir();
+        return a && b && c && d;
     }
 
     private boolean clearToolChangerGripperIO() throws IOException {
@@ -2696,8 +2719,9 @@ public class MotoPlusConnection implements AutoCloseable {
             return true;
         }
         boolean a = clearToolChangerGripperIO();
-        Thread.sleep(50);
-        ioClear = a;
+        boolean b = turnOnAir();
+        Thread.sleep(100);
+        ioClear = a && b;
         return a;
     }
 
@@ -2711,6 +2735,13 @@ public class MotoPlusConnection implements AutoCloseable {
         return mpWriteIO(ioData, values.length);
     }
 
+    public boolean turnOnAir() throws IOException {
+        return writeConsecutiveI0(10012, 1);
+    }
+    
+    public boolean turnOffAir() throws IOException {
+        return writeConsecutiveI0(10012, 0);
+    }
     public boolean closeToolChanger() throws Exception {
         boolean a = clearToolChangerGripperIOAndWait();
         boolean b = writeConsecutiveI0(10012, 1, 0, 1);

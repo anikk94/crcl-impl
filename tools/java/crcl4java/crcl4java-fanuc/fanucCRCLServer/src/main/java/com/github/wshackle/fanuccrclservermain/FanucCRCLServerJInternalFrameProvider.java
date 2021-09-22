@@ -108,6 +108,16 @@ public class FanucCRCLServerJInternalFrameProvider implements ServerJInternalFra
             }
         }
     }
+    
+    @Override
+    public void disconnnectAllAndClose() {
+        if(null != fanucCRCLMain) {
+            fanucCRCLMain.disconnectRemoteRobot();
+        }
+        if(null != fanucCRCLServerJInternalFrame) {
+            fanucCRCLServerJInternalFrame.doDefaultCloseAction();
+        }
+    }
 
     @Override
     public synchronized FanucCRCLServerJInternalFrame getJInternalFrame() {

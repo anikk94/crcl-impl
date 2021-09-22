@@ -63,7 +63,7 @@ public class TestMotoPlusConnection {
         }
         System.out.println("host = " + host);
         try (MotoPlusConnection mpc = MotoPlusConnection.connectionFromSocket(new Socket(host, 12222))) {
-            testFileFunctions(mpc);
+//            testFileFunctions(mpc);
 //            testMoveZ(mpc);
         }
     }
