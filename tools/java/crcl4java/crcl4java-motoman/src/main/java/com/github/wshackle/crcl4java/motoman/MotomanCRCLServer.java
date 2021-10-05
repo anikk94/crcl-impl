@@ -416,6 +416,22 @@ public class MotomanCRCLServer implements AutoCloseable {
         int diffz = pos1.lz() - dst.z;
         return Math.sqrt(diffx * diffx + diffy * diffy + diffz * diffz);
     }
+    
+    private double maxRotDiff(MP_CART_POS_RSP_DATA pos1, COORD_POS dst) {
+        int diffrx = boundsCheckRotDiff(pos1.lrx() - dst.rx);
+        int diffry = boundsCheckRotDiff(pos1.lry() - dst.ry);
+        int diffrz = boundsCheckRotDiff(pos1.lrz() - dst.rz);
+        return Math.max(Math.abs(diffrx),Math.max(Math.abs(diffry),Math.abs(diffrz)));
+    }
+
+    private int boundsCheckRotDiff(int diffr) {
+        if(diffr > 1800000) {
+            diffr = diffr - 1800000;
+        } else if(diffr < -1800000) {
+            diffr =diffr + 1800000;
+        }
+        return diffr;
+    }
 
 //    private void recheckCoordTarget(MP_CART_POS_RSP_DATA pos) throws IOException, MotoPlusConnectionException, PmException {
 //        boolean resendNeeded = false;
@@ -552,6 +568,7 @@ public class MotomanCRCLServer implements AutoCloseable {
                 + "(time-lastCheckMoveTime)=" + (time - lastCheckMoveTime) + "\n"
                 + "lastCheckMoveJointDiffMax=" + lastCheckMoveJointDiffMax + "\n"
                 + "lastCheckMoveCartDiff=" + lastCheckMoveCartDiff + "\n"
+                + "lastCheckMoveRotDiff=" + lastCheckMoveRotDiff + "\n"
                 + "lastMpcStatus=" + this.lastMpcStatus + "\n\n//end lastMpcStatus\n\n"
                 + "lastGetCrclStatusCopy=" + CRCLSocket.statusToPrettyString(lastGetCrclStatusCopy) + "\n\n//end lastGetCrclStatusCopy\n\n";
 
@@ -757,6 +774,7 @@ public class MotomanCRCLServer implements AutoCloseable {
 
     private volatile int lastCheckMoveJointDiffMax = -1;
     private volatile double lastCheckMoveCartDiff = -1;
+    private volatile double lastCheckMoveRotDiff = -1;
     private volatile long lastCheckMoveTime = -1;
 
     public long getLastCheckMoveTime() {
@@ -797,9 +815,11 @@ public class MotomanCRCLServer implements AutoCloseable {
             if (null == pos) {
                 throw new NullPointerException("null==pos: " + "lastSendId=" + lastSentId + ",recvId=" + recvId + ",lastCommand=" + lastCommand);
             }
-            double diff = transDiffCartData(pos, dst);
-            lastCheckMoveCartDiff = diff;
-            if (diff < 100) {
+            double cartDiff = transDiffCartData(pos, dst);
+            lastCheckMoveCartDiff = cartDiff;
+            double rotDiff = maxRotDiff(pos, dst);
+            lastCheckMoveRotDiff = rotDiff;
+            if (cartDiff < 100 && rotDiff < 100) {
                 if (crclServerSocket.getCommandStateEnum() != CRCL_DONE) {
                     crclServerSocket.setStateDescription("");
                     crclServerSocket.setCommandStateEnum(CRCL_DONE);
