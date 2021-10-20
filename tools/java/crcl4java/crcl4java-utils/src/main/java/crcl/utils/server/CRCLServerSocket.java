@@ -700,16 +700,21 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return commandStateEnum;
     }
 
+    private volatile StackTraceElement setCommandStateErrorTrace @Nullable [] = null;
+    
     public void setCommandStateEnum(CommandStateEnumType newCommandStateEnum) {
 
-        if (initialized) {
-            if (this.commandStateEnum == CommandStateEnumType.CRCL_ERROR) {
+        if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR 
+                ||( initialized && this.commandStateEnum == CommandStateEnumType.CRCL_ERROR)) {
                 System.out.println("");
                 System.err.println("");
                 System.out.flush();
                 System.err.flush();
                 System.out.println("this.commandStateEnum = " + this.commandStateEnum);
                 System.out.println("newCommandStateEnum = " + newCommandStateEnum);
+                System.out.println("this.stateDescription = " + this.stateDescription);
+                System.out.println("this.lastErrorCmdId = " + this.lastErrorCmdId);
+                System.out.println("this.setCommandStateErrorTrace = " + XFuture.traceToString(this.setCommandStateErrorTrace));
                 System.out.println("");
                 System.err.println("");
                 System.out.flush();
@@ -719,7 +724,6 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                 System.err.println("");
                 System.out.flush();
                 System.err.flush();
-            }
         }
         if (this.commandStateEnum != newCommandStateEnum) {
             switch (newCommandStateEnum) {
@@ -755,6 +759,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         }
         if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR) {
             this.lastErrorCmdId = this.lastCommandEventCommandId;
+            setCommandStateErrorTrace= Thread.currentThread().getStackTrace();
             if (initialized && this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
                 System.out.println("");
                 System.err.println("");

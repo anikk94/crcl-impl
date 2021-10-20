@@ -513,7 +513,6 @@ public class MotomanCRCLServer implements AutoCloseable {
 //        }
 //    }
     private final AtomicInteger lastSentTargetId = new AtomicInteger(1);
-    private final int lastRecvdTargetId = 1;
 
     public int getLastSentTargetId() {
         return lastSentTargetId.get();
@@ -524,7 +523,11 @@ public class MotomanCRCLServer implements AutoCloseable {
     }
 
     public int getLastRecvdTargetId() {
-        return lastRecvdTargetId;
+        if(null == lastMpcStatus)  {
+            return -1;
+        } else {
+            return lastMpcStatus.getRecvId();
+        }
     }
 
     private final AtomicInteger updatesSinceCommand = new AtomicInteger();
@@ -559,7 +562,7 @@ public class MotomanCRCLServer implements AutoCloseable {
                 + "actuateJointsLastJointTarget=" + actuateJointsLastJointTarget + "\n"
                 + "lastMoveToCoordTarget" + lastMoveToCoordTarget + "\n"
                 + "lastSentTargetId=" + lastSentTargetId.get() + "\n"
-                + "lastRecvdTargetId=" + lastRecvdTargetId + "\n"
+                + "lastRecvdTargetId=" + getLastRecvdTargetId() + "\n"
                 + "lastStatusCheckPrevLastRecvdTargetId=" + lastStatusCheckPrevLastRecvdTargetId + "\n"
                 + "lastStatusCheckLastSentId=" + lastStatusCheckLastSentId + "\n"
                 + "idDiffCount=" + idDiffCount.get() + "\n"
