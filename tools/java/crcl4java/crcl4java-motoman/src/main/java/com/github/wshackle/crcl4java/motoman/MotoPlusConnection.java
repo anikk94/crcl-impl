@@ -2750,9 +2750,7 @@ public class MotoPlusConnection implements AutoCloseable {
         } catch (InterruptedException ex) {
             Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
         }
-        boolean c = clearToolChangerGripperIO();
-        boolean d = turnOnAir();
-        return a && b && c && d;
+        return a;
     }
 
     private boolean clearToolChangerGripperIO() throws IOException {
