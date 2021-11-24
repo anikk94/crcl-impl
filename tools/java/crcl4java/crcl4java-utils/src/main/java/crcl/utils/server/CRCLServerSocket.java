@@ -22,6 +22,8 @@
  */
 package crcl.utils.server;
 
+import crcl.base.ActuateJointType;
+import crcl.base.ActuateJointsType;
 import crcl.base.CRCLCommandInstanceType;
 import crcl.base.CRCLCommandType;
 import crcl.base.CRCLStatusType;
@@ -40,7 +42,9 @@ import crcl.base.GuardLimitEnumType;
 import crcl.base.GuardType;
 import crcl.base.GuardsStatusesType;
 import crcl.base.InitCanonType;
+import crcl.base.JointDetailsType;
 import crcl.base.JointPositionsTolerancesType;
+import crcl.base.JointSpeedAccelType;
 import crcl.base.JointStatusType;
 import crcl.base.JointStatusesType;
 import crcl.base.MoveThroughToType;
@@ -157,6 +161,56 @@ import org.checkerframework.checker.nullness.qual.*;
  * @author Will Shackleford {@literal <william.shackleford@nist.gov> }
  */
 public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implements AutoCloseable {
+
+    private volatile double speedOverride = globalSpeedOverride;
+
+    /**
+     * Get the value of speedOverride
+     *
+     * @return the value of speedOverride
+     */
+    public double getSpeedOverride() {
+        return speedOverride;
+    }
+
+    /**
+     * Set the value of speedOverride
+     *
+     * @param speedOverride new value of speedOverride
+     */
+    public void setSpeedOverride(double speedOverride) {
+        if (speedOverride > 1.0 || speedOverride < 0.01) {
+            throw new IllegalArgumentException("speedOveride=" + speedOverride + " but must be between 0.01 and 1.0");
+        }
+        this.speedOverride = speedOverride;
+    }
+
+    private static volatile double globalSpeedOverride = getInitGlobalSpeedOverride();
+
+    private static double getInitGlobalSpeedOverride() {
+        try {
+            double v = Double.parseDouble(System.getProperty(CRCLUTILSSERVER_CRCL_SERVER_SOCKETGLOBAL_SPEE, "1.0"));
+            if (v < 0.01 || v > 1.0) {
+                throw new Exception(CRCLUTILSSERVER_CRCL_SERVER_SOCKETGLOBAL_SPEE + "=" + v + " must be between 0.01 and 1.0");
+            }
+            return v;
+        } catch (Exception exception) {
+            Logger.getLogger(CRCLServerSocket.class.getName()).log(Level.SEVERE, "", exception);
+            return 1.0;
+        }
+    }
+    
+    private static final String CRCLUTILSSERVER_CRCL_SERVER_SOCKETGLOBAL_SPEE = "crcl.utils.server.CRCLServerSocket.globalSpeedOverride";
+
+    public static void setGlobalSpeedOverride(double newGlobalSpeedOverride) {
+        if (newGlobalSpeedOverride > 1.0 || newGlobalSpeedOverride < 0.01) {
+            throw new IllegalArgumentException("speedOveride=" + newGlobalSpeedOverride + " but must be between 0.01 and 1.0");
+        }
+        globalSpeedOverride = newGlobalSpeedOverride;
+        for (CRCLServerSocket serverSocket : portMap.values()) {
+            serverSocket.setSpeedOverride(newGlobalSpeedOverride);
+        }
+    }
 
     private static final Map<Integer, CRCLServerSocket<?>> portMap
             = new ConcurrentHashMap<>();
@@ -700,30 +754,30 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return commandStateEnum;
     }
 
-    private volatile StackTraceElement setCommandStateErrorTrace @Nullable [] = null;
-    
+    private volatile StackTraceElement setCommandStateErrorTrace @Nullable []  = null;
+
     public void setCommandStateEnum(CommandStateEnumType newCommandStateEnum) {
 
-        if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR 
-                ||( initialized && this.commandStateEnum == CommandStateEnumType.CRCL_ERROR)) {
-                System.out.println("");
-                System.err.println("");
-                System.out.flush();
-                System.err.flush();
-                System.out.println("this.commandStateEnum = " + this.commandStateEnum);
-                System.out.println("newCommandStateEnum = " + newCommandStateEnum);
-                System.out.println("this.stateDescription = " + this.stateDescription);
-                System.out.println("this.lastErrorCmdId = " + this.lastErrorCmdId);
-                System.out.println("this.setCommandStateErrorTrace = " + XFuture.traceToString(this.setCommandStateErrorTrace));
-                System.out.println("");
-                System.err.println("");
-                System.out.flush();
-                System.err.flush();
-                Thread.dumpStack();
-                System.out.println("");
-                System.err.println("");
-                System.out.flush();
-                System.err.flush();
+        if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR
+                || (initialized && this.commandStateEnum == CommandStateEnumType.CRCL_ERROR)) {
+            System.out.println("");
+            System.err.println("");
+            System.out.flush();
+            System.err.flush();
+            System.out.println("this.commandStateEnum = " + this.commandStateEnum);
+            System.out.println("newCommandStateEnum = " + newCommandStateEnum);
+            System.out.println("this.stateDescription = " + this.stateDescription);
+            System.out.println("this.lastErrorCmdId = " + this.lastErrorCmdId);
+            System.out.println("this.setCommandStateErrorTrace = " + XFuture.traceToString(this.setCommandStateErrorTrace));
+            System.out.println("");
+            System.err.println("");
+            System.out.flush();
+            System.err.flush();
+            Thread.dumpStack();
+            System.out.println("");
+            System.err.println("");
+            System.out.flush();
+            System.err.flush();
         }
         if (this.commandStateEnum != newCommandStateEnum) {
             switch (newCommandStateEnum) {
@@ -759,7 +813,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         }
         if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR) {
             this.lastErrorCmdId = this.lastCommandEventCommandId;
-            setCommandStateErrorTrace= Thread.currentThread().getStackTrace();
+            setCommandStateErrorTrace = Thread.currentThread().getStackTrace();
             if (initialized && this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
                 System.out.println("");
                 System.err.println("");
@@ -1025,6 +1079,27 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                         setCommandStateEnum(CommandStateEnumType.CRCL_DONE);
                         return true;
                     }
+                    if (speedOverride < 1.0 && speedOverride > 0.0) {
+                        if (cmd instanceof ActuateJointsType) {
+                            ActuateJointsType in = (ActuateJointsType) cmd;
+                            ActuateJointsType out = CRCLCopier.copy(in);
+                            for (ActuateJointType aji : out.getActuateJoint()) {
+                                JointDetailsType details = aji.getJointDetails();
+                                if (details instanceof JointSpeedAccelType) {
+                                    JointSpeedAccelType jsa = (JointSpeedAccelType) details;
+                                    if (null != jsa.getJointAccel()) {
+                                        jsa.setJointAccel(speedOverride * jsa.getJointAccel());
+                                    }
+                                    if (null != jsa.getJointSpeed()) {
+                                        jsa.setJointSpeed(speedOverride * jsa.getJointSpeed());
+                                    }
+                                }
+                            }
+                            CRCLCommandInstanceType newCommandInstance = createNewCommandInstance(out, instanceIn);
+                            completeHandleEvent(CRCLServerSocketEvent.commandRecieved(state, newCommandInstance));
+                            return true;
+                        }
+                    }
                     if (automaticallyConvertUnits) {
                         if (cmd instanceof SetLengthUnitsType) {
                             SetLengthUnitsType setLengthUnitsCmd = (SetLengthUnitsType) cmd;
@@ -1097,7 +1172,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                                 TransSpeedAbsoluteType transSpeedAbsOut = new TransSpeedAbsoluteType();
                                 setTransSpeedCmdOut.setCommandID(setTransSpeedCmdIn.getCommandID());
                                 setTransSpeedCmdOut.setName(setTransSpeedCmdIn.getName());
-                                transSpeedAbsOut.setSetting(state.filterSettings.convertLengthToServer(transSpeedAbsIn.getSetting()));
+                                transSpeedAbsOut.setSetting(state.filterSettings.convertLengthToServer(transSpeedAbsIn.getSetting() * speedOverride));
                                 setTransSpeedCmdOut.setTransSpeed(transSpeedAbsOut);
                                 CRCLCommandInstanceType newCommandInstance = createNewCommandInstance(setTransSpeedCmdOut, instanceIn);
                                 localServerSideSettingsStatus.setTransSpeedAbsolute(transSpeedAbsOut);
@@ -1121,7 +1196,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                                 RotSpeedAbsoluteType rotSpeedAbsOut = new RotSpeedAbsoluteType();
                                 setRotSpeedCmdOut.setCommandID(setRotSpeedCmdIn.getCommandID());
                                 setRotSpeedCmdOut.setName(setRotSpeedCmdIn.getName());
-                                rotSpeedAbsOut.setSetting(state.filterSettings.convertAngleToServer(rotSpeedAbsIn.getSetting()));
+                                rotSpeedAbsOut.setSetting(state.filterSettings.convertAngleToServer(rotSpeedAbsIn.getSetting() * speedOverride));
                                 setRotSpeedCmdOut.setRotSpeed(rotSpeedAbsOut);
                                 CRCLCommandInstanceType newCommandInstance = createNewCommandInstance(setRotSpeedCmdOut, instanceIn);
                                 localServerSideSettingsStatus.setRotSpeedAbsolute(rotSpeedAbsOut);
@@ -2234,8 +2309,8 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                 throw new NullPointerException("serverSideStatus");
             }
         }
-        if(null != serverSideStatus) {
-             serverSideStatus.releaseLockThread();
+        if (null != serverSideStatus) {
+            serverSideStatus.releaseLockThread();
         }
         while (!closing && !Thread.currentThread().isInterrupted()) {
             selectorForRun.select();
