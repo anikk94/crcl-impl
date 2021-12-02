@@ -81,7 +81,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     /**
      * Creates new form ForceTorqueSimJPanel
      */
-    @SuppressWarnings({"nullness", "initialization"})
+    @SuppressWarnings({"nullness", "initialization","rawtypes"})
     public ForceTorqueSimJPanel() {
         statusOut = new ThreadLockedHolder<>("ForceTorqueSimJPanel.statusOut", new CRCLStatusType(), false);
         final CRCLStatusType statOut = this.statusOut.get();

@@ -207,7 +207,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             throw new IllegalArgumentException("speedOveride=" + newGlobalSpeedOverride + " but must be between 0.01 and 1.0");
         }
         globalSpeedOverride = newGlobalSpeedOverride;
-        for (CRCLServerSocket serverSocket : portMap.values()) {
+        for (CRCLServerSocket<?> serverSocket : portMap.values()) {
             serverSocket.setSpeedOverride(newGlobalSpeedOverride);
         }
     }
