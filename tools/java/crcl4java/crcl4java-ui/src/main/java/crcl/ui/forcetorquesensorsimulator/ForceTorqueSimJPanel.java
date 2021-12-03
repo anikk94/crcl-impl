@@ -1547,7 +1547,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                 this.jSlider1.setValue((int) inOutJPanel1.getHeightViewAngle());
             }
         } catch (IOException iOException) {
-            showMessage(iOException);
+            showMessage("Failed to loadPrefsFile "+f+" : "+iOException);
         }
     }
 
