@@ -524,9 +524,6 @@ public class CRCLCopierTest {
                 }
             }
 
-            if (null == newObj) {
-                throw new NullPointerException("newObj = " + newObj);
-            }
             checkForNullObjectFields(clzz.getFields(), newObj, newExcludedClasses);
             checkForNullObjectFields(clzz.getDeclaredFields(), newObj, newExcludedClasses);
             checkForNullObjectFields(newObjClass.getFields(), newObj, newExcludedClasses);
