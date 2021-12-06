@@ -81,7 +81,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     /**
      * Creates new form ForceTorqueSimJPanel
      */
-    @SuppressWarnings({"nullness", "initialization","rawtypes"})
+    @SuppressWarnings({"nullness", "initialization", "rawtypes"})
     public ForceTorqueSimJPanel() {
         statusOut = new ThreadLockedHolder<>("ForceTorqueSimJPanel.statusOut", new CRCLStatusType(), false);
         final CRCLStatusType statOut = this.statusOut.get();
@@ -907,7 +907,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             File crcljavaDir = new File(CRCLUtils.getCrclUserHomeDir(), CRCLJAVA_USER_DIR);
             boolean made_dir = crcljavaDir.mkdirs();
             File settingsRef = new File(crcljavaDir, SETTINGSREF);
-            try (PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
+            try ( PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
                 psRef.println(propertiesFile.getCanonicalPath());
             } catch (Exception ex) {
                 showMessage(ex);
@@ -1087,7 +1087,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     }
 
     private static void saveTableModel(File f, TableModel tm) throws IOException {
-        try (CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f)), CSVFormat.DEFAULT.withHeader(tableHeaders(tm)))) {
+        try ( CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f)), CSVFormat.DEFAULT.withHeader(tableHeaders(tm)))) {
 
             List<String> colNameList = new ArrayList<>();
             for (int i = 0; i < tm.getColumnCount(); i++) {
@@ -1140,7 +1140,19 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             return;
         }
         this.objectsFileName = name;
-        loadObjectsFile(new File(name));
+        File f = new File(name);
+        if (f.exists()) {
+            loadObjectsFile(f);
+        } else {
+            File f2 = new File(propertiesFile.getParentFile(), f.getName());
+            if (f2.exists()) {
+                loadObjectsFile(f2);
+                this.objectsFileName = f.getName();
+                if (null != jTextFieldObjectsFile) {
+                    jTextFieldObjectsFile.setText(f.getName());
+                }
+            }
+        }
     }
 
     @UIEffect
@@ -1155,7 +1167,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         if (null != dtm) {
             dtm.setRowCount(0);
         }
-        try (CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+        try ( CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
             Map<String, Integer> headerMap = parser.getHeaderMap();
             if (forceColumns && null != dtm) {
                 dtm.setRowCount(0);
@@ -1435,7 +1447,8 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         }
     }
 
-    private volatile @Nullable Thread getPoseServiceThread = null;
+    private volatile @Nullable
+    Thread getPoseServiceThread = null;
 
     private static final AtomicInteger tcount = new AtomicInteger();
 
@@ -1536,7 +1549,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             File crcljavaDir = new File(CRCLUtils.getCrclUserHomeDir(), CRCLJAVA_USER_DIR);
             boolean made_dir = crcljavaDir.mkdirs();
             File settingsRef = new File(crcljavaDir, SETTINGSREF);
-            try (PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
+            try ( PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
                 psRef.println(f.getCanonicalPath());
             }
             Map<String, Object> targetMap = new TreeMap<>();
@@ -1547,7 +1560,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                 this.jSlider1.setValue((int) inOutJPanel1.getHeightViewAngle());
             }
         } catch (IOException iOException) {
-            showMessage(iOException);
+            showMessage("Failed to loadPrefsFile " + f + " : " + iOException);
         }
     }
 
