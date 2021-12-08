@@ -34,6 +34,7 @@ import crcl.base.PointType;
 import crcl.base.PoseType;
 import crcl.base.VectorType;
 import static crcl.utils.CRCLSocket.getUtilSocket;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -505,4 +506,43 @@ public class CRCLUtils {
         );
     }
 
+    
+    private volatile static boolean allowExit = true;
+
+    public static boolean isAllowExit() {
+        return allowExit;
+    }
+
+    public static void setAllowExit(boolean newAllowExit) {
+        allowExit = newAllowExit;
+    }
+    
+    private volatile static boolean forceHeadless = false;
+
+    public static boolean isForceHeadless() {
+        return forceHeadless;
+    }
+
+    public static void setForceHeadless(boolean newForceHeadless) {
+        forceHeadless = newForceHeadless;
+    }
+    
+    static private volatile StackTraceElement[] exitTrace = null;
+    
+    static public void systemExit(int status) {
+        if(null != exitTrace) {
+             System.err.println("Exit called before from "+XFuture.traceToString(exitTrace));   
+        }
+        exitTrace = Thread.currentThread().getStackTrace();
+        if(allowExit) {
+            System.exit(status);
+        }
+        else {
+            System.err.println("Exit called when not allowed from "+XFuture.traceToString(exitTrace));
+        }
+    }
+    
+    static public boolean graphicsEnvironmentIsHeadless() {
+        return GraphicsEnvironment.isHeadless() || forceHeadless;
+    }
 }

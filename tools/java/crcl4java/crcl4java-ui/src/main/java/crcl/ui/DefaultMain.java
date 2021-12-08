@@ -26,6 +26,7 @@ import crcl.ui.server.CmdLineSimServer;
 import crcl.ui.server.SimServerJFrame;
 import crcl.ui.client.CrclSwingClientJFrame;
 import crcl.ui.client.CmdLineClient;
+import crcl.utils.CRCLUtils;
 import crcl.utils.kinematics.SimRobotEnum;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -50,7 +51,7 @@ public class DefaultMain {
                         System.setProperty("crcl4java.port", Integer.toString(porti));
                     } catch (NumberFormatException numberFormatException) {
                         System.err.println("port\"("+args[i+1]+"\" must be an integer");
-                        System.exit(i);
+                        CRCLUtils.systemExit(i);
                     }
                     i++;
                     continue;
@@ -104,7 +105,7 @@ public class DefaultMain {
                 System.err.println("crcl4java.client.quitOnTestCommandFailure\tHave the client stop running a program if a command test fails. eg. MoveTo results in server reporting DONE but position is not within tolerance of the EndPoint. Default=false. NOTE: A server reporting ERROR always stops the program regardless of this setting. ");
                 System.err.println("");
                 
-                System.exit(1);
+                CRCLUtils.systemExit(1);
             }
         }
         System.out.println("mode = " + mode);
@@ -134,7 +135,7 @@ public class DefaultMain {
                 System.err.println("Options are:");
                 System.err.println("\t--mode\tSet mode to one of:"
                         +"\n\t\tLauncher,CmdLineClient,CmdLineServer,GraphicalServer,GraphicalClient");
-                System.exit(1);
+                CRCLUtils.systemExit(1);
         }
     }
     private static final Logger LOG = Logger.getLogger(DefaultMain.class.getName());

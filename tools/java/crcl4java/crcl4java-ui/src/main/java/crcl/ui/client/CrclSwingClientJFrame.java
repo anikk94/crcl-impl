@@ -551,7 +551,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
 
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        System.exit(0);
+        CRCLUtils.systemExit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
 

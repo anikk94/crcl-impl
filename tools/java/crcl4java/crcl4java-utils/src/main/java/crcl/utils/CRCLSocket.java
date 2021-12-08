@@ -2341,7 +2341,7 @@ public class CRCLSocket implements AutoCloseable {
             bufferedInputStream = null;
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, "", ex);
-            System.exit(0);
+            CRCLUtils.systemExit(0);
             throw new RuntimeException(ex);
         } catch (Exception ex) {
             logClassPath();

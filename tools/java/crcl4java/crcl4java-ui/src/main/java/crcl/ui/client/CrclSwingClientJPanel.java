@@ -619,7 +619,7 @@ public class CrclSwingClientJPanel
                 if (null != outerJFrame) {
                     this.outerJFrame = outerJFrame;
                 } else {
-                    if (!GraphicsEnvironment.isHeadless()) {
+                    if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
                         this.outerJFrame = new JFrame("CrclSwingClientJPanel created empty frame");
                         this.outerJFrame.add(outerContainer);
                         this.outerJFrame.pack();
@@ -631,7 +631,7 @@ public class CrclSwingClientJPanel
                 this.outerContainer = outerJFrame;
                 this.outerJFrame = outerJFrame;
             } else {
-                if (!GraphicsEnvironment.isHeadless()) {
+                if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
                     this.outerContainer = this.outerJFrame = new JFrame("CrclSwingClientJPanel created empty frame");
                     this.outerJFrame.add(this);
                     this.outerJFrame.pack();

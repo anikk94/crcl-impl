@@ -71,7 +71,7 @@ public class TelnetClientExample implements Runnable, TelnetNotificationHandler
         {
             telnet(DEFAULT_HOST,DEFAULT_PORT);
             System.err.println("Usage: TelnetClientExample <remote-ip> [<remote-port>]");
-            System.exit(1);
+            CRCLUtils.systemExit(1);
         }
 
         String remoteip = args[0];
@@ -282,7 +282,7 @@ public class TelnetClientExample implements Runnable, TelnetNotificationHandler
             catch (IOException e)
             {
                 System.err.println("Exception while connecting:" + e.getMessage());
-                System.exit(1);
+                CRCLUtils.systemExit(1);
             }
         }
     }

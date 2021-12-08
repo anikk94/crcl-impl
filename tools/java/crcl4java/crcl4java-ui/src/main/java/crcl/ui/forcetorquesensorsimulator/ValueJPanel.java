@@ -5,7 +5,7 @@
  */
 package crcl.ui.forcetorquesensorsimulator;
 
-import java.awt.GraphicsEnvironment;
+import crcl.utils.CRCLUtils;
 
 /**
  *
@@ -19,7 +19,7 @@ public class ValueJPanel extends javax.swing.JPanel {
      */
     @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel() {
-        if (!GraphicsEnvironment.isHeadless()) {
+        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
             initComponents();
             jLabelName.setText(super.getName());
         }
@@ -30,7 +30,7 @@ public class ValueJPanel extends javax.swing.JPanel {
      */
     @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel(String name) {
-        if (!GraphicsEnvironment.isHeadless()) {
+        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
             initComponents();
             jLabelName.setText(name);
         }

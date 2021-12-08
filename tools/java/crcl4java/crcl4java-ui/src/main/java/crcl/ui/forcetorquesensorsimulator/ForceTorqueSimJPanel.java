@@ -88,7 +88,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         statOut.setSensorStatuses(new SensorStatusesType());
         sensorStatus = new ForceTorqueSensorStatusType();
         statOut.getSensorStatuses().getForceTorqueSensorStatus().add(sensorStatus);
-        if (!GraphicsEnvironment.isHeadless()) {
+        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
             initComponents();
 
         } else {

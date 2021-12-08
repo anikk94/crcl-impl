@@ -867,7 +867,7 @@ public class CrclSwingClientJInternalFrame
     }//GEN-LAST:event_jMenuItemViewLogFileActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        System.exit(0);
+        CRCLUtils.systemExit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemXPathQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemXPathQueryActionPerformed

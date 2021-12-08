@@ -1543,7 +1543,7 @@ public class FanucCRCLMain {
                 t.interrupt();
             }
         }
-        System.exit(0);
+        CRCLUtils.systemExit(0);
     }
 
     public synchronized void stopCrclServer() {
@@ -2644,7 +2644,7 @@ public class FanucCRCLMain {
                             boolean interrupted = Thread.currentThread().isInterrupted();
                             logDebug("interrupted = " + interrupted);
                             if (interrupted) {
-                                System.exit(1);
+                                CRCLUtils.systemExit(1);
                             }
                             logDebug("Abort took " + (t1 - t0) + " ms and " + cycles + " cycles.");
                             logDebug("tskStatus = " + tskStatus);
