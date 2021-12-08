@@ -3,7 +3,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>crcl4java-fanuc</artifactId>
     <packaging>pom</packaging>
-    <version>1.9.1-SNAPSHOT</version>
     <parent>
         <relativePath>..</relativePath>
         <artifactId>crcl4java</artifactId>

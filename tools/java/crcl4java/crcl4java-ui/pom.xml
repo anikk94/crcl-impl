@@ -158,7 +158,7 @@
                 </property>
             </activation>
             <properties>
-                <custom.nb.exec.args>-ea -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n ${exec.args}</custom.nb.exec.args>
+                <custom.nb.exec.args>-enableassertions -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n ${exec.args}</custom.nb.exec.args>
             </properties>
         </profile>
         

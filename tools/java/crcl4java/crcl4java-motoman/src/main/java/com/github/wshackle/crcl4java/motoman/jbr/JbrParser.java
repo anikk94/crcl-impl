@@ -22,13 +22,6 @@
  */
 package com.github.wshackle.crcl4java.motoman.jbr;
 
-import crcl.base.CRCLProgramType;
-import crcl.base.EndCanonType;
-import crcl.base.InitCanonType;
-import crcl.base.MoveToType;
-import crcl.base.PoseType;
-import crcl.base.SetEndEffectorType;
-import crcl.utils.CRCLPosemath;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -38,8 +31,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
+import crcl.base.CRCLProgramType;
+import crcl.base.EndCanonType;
+import crcl.base.InitCanonType;
+import crcl.base.MoveToType;
+import crcl.base.PoseType;
+import crcl.base.SetEndEffectorType;
+import crcl.utils.CRCLPosemath;
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmException;
 import rcs.posemath.PmRpy;
@@ -117,6 +116,8 @@ public class JbrParser {
             }
         }
     }
+    
+    @SuppressWarnings({ "serial" })
     private static class GetPoseException extends Exception {
 
         public GetPoseException(String msg) {

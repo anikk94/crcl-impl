@@ -116,7 +116,8 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                     false, false
                 };
 
-                public Class getColumnClass(int columnIndex) {
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
                     return types[columnIndex];
                 }
 
@@ -149,7 +150,8 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                     false, false
                 };
 
-                public Class getColumnClass(int columnIndex) {
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
                     return types[columnIndex];
                 }
 
@@ -168,7 +170,8 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                     java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
                 };
 
-                public Class getColumnClass(int columnIndex) {
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
                     return types[columnIndex];
                 }
             });

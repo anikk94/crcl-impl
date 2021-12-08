@@ -142,7 +142,6 @@ public class MotoPlusConnection implements AutoCloseable {
     private @Nullable DataOutputStream dos;
     private @Nullable DataInputStream dis;
     public static final int NO_WAIT = 0;
-    private static final int WAIT_FOREVER = -1; // This is not allowed to avoid hanging server.
 
     private volatile int maxWait = -99;
 
@@ -2165,8 +2164,6 @@ public class MotoPlusConnection implements AutoCloseable {
                 lastPosCloseToTarget = false;
             }
         }
-        final double initTargetPosDiff = targetPosDiff;
-        final double initTargetRotMaxDiff = targetRotMaxDiff;
         final boolean doMpMotTargetRecieve
                 = localOrigCommandState == CRCL_WORKING
                 && lastSentId != lastRecvdTargetId
@@ -2290,7 +2287,6 @@ public class MotoPlusConnection implements AutoCloseable {
             t[9] = -9;
         }
         t[10] = System.currentTimeMillis() - t0;
-        int a[] = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         if (afterMove) {
             if (t[10] > maxReadMpcStatusTimeAfterMove) {
                 maxReadMpcStatusTimeDiffArrayAfterMove = t;
@@ -2358,7 +2354,7 @@ public class MotoPlusConnection implements AutoCloseable {
         double distrx = (double) (localLastCoordTargetDest.rx - localCachedGetPosData.lrx());
         double distry = (double) (localLastCoordTargetDest.ry - localCachedGetPosData.lry());
         double distrz = (double) (localLastCoordTargetDest.rz - localCachedGetPosData.lrz());
-        targetRotMaxDiff = Math.max(Math.abs(distrz), Math.max(Math.abs(distry), Math.abs(distrz)));
+        targetRotMaxDiff = Math.max(Math.abs(distrx), Math.max(Math.abs(distry), Math.abs(distrz)));
         return targetRotMaxDiff;
     }
 
@@ -2376,16 +2372,7 @@ public class MotoPlusConnection implements AutoCloseable {
         return returner.getPulsePosReturn(data);
     }
 
-    private boolean mpGetFBPulsePos(int ctrlGroup, MP_FB_PULSE_POS_RSP_DATA[] data) throws IOException {
-        starter.startMpGetFBPulsePos(ctrlGroup, data);
-        return returner.getFBPulsePosReturn(data);
-    }
-
-    private boolean mpGetDegPosEx(int ctrlGroup, MP_DEG_POS_RSP_DATA_EX[] data) throws IOException {
-        starter.startMpGetDegPosEx(ctrlGroup, data);
-        return returner.getDegPosExPosReturn(data);
-    }
-
+    @SuppressWarnings("serial")
     public static final class MotoPlusConnectionException extends Exception {
 
         public MotoPlusConnectionException(String message) {
@@ -2744,7 +2731,7 @@ public class MotoPlusConnection implements AutoCloseable {
 
     public boolean closeGripper() throws Exception {
         boolean a = clearToolChangerGripperIOAndWait();
-        boolean b = writeConsecutiveI0(10010, 0, 1, 1);
+        writeConsecutiveI0(10010, 0, 1, 1);
         try {
             Thread.sleep(200);
         } catch (InterruptedException ex) {
@@ -2934,7 +2921,6 @@ public class MotoPlusConnection implements AutoCloseable {
             }
             try {
                 int r = MAX_READ_LEN;
-                int sum = 0;
                 while (r == MAX_READ_LEN) {
                     byte buf[] = new byte[MAX_READ_LEN];
                     r = mpReadFile(fd, buf);

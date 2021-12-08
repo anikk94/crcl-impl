@@ -116,4 +116,8 @@ public class MotoFitTorqueSensorServer implements SensorServerInterface {
         mpc.remove();
     }
 
+    public List<ParameterSettingType> getSensorParameterSetting() {
+	return sensorParameterSetting;
+    }
+
 }

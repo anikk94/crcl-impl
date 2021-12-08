@@ -102,6 +102,9 @@ public class JavaCloneUtilGenerator {
             if (clzzi.isSynthetic()) {
                 continue;
             }
+            if (clzzi.isEnum()) {
+                continue;
+            }
             classnamesSet.add(clzzi.getName());
         }
         final Comparator<Method> methodNameComparator = new Comparator<Method>() {
@@ -147,11 +150,7 @@ public class JavaCloneUtilGenerator {
             pw.println("import java.util.Arrays;");
             pw.println("import java.util.HashSet;");
             pw.println("import java.util.Set;");
-            pw.println("import java.util.logging.Level;");
-            pw.println("import java.util.logging.Logger;");
-            pw.println("import org.checkerframework.checker.nullness.qual.Nullable;");
             pw.println("import org.checkerframework.checker.nullness.qual.PolyNull;");
-            pw.println("import org.checkerframework.checker.nullness.qual.NonNull;");
             pw.println();
             pw.println("public class " + classonlyname + " {");
 
@@ -347,6 +346,9 @@ public class JavaCloneUtilGenerator {
                                 String itname = "iterator" + methodJ.getName().substring(3);
                                 pw.println("        Iterator<" + componentTypeName + "> " + itname + " = in." + methodJ.getName() + "().iterator();");
                                 pw.println("        while(" + itname + ".hasNext()) {");
+                                if(null == componentClass) { 
+                                    throw new RuntimeException("componentClass == null: componentTypeName="+componentTypeName);
+                                }
                                 if (componentClass.isInterface() || nocopyclassnamesSet.contains(componentTypeName)) {
                                     pw.println("            " + outColName + ".add(" + itname + ".next());");
                                 } else {

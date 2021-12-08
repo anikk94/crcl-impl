@@ -68,6 +68,7 @@ public class TestMotoPlusConnection {
         }
     }
 
+    @SuppressWarnings("unused")
     private static void testFileFunctions(MotoPlusConnection mpc) throws IOException, MotoPlusConnection.MotoPlusConnectionException {
         final String[] jbi_filenames = mpc.mpGetFileNames(MpExtensionType.MP_EXT_ID_JBI);
         System.out.println("jbi_filenames = " + Arrays.toString(jbi_filenames));
@@ -87,6 +88,7 @@ public class TestMotoPlusConnection {
 //        mpc.mpCloseFile(fd0);
     }
     
+    @SuppressWarnings("unused")
     private static void testSys1Functions(MotoPlusConnection mpc) throws IOException {
         final int num = 3;
         final MP_VAR_INFO[] varInfo = new MP_VAR_INFO[num];
@@ -180,6 +182,7 @@ public class TestMotoPlusConnection {
         System.out.println("iorData = " + Arrays.toString(iorData));
     }
 
+    @SuppressWarnings("unused")
     private static void testConvCartPosToAxesAndBack(MP_CART_POS_RSP_DATA currentCartPos, final MotoPlusConnection mpc, int[] prev_angle, MP_KINEMA_TYPE kinType, MpKinAngleReturn currentAngle) throws IOException, MotoPlusConnection.MotoPlusConnectionException {
 
         System.out.println("kinType = " + kinType);
@@ -211,6 +214,7 @@ public class TestMotoPlusConnection {
         System.out.println("mpConvAngleToPulseRet2 (0,prev_angle) = " + mpConvAngleToPulseRet2);
     }
 
+    @SuppressWarnings("unused")
     private static void testMoveZ(final MotoPlusConnection mpc) throws InterruptedException, IOException, MotoPlusConnection.MotoPlusConnectionException {
         System.out.println("Calling mpMotStop(0)");
         MotCtrlReturnEnum motStopRet = mpc.mpMotStop(0);
@@ -334,6 +338,7 @@ public class TestMotoPlusConnection {
     }
     private static final int Z_MOVE_MICROS = 200000;
 
+    @SuppressWarnings("unused")
     private static void testMoveJointS(final MotoPlusConnection mpc) throws InterruptedException, IOException, MotoPlusConnection.MotoPlusConnectionException {
         System.out.println("Calling mpMotStop(0)");
         MotCtrlReturnEnum motStopRet = mpc.mpMotStop(0);

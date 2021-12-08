@@ -1540,7 +1540,7 @@ public class CrclSwingClientJPanel
         if (null == program) {
             prevSetProgramProgram = null;
             showProgramCopy = null;
-            internal.setOutgoingProgramFile(null);
+//            internal.setOutgoingProgramFile(null);
         } else if (showProgramCopy == null
                 || prevSetProgramProgram != program
                 || Objects.requireNonNull(program.getMiddleCommand(), "program.getMiddleCommand()").size() != prevSetProgramLength) {
@@ -2448,7 +2448,7 @@ public class CrclSwingClientJPanel
                 javax.swing.SwingUtilities.invokeLater(() -> finalOuterJFrame.setTitle(finalNewTitle));
             }
         }
-        if (null != updateTitleListeners) {
+        if (null != updateTitleListeners && null != ccst) {
             for (UpdateTitleListener utl : updateTitleListeners) {
                 utl.titleChanged(ccst, outerContainer, stateString, stateDescription);
             }

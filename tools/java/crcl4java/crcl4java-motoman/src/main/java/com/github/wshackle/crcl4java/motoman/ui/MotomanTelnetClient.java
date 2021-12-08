@@ -41,19 +41,8 @@ public class MotomanTelnetClient {
 
         final InputStream localInputStream = System.in;
         final PrintStream localPrintStream = System.out;
-        MotomanTelnetClient telnet = defaultMotoman(localPrintStream, localInputStream);
-
-//        }, "localToRemote");
-//        IOUtil.readWrite(open.getInputStream(), open.getOutputStream(),
-//                         System.in, System.out);
-//        try {
-//            telnet.disconnect();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            System.exit(1);
-//        }
-//
-//        System.exit(0);
+        @SuppressWarnings("unused")
+	MotomanTelnetClient telnet = defaultMotoman(localPrintStream, localInputStream);
     }
 
     public static final String DEFAULT_MOTOMAN_USERNAME = "MOTOMANrobot";

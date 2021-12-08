@@ -22,9 +22,6 @@
  */
 package com.github.wshackle.crcl4java.motoman.force;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
@@ -39,18 +36,6 @@ public enum MP_FCS_ROB_ID {
 
     private final int id;
 
-    private static Map<Integer, FcsReturnCode> map = new HashMap<>();
-
-//    static {
-//        for (int i = 0; i < FcsReturnCode.values().length; i++) {
-//            FcsReturnCode m = FcsReturnCode.values()[i];
-//            map.put(m.getId(), m);
-//        }
-//    }
-//    
-//    public static FcsReturnCode fromInt(int i) {
-//        return map.get(i);
-//    }
     public int getId() {
         return id;
     }
