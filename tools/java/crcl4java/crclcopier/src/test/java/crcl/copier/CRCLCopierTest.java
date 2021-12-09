@@ -637,6 +637,7 @@ public class CRCLCopierTest {
      * Test of copy method, of class CRCLPosemath.
      */
     @Test
+    @SuppressWarnings({"nullness","keyfor"})
     public void testCopy_CRCLProgramType() {
         System.out.println("CRCLCopier.copy(CRCLProgramType)");
 
@@ -671,34 +672,6 @@ public class CRCLCopierTest {
                 randProgram.getMiddleCommand().set(i, newMidCmdtype);
             }
             reflectiveCheckEquals("randProgramCopy2Copy", randProgramCopy, randProgramCopy2, 0);
-//            try {
-//
-//                String randProgramString = CRCLSocket.getUtilSocket().programToPrettyString(randProgram, true);
-////            System.out.println("randomProgramFile = " + randomProgramFile);
-//                try (PrintWriter pw = new PrintWriter(randomProgramFile)) {
-//                    pw.println(randProgramString);
-//                }
-//                CRCLProgramType readBackRandProgram = CRCLUtils.readProgramFile(randomProgramFile);
-//                reflectiveCheckEquals("readBackRandProgram", randProgram, readBackRandProgram, 0);
-////            System.out.println("randProgramString = " + randProgramString);
-//                CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
-//                reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
-//            } catch (Exception exception) {
-//                System.out.println("randomProgramFile = " + randomProgramFile);
-//                System.out.println("randProgram = " + randProgram);
-//                System.out.println("exception.getMessage() = " + exception.getMessage());
-//                try (BufferedReader br = new BufferedReader(new FileReader(randomProgramFile))) {
-//                    String line = br.readLine();
-//                    int count = 1;
-//                    while (null != line) {
-//                        System.out.printf("%04d:    %s\n", count, line);
-//                        count++;
-//                        line = br.readLine();
-//                    }
-//                }
-//                exception.printStackTrace();
-//                throw new RuntimeException(exception);
-//            }
         } catch (IOException iOException) {
             iOException.printStackTrace();
             throw new RuntimeException(iOException);

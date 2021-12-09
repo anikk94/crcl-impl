@@ -22,18 +22,8 @@
  */
 package crcl.utils;
 
-import crcl.base.CRCLCommandInstanceType;
-import crcl.base.CRCLCommandType;
-import crcl.base.CRCLProgramType;
-import crcl.base.CRCLStatusType;
-import crcl.base.CommandStatusType;
-import crcl.base.JointStatusType;
-import crcl.base.JointStatusesType;
-import crcl.base.MiddleCommandType;
-import crcl.base.PointType;
-import crcl.base.PoseType;
-import crcl.base.VectorType;
 import static crcl.utils.CRCLSocket.getUtilSocket;
+
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
@@ -50,11 +40,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+
 import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-
+import crcl.base.CRCLCommandInstanceType;
+import crcl.base.CRCLCommandType;
+import crcl.base.CRCLProgramType;
+import crcl.base.CRCLStatusType;
+import crcl.base.CommandStatusType;
+import crcl.base.JointStatusType;
+import crcl.base.JointStatusesType;
+import crcl.base.MiddleCommandType;
+import crcl.base.PointType;
+import crcl.base.PoseType;
+import crcl.base.VectorType;
 
 /**
  *
@@ -527,7 +528,7 @@ public class CRCLUtils {
         forceHeadless = newForceHeadless;
     }
     
-    static private volatile StackTraceElement[] exitTrace = null;
+    static private volatile StackTraceElement @Nullable [] exitTrace = null;
     
     static public void systemExit(int status) {
         if(null != exitTrace) {

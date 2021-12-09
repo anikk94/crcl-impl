@@ -1595,6 +1595,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     @Override
+    @SuppressWarnings({"nullness"})
     public XFuture<T> exceptionally(Function<Throwable, ? extends @Nullable T> fn) {
         return wrap(this.name + ".exceptionally", super.exceptionally(fn));
     }

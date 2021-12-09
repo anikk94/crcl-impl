@@ -194,6 +194,7 @@ public class FanucCRCLMain {
      *
      * @param remoteRobotHost new value of remoteRobotHost
      */
+    @SuppressWarnings({"nullness"})
     public XFutureVoid setRemoteRobotHost(String remoteRobotHost) {
         if (!Objects.equals(this.remoteRobotHost, remoteRobotHost)) {
             this.remoteRobotHost = remoteRobotHost;
@@ -1964,6 +1965,7 @@ public class FanucCRCLMain {
         }
     }
 
+    @SuppressWarnings({"nullness"})
     private void logInfoString(String error) {
         if (null != error && !error.equals(lastErrorString)) {
             System.err.println(error);
@@ -2227,6 +2229,7 @@ public class FanucCRCLMain {
     private volatile @Nullable
     List<Object[]> getTaskListOutput = null;
 
+    @SuppressWarnings({"nullness"})
     public Optional<List<Object[]>> getTaskList(boolean showAborted) {
         if (null == tasksIterator || null == getTaskListOutput) {
             final IRobot2 localRobot = robot;
@@ -3944,6 +3947,7 @@ public class FanucCRCLMain {
     String lastComExString = null;
     private long last_com_ex_time = 0;
 
+    @SuppressWarnings({"nullness"})
     public void showComException(ComException comEx) {
         String newMsg = comEx.getMessage();
         if (!newMsg.equals(lastComExString) || (System.currentTimeMillis() - last_com_ex_time) > 5000) {
@@ -4043,13 +4047,15 @@ public class FanucCRCLMain {
     }
 
     public static void main(String[] args) throws IOException, CRCLException {
-        main = new FanucCRCLMain();
+    	FanucCRCLMain localmain  = new FanucCRCLMain();
+    	FanucCRCLMain.main = localmain;
         String neighborhoodname = args.length > 0 ? args[0] : DEFAULT_AGILITY_FANUC_NEIGHBORHOOD_NAME;
         String host = args.length > 1 ? args[1] : DEFAULT_AGILITY_LAB_REMOTE_ROBOT_HOST; //"129.6.78.111";
         int port = args.length > 2 ? Integer.parseInt(args[2]) : CRCLSocket.DEFAULT_PORT;
         boolean prefRNN = args.length > 3 && Boolean.parseBoolean(args[3]);
-        main.startDisplayInterface();
-        main.start(prefRNN, neighborhoodname, host, port);
+        localmain.startDisplayInterface();
+        localmain.start(prefRNN, neighborhoodname, host, port);
+        
 //        logDebug("Press enter \"stop\" to quit");
 //        Scanner in = new Scanner(System.in);
 //        while (!in.nextLine().equals("stop")) {

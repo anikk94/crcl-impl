@@ -2046,7 +2046,7 @@ public class SimServerInner {
         }
     }
 
-    @SuppressWarnings("nullness")
+    @SuppressWarnings({"nullness","keyfor"})
     public boolean isGripperCommand(CRCLCommandInstanceType cmdInstance) {
         return Optional.ofNullable(cmdInstance)
                 .map(CRCLCommandInstanceType::getCRCLCommand)
@@ -2055,115 +2055,12 @@ public class SimServerInner {
                 .orElse(false);
     }
 
-//    private void readCommandsRepeatedly(SimServerClientState state, final int start_close_count) {
-//        try {
-//            while (!Thread.currentThread().isInterrupted()) {
-//                if (closeCount.get() > start_close_count) {
-//                    return;
-//                }
-////                final CRCLSocket cs = state.getCs();
-//                final CRCLCommandInstanceType cmdInstance
-//                        = state.getCs().readCommand(validateXMLSelected);
-//                handleCommandReceived(cmdInstance, state);
-//            }
-//        } catch (SocketException se) {
-//            final CRCLSocket cs = state.getCs();
-//
-//            try {
-//                cs.close();
-//            } catch (IOException ex1) {
-//            }
-//            this.clientStates.remove(state);
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        } catch (CRCLException ex) {
-//            final CRCLSocket cs = state.getCs();
-//            if (ex.getCause() instanceof EOFException) {
-//                try {
-//                    cs.close();
-//                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, "", ex1);
-//                }
-//                this.clientStates.remove(state);
-//                clientStatesSize = clientStates.size();
-////                System.out.println("clientStates.size()=" + clientStatesSize);
-//                return;
-//            }
-//            if (null != ex.getCause() && ex.getCause().getCause() instanceof EOFException) {
-//                try {
-//                    cs.close();
-//                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, "", ex1);
-//                }
-//                this.clientStates.remove(state);
-//                clientStatesSize = clientStates.size();
-////                System.out.println("clientStates.size()=" + clientStatesSize);
-//                return;
-//            }
-//            if (closeCount.get() <= start_close_count) {
-//                System.err.println("String to parse was:" + cs.getLastCommandString());
-//                LOGGER.log(Level.SEVERE, "", ex);
-//                this.showMessage(ex.toString() + "\nString to parse was:" + cs.getLastCommandString());
-//            }
-//        } catch (IOException ex) {
-//            final CRCLSocket cs = state.getCs();
-//            if (closeCount.get() <= start_close_count) {
-//                String str = cs.getReadInProgressString();
-//                if (str.length() == 0) {
-//                    return;
-//                }
-//                LOGGER.log(Level.SEVERE, "ReadInProgressString:{0}", str);
-//                LOGGER.log(Level.SEVERE, "", ex);
-//            }
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        } finally {
-//            final CRCLSocket cs = state.getCs();
-//            try {
-//                cs.close();
-//            } catch (IOException ex1) {
-//            }
-//            this.clientStates.remove(state);
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        }
-//    }
+
     private void handleCommandReceived(final CRCLCommandInstanceType cmdInstance, SimServerClientState state) {
-//        LOGGER.log(Level.FINER, () -> "cmdInstance = " + cmdInstance);
         if (null != cmdInstance) {
             CRCLCommandType cmd = cmdInstance.getCRCLCommand();
             if (null != cmd) {
-//                LOGGER.log(Level.FINEST, () -> "SimServerInner.readCommandsRepeatedly() : cmd = " + cmd + ", state=" + state);
                 if (cmd instanceof GetStatusType) {
-//                    state.getStatusRequests++;
-//                    state.lastStatRequestTime = System.currentTimeMillis();
-//                    GetStatusType getStatus = (GetStatusType) cmd;
-//                    if (debug_this_command || menuOuter().isDebugReadCommandSelected()
-//                            && getStatus.getCommandID() != state.getStatusCmdId) {
-//                        outer.showDebugMessage("SimServerInner.readCommandsRepeatedly() :  (getStatus=" + getStatus + " ID=" + getStatus.getCommandID() + ") state = " + state);
-//                    }
-//                    state.getStatusCmdId = getStatus.getCommandID();
-//                    //                        if (enableGetStatusIDCheck && null != state.cmdId
-////                                && !state.getStatusCmdId.equals(state.cmdId)) {
-////                            LOGGER.log(Level.SEVERE, "SimServerInner.readCommandsRepeatedly() GetStatusIDCheck failed: state.getStatusCmdId={0}, state.cmdId = {1},status={2}", new Object[]{state.getStatusCmdId, state.cmdId, CRCLSocket.statToDebugString(status)});
-////                            LOGGER.setLevel(Level.OFF);
-////                            new Thread(() -> closeServer()).start();
-////                            return;
-////                        }
-//                    final CRCLStatusType stat = this.getLastUpdateServerSideStatusCopy();
-//                    synchronized (stat) {
-//                        CommandStatusType cst = stat.getCommandStatus();
-//                        if (null == cst) {
-//                            cst = new CommandStatusType();
-//                            cst.setCommandID(cmd.getCommandID());
-//                            cst.setStatusID(1);
-//                            cst.setCommandState(crclServerSocket.getCommandStateEnum());
-//                            stat.setCommandStatus(cst);
-//                        } else {
-//                            cst.setCommandState(crclServerSocket.getCommandStateEnum());
-//                        }
-//                        SimServerInner.this.sendStatus(state.getCs(), stat);
-//                    }
                     throw new RuntimeException("this command should have been handled by CRCLServerSocket.handleAutomaticEvents");
                 } else {
                     debug_this_command = false;
@@ -2200,6 +2097,7 @@ public class SimServerInner {
             }
         }
     }
+    
     private volatile int clientStatesSize = 0;
 
     private void handleCRCLServerSocketEvent(CRCLServerSocketEvent<SimServerClientState> evt) {

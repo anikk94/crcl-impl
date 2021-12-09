@@ -92,17 +92,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         timer.start();
         this.jTableCartesianLimits.getModel().addTableModelListener(e -> updateCartLimits(false));
         this.jTableJointLimits.getModel().addTableModelListener(e -> updateJointLimits(false));
-//        setIconImage(SERVER_IMAGE);
         readPropertiesFile();
-//        if (jCheckBoxMenuItemStartClient.isSelected()) {
-//            launchClient();
-//        }
-//        if (jCheckBoxMenuItemStartPressureServer.isSelected()) {
-//            launchPressureSensorServer();
-//            if (null != serverSensorJFrame) {
-//                serverSensorJFrame.setVisible(jCheckBoxMenuItemShowPressureOutput.isSelected());
-//            }
-//        }
     }
 
     private javax.swing.@Nullable Timer timer = null;
@@ -735,9 +725,12 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             chooser.setSelectedFile(new File(CRCLUtils.getCrclUserHomeDir(), prog.name() + ".xml"));
             if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(this)) {
                 File f = chooser.getSelectedFile();
+                if(null == f) {
+                	throw new NullPointerException("chooser.getSelectedFile() returned null.");
+                }
                 Files.write(f.toPath(), crclProgText.getBytes());
             }
-        } catch (CRCLException | IOException ex) {
+        } catch (Exception ex) {
             this.jTextAreaErrors.append(ex.toString());
             JOptionPane.showMessageDialog(this, ex);
             Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
@@ -758,26 +751,6 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         setCommandId(cmd, commandId.incrementAndGet());
     }
 
-//    private IRobot2 robot = null;
-//
-//    /**
-//     * Get the value of robot
-//     *
-//     * @return the value of robot
-//     */
-//    public IRobot2 getRobot() {
-//        return robot;
-//    }
-//
-//    /**
-//     * Set the value of robot
-//     *
-//     * @param robot new value of robot
-//     */
-//    public void setRobot(IRobot2 robot) {
-//        this.robot = robot;
-//        updateWatchVar(robot);
-//    }
     private FanucCRCLMain main;
 
     /**
