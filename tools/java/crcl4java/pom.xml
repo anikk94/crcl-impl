@@ -185,27 +185,7 @@
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>verbose_setrelease_for_jdk9plus</id>
-			<activation>
-				<jdk>[1.9,)</jdk>
-			</activation>
-			<properties>
-				<maven.compiler.release>8</maven.compiler.release>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>${maven-compiler-plugin.version}</version>
-						<configuration>
-							<release>${maven.compiler.release}</release>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+
 		<profile>
 			<id>verbose_javac</id>
 			<build>
@@ -222,6 +202,27 @@
 							</compilerArgs>
 							<showDeprecation>true</showDeprecation>
 							<verbose>true</verbose>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>verbose_setrelease_for_jdk9plus</id>
+			<activation>
+				<jdk>[1.9,)</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.release>8</maven.compiler.release>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>${maven-compiler-plugin.version}</version>
+						<configuration>
+							<release>${maven.compiler.release}</release>
 						</configuration>
 					</plugin>
 				</plugins>

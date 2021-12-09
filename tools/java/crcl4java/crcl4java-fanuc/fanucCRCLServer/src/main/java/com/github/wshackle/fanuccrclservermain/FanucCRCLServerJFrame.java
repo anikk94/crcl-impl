@@ -43,6 +43,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings({"serial","unused"})
 public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCRCLServerDisplayInterface {
 
 	/**

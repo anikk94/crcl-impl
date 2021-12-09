@@ -23,6 +23,58 @@
 package com.github.wshackle.fanuccrclservermain;
 
 import static com.github.wshackle.fanuc.robotneighborhood.ClassFactory.createFRCRobotNeighborhood;
+import static crcl.base.CommandStateEnumType.CRCL_ERROR;
+import static crcl.base.CommandStateEnumType.CRCL_WORKING;
+import static crcl.copier.CRCLCopier.copy;
+import static crcl.utils.CRCLPosemath.point;
+import static crcl.utils.CRCLUtils.requireNonNull;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.xml.sax.SAXException;
+
 import com.github.wshackle.fanuc.robotneighborhood.IRNRobot;
 import com.github.wshackle.fanuc.robotneighborhood.IRNRobots;
 import com.github.wshackle.fanuc.robotneighborhood.IRobotNeighborhood;
@@ -51,6 +103,7 @@ import com.github.wshackle.fanuc.robotserver.ITasks;
 import com.github.wshackle.fanuc.robotserver.IVar;
 import com.github.wshackle.fanuc.robotserver.IVars;
 import com.github.wshackle.fanuc.robotserver.IXyzWpr;
+
 import com4j.Com4jObject;
 import com4j.ComException;
 import crcl.base.ActuateJointType;
@@ -60,14 +113,11 @@ import crcl.base.CRCLCommandType;
 import crcl.base.CRCLStatusType;
 import crcl.base.CloseToolChangerType;
 import crcl.base.CommandStateEnumType;
-import static crcl.base.CommandStateEnumType.CRCL_WORKING;
-import static crcl.base.CommandStateEnumType.CRCL_ERROR;
 import crcl.base.CommandStatusType;
 import crcl.base.ConfigureJointReportType;
 import crcl.base.ConfigureJointReportsType;
 import crcl.base.DwellType;
 import crcl.base.EndCanonType;
-
 import crcl.base.GetStatusType;
 import crcl.base.GripperStatusType;
 import crcl.base.GuardsStatusesType;
@@ -103,53 +153,10 @@ import crcl.base.TransSpeedAbsoluteType;
 import crcl.base.TransSpeedRelativeType;
 import crcl.base.TransSpeedType;
 import crcl.copier.CRCLCopier;
-import static crcl.copier.CRCLCopier.copy;
-
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JSlider;
-import rcs.posemath.PmCartesian;
-import rcs.posemath.PmException;
-import rcs.posemath.PmRotationVector;
-import rcs.posemath.PmRpy;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.PrintStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-import static crcl.utils.CRCLPosemath.point;
 import crcl.utils.CRCLUtils;
-import static crcl.utils.CRCLUtils.requireNonNull;
 import crcl.utils.ThreadLockedHolder;
 import crcl.utils.XFuture;
 import crcl.utils.XFutureVoid;
@@ -159,15 +166,10 @@ import crcl.utils.server.CRCLServerSocketEvent;
 import crcl.utils.server.CRCLServerSocketEventListener;
 import crcl.utils.server.CRCLServerSocketStateGenerator;
 import crcl.utils.server.UnitsTypeSet;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.SwingUtilities;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.xml.sax.SAXException;
+import rcs.posemath.PmCartesian;
+import rcs.posemath.PmException;
+import rcs.posemath.PmRotationVector;
+import rcs.posemath.PmRpy;
 import rcs.posemath.Posemath;
 
 /**
@@ -267,7 +269,6 @@ public class FanucCRCLMain {
         if (null == posXyzWpr) {
             throw new IllegalArgumentException("Can't get xyzwpr for pos");
         }
-        boolean changed = false;
         PmCartesian cart = new PmCartesian(posXyzWpr.x(), posXyzWpr.y(), posXyzWpr.z());
         float xMinEffective = xMin + border1;
         float xMaxEffective = xMax - border1;
@@ -279,29 +280,23 @@ public class FanucCRCLMain {
         if (cart.x > xMaxEffective) {
             posXyzWpr.x(xMaxEffective);
             showWarning("X move of " + cart.x + " limited to max = " + xMaxEffective);
-            changed = true;
         } else if (cart.x < xMinEffective) {
             posXyzWpr.x(xMinEffective);
             showWarning("X move of " + cart.x + " limited to min= " + xMinEffective);
-            changed = true;
         }
         if (cart.y > yMaxEffective) {
             posXyzWpr.y(yMaxEffective);
             showWarning("Y move of " + cart.y + " limited to max = " + yMaxEffective);
-            changed = true;
         } else if (cart.y < yMinEffective) {
             posXyzWpr.y(yMinEffective);
             showWarning("Y move of " + cart.y + " limited to min = " + yMinEffective);
-            changed = true;
         }
         if (cart.z > zMaxEffective) {
             posXyzWpr.z(zMaxEffective);
             showWarning("Z move of " + cart.z + " limited to max = " + zMaxEffective);
-            changed = true;
         } else if (cart.z < zMinEffective) {
             posXyzWpr.z(zMinEffective);
             showWarning("Z move of " + cart.z + " limited to min = " + zMinEffective);
-            changed = true;
         }
 
 //        if (changed) {
@@ -1387,8 +1382,6 @@ public class FanucCRCLMain {
         return prevCmd;
     }
 
-    private boolean lastActivAlarms = false;
-
     private boolean checkServoReady() {
         boolean readyNow = false;
         boolean safetyStatError = checkSafetyStatError();
@@ -1503,11 +1496,11 @@ public class FanucCRCLMain {
 
                 case GUARD_LIMIT_REACHED:
                     internalStopMotion();
-
-//                    overrideVar.value(overrideValue);
                     crclServerSocket.comleteGuardTrigger();
-
                     break;
+                    
+                case BAD_GUARD_SENSOR_ID:
+                	break;
             }
         } catch (Exception ex) {
             getLocalLogger().log(Level.SEVERE, "evt=" + evt, ex);
@@ -2052,18 +2045,6 @@ public class FanucCRCLMain {
         }
     }
 
-    private Set<String> getProgramNames() {
-        Set<String> prognames = new TreeSet<>();
-        if (null != robot) {
-            IPrograms progs = robot.programs();
-            for (Com4jObject c4jo_prog : progs) {
-                IProgram prog = c4jo_prog.queryInterface(IProgram.class);
-                prognames.add(prog.name());
-            }
-        }
-        return prognames;
-    }
-
     volatile private @Nullable
     Thread moveThread = null;
 
@@ -2099,8 +2080,6 @@ public class FanucCRCLMain {
         localPosReg.update();
     }
 
-    private boolean posReg97Updated = false;
-
     private void updatePosReg97() {
         final ISysGroupPosition localPosReg97 = posReg97;
         final IRobot2 localRobot = robot;
@@ -2116,7 +2095,6 @@ public class FanucCRCLMain {
                 posReg97Joint.item(i, cur_joint_pos);
             }
             localPosReg97.update();
-            posReg97Updated = true;
         }
     }
 
@@ -2149,7 +2127,6 @@ public class FanucCRCLMain {
         moveChecksDone = 0;
         CRCLStatusType localStatus = this.status.get();
         moveToStartPosition = copy(localStatus.getPoseStatus().getPose());
-        posReg97Updated = false;
         setCommandState(CRCL_WORKING);
         PointType moveCmdEndPt = moveCmd.getEndPosition().getPoint();
         PmCartesian cart = CRCLPosemath.toPmCartesian(moveCmdEndPt);
@@ -2409,7 +2386,6 @@ public class FanucCRCLMain {
     }
 
     private void handleMoveThroughTo(MoveThroughToType moveCmd) throws PmException {
-        posReg97Updated = false;
         final int handleMoveThroughStartingAbortCount = abortCount.get();
         this.moveStartAbortCount = handleMoveThroughStartingAbortCount;
         setCommandState(CRCL_WORKING);
@@ -2436,16 +2412,16 @@ public class FanucCRCLMain {
                     PoseType pose = moveCmd.getWaypoint().get(currentWaypointNumber);
                     PmCartesian cart = CRCLPosemath.toPmCartesian(pose.getPoint());
                     PmRpy rpy = CRCLPosemath.toPmRpy(pose);
-                    final IRobot2 localRobot = CRCLUtils.requireNonNull(robot);
-                    ICurPosition icp = localRobot.curPosition();
-                    ICurGroupPosition icgp = icp.group((short) 1, FRECurPositionConstants.frWorldDisplayType);
-                    Com4jObject com4jobj_pos = icgp.formats(FRETypeCodeConstants.frXyzWpr);
-                    IXyzWpr pos = com4jobj_pos.queryInterface(IXyzWpr.class);
+//                    final IRobot2 localRobot = CRCLUtils.requireNonNull(robot);
+//                    ICurPosition icp = localRobot.curPosition();
+//                    ICurGroupPosition icgp = icp.group((short) 1, FRECurPositionConstants.frWorldDisplayType);
+//                    Com4jObject com4jobj_pos = icgp.formats(FRETypeCodeConstants.frXyzWpr);
+//                    IXyzWpr pos = com4jobj_pos.queryInterface(IXyzWpr.class);
                     final IIndGroupPosition localGroupPos = CRCLUtils.requireNonNull(groupPos, "groupPos");
                     Com4jObject com4jobj_sys_pos = localGroupPos.formats(FRETypeCodeConstants.frXyzWpr);
                     IXyzWpr sys_pos = com4jobj_sys_pos.queryInterface(IXyzWpr.class);
-                    long t0 = System.currentTimeMillis();
-                    long t1 = System.currentTimeMillis();
+//                    long t0 = System.currentTimeMillis();
+//                    long t1 = System.currentTimeMillis();
                     sys_pos.setAll(cart.x, cart.y, cart.z,
                             Math.toDegrees(rpy.r), Math.toDegrees(rpy.p), Math.toDegrees(rpy.y));
                     localGroupPos.update();
@@ -2875,16 +2851,17 @@ public class FanucCRCLMain {
 
     private void openMoveToLogFile() {
         try {
-            File directory = null;
+//            File directory = null;
 //            if (null != propertiesFile) {
 //                directory = propertiesFile.getParentFile();
 //            }
             if (null == moveLogFile || null == moveLogFilePrintStream) {
-                if (null == directory) {
+//                if (null == directory) {
                     moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv");
-                } else {
-                    moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv", directory);
-                }
+//                } 
+//                else {
+//                    moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv", directory);
+//                }
                 moveLogFilePrintStream = new PrintStream(new FileOutputStream(moveLogFile));
                 moveLogFilePrintStream.println("current_time_ms,current_time_string,expectedEndMoveTimeDiff,id,start_x,start_y,start_z,end_x,end_y,end_z,distTran,distRot,moveTime,moveCheckCount,cmdTransSpeed,cmdRotSpeed,realTransSpeed,realRotSpeed,timeToWaitForLastMotionProgram,timeToStartMotionProgram,lastMotionProgramRunningCount,distances,reasons,updateTimes");
             }
@@ -3060,19 +3037,6 @@ public class FanucCRCLMain {
             System.err.println("startStartCrclServerCount = " + startStartCrclServerCount);
             System.err.println("startCrclServerCount.get() = " + startCrclServerCount.get());
             throw new RuntimeException(ex);
-        }
-    }
-
-    private void runUpdateCachedStatus() {
-        try {
-            readCachedStatusFromRobot();
-        } catch (Exception ex) {
-            getLocalLogger().log(Level.SEVERE, "", ex);
-            if (ex instanceof RuntimeException) {
-                throw (RuntimeException) ex;
-            } else {
-                throw new RuntimeException(ex);
-            }
         }
     }
 
@@ -3619,16 +3583,6 @@ public class FanucCRCLMain {
                 this::connectRemoteRobotInternal,
                 getRobotService());
     }
-
-    private static final List<String> programNamesToCheckList = Arrays.asList(
-            "GRIPPER_OPEN",
-            "MOVE_W_TIME",
-            "MOVE_JOINT",
-            "TOOL_OPEN",
-            "TOOL_CLOSE",
-            "GRIPPER_CLOSE");
-
-    private static final HashSet<String> programNamesToCheckSet = new HashSet<>(programNamesToCheckList);
 
     private volatile int overrideValue = 100;
 

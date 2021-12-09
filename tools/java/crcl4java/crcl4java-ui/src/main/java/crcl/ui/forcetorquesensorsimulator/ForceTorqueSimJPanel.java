@@ -5,35 +5,8 @@
  */
 package crcl.ui.forcetorquesensorsimulator;
 
-import crcl.base.CRCLStatusType;
-import crcl.base.ConfigureStatusReportType;
-import crcl.base.ForceTorqueSensorStatusType;
-import crcl.base.GetStatusType;
-import crcl.base.GripperStatusType;
-import crcl.base.PointType;
-import crcl.base.PoseStatusType;
-import crcl.base.PoseType;
-import crcl.base.SensorStatusesType;
-import crcl.base.SettingsStatusType;
-import crcl.ui.AutomaticPropertyFileUtils;
-import crcl.ui.PoseDisplay;
-import crcl.ui.PoseDisplayMode;
-import crcl.ui.client.CrclSwingClientJPanel;
-import crcl.ui.client.CurrentPoseListener;
-import crcl.ui.client.CurrentPoseListenerUpdateInfo;
-import crcl.copier.CRCLCopier;
-import crcl.utils.CRCLException;
-import crcl.utils.CRCLSocket;
-import crcl.utils.CRCLUtils;
-import crcl.utils.ThreadLockedHolder;
-import crcl.utils.XFuture;
-import crcl.utils.XFutureVoid;
-import crcl.utils.outer.interfaces.PropertyOwner;
-import crcl.utils.server.CRCLServerClientState;
-import crcl.utils.server.CRCLServerSocket;
-import crcl.utils.server.CRCLServerSocketEvent;
-import crcl.utils.server.CRCLServerSocketEventListener;
-import crcl.utils.server.CRCLServerSocketStateGenerator;
+import static crcl.utils.CRCLUtils.requireNonNull;
+
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import static crcl.utils.CRCLUtils.requireNonNull;
-import java.awt.GraphicsEnvironment;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -58,18 +29,50 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JFileChooser;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.checkerframework.checker.guieffect.qual.UIEffect;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import crcl.base.CRCLStatusType;
+import crcl.base.ConfigureStatusReportType;
+import crcl.base.ForceTorqueSensorStatusType;
+import crcl.base.GetStatusType;
+import crcl.base.GripperStatusType;
+import crcl.base.PointType;
+import crcl.base.PoseStatusType;
+import crcl.base.PoseType;
+import crcl.base.SensorStatusesType;
+import crcl.base.SettingsStatusType;
+import crcl.copier.CRCLCopier;
+import crcl.ui.AutomaticPropertyFileUtils;
+import crcl.ui.PoseDisplay;
+import crcl.ui.PoseDisplayMode;
+import crcl.ui.client.CrclSwingClientJPanel;
+import crcl.ui.client.CurrentPoseListener;
+import crcl.ui.client.CurrentPoseListenerUpdateInfo;
+import crcl.utils.CRCLException;
+import crcl.utils.CRCLSocket;
+import crcl.utils.CRCLUtils;
+import crcl.utils.ThreadLockedHolder;
+import crcl.utils.XFuture;
+import crcl.utils.XFutureVoid;
+import crcl.utils.outer.interfaces.PropertyOwner;
+import crcl.utils.server.CRCLServerClientState;
+import crcl.utils.server.CRCLServerSocket;
+import crcl.utils.server.CRCLServerSocketEvent;
+import crcl.utils.server.CRCLServerSocketEventListener;
+import crcl.utils.server.CRCLServerSocketStateGenerator;
 
 /**
  *

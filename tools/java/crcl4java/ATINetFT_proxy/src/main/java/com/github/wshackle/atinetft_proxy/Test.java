@@ -33,7 +33,8 @@ import java.net.UnknownHostException;
  */
 public class Test {
 
-    public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
+    @SuppressWarnings({"resource","unused"})
+	public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
         ConfigurationReader configurationReader = new ConfigurationReader("192.168.1.1");
         System.out.println("configurationReader = " + configurationReader);
         NetFTSensorProxy sensor = new NetFTSensorProxy(InetAddress.getByName("192.168.1.1"));

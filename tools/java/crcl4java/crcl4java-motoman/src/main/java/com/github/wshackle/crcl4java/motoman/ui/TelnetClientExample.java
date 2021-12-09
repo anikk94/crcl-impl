@@ -22,20 +22,22 @@
  */
 package com.github.wshackle.crcl4java.motoman.ui;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.util.StringTokenizer;
 
+import org.apache.commons.net.telnet.EchoOptionHandler;
+import org.apache.commons.net.telnet.InvalidTelnetOptionException;
+import org.apache.commons.net.telnet.SimpleOptionHandler;
+import org.apache.commons.net.telnet.SuppressGAOptionHandler;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.apache.commons.net.telnet.TelnetNotificationHandler;
-import org.apache.commons.net.telnet.SimpleOptionHandler;
-import org.apache.commons.net.telnet.EchoOptionHandler;
 import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
-import org.apache.commons.net.telnet.SuppressGAOptionHandler;
-import org.apache.commons.net.telnet.InvalidTelnetOptionException;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import crcl.utils.CRCLUtils;
 
 
 /***

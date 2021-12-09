@@ -39,6 +39,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings("serial")
 public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame implements FanucCRCLServerDisplayInterface {
 
     /**
@@ -252,21 +253,6 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
 
     public void updateJointLimits(float lowerJointLimits[], float upperJointLimits[]) {
         fanucCRCLServerJPanel1.updateJointLimits(lowerJointLimits, upperJointLimits);
-    }
-
-    private void readPropertiesFile() {
-//        try {
-//            if (PROPERTIES_FILE.exists()) {
-//                props.load(new FileReader(PROPERTIES_FILE));
-//            }
-//            fingerSensorServerCmd = getProperty("fingerSensorServerCmd", DEFAULT_FINGER_SENSOR_SERVER_COMMAND);
-//            fingerSensorServerDirectory = getProperty("fingerSensorServerDirectory", DEFAULT_FINGER_SENSOR_SERVER_DIRECTORY);
-//            jCheckBoxMenuItemStartClient.setSelected(getBooleanProperty("autoStartClient", false));
-//            jCheckBoxMenuItemStartPressureServer.setSelected(getBooleanProperty("autoStartPressureSensorServer", false));
-//            jCheckBoxMenuItemShowPressureOutput.setSelected(getBooleanProperty("showPressureOutput", false));
-//        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
-//        }
     }
 
     public JMenuItem getjMenuItemReconnectRobot() {

@@ -5,6 +5,35 @@
  */
 package com.github.wshackle.fanuccrclservermain;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import com.github.wshackle.fanuc.robotserver.FRECurPositionConstants;
 import com.github.wshackle.fanuc.robotserver.FRETypeCodeConstants;
 import com.github.wshackle.fanuc.robotserver.IConfig;
@@ -17,6 +46,7 @@ import com.github.wshackle.fanuc.robotserver.ITPSimpleLine;
 import com.github.wshackle.fanuc.robotserver.IVar;
 import com.github.wshackle.fanuc.robotserver.IVars;
 import com.github.wshackle.fanuc.robotserver.IXyzWpr;
+
 import com4j.Com4jObject;
 import com4j.ComException;
 import crcl.base.CRCLCommandType;
@@ -39,38 +69,10 @@ import crcl.base.SetLengthUnitsType;
 import crcl.base.SetTransSpeedType;
 import crcl.base.TransSpeedAbsoluteType;
 import crcl.ui.client.CrclSwingClientJFrame;
-import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;
 import crcl.utils.CRCLUtils;
 import crcl.utils.PropertiesUtils;
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmException;
 import rcs.posemath.PmRpy;
@@ -80,6 +82,7 @@ import rcs.posemath.Posemath;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings({"serial","unused"})
 public class FanucCRCLServerJPanel extends javax.swing.JPanel {
 
     /**
@@ -537,16 +540,6 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         return props.getProperty(key, defaultValue);
     }
 
-    private boolean getBooleanProperty(String key, boolean defaultValue) {
-        String sysProp = System.getProperty(key);
-        if (null != sysProp) {
-            return Boolean.parseBoolean(sysProp);
-        }
-        return Optional.ofNullable(props.getProperty(key))
-                .map(Boolean::valueOf)
-                .orElse(defaultValue);
-    }
-
     private static final String DEFAULT_FINGER_SENSOR_SERVER_COMMAND = "C:\\Program Files\\nodejs\\node.exe sensorServer.js";
     private static final String DEFAULT_FINGER_SENSOR_SERVER_DIRECTORY = "C:\\Users\\Public\\Documents\\FingerPressureSensorNodeJS";
 
@@ -555,8 +548,8 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
     private @Nullable
     String fingerSensorServerDirectory = null;
 
-    private static final String DEFAULT_WEB_SERVER_COMMAND = "C:\\Users\\Public\\Documents\\runWebApp.bat";
-    private static final String DEFAULT_WEB_SERVER_DIRECTORY = "C:\\Users\\Public\\Documents\\";
+//    private static final String DEFAULT_WEB_SERVER_COMMAND = "C:\\Users\\Public\\Documents\\runWebApp.bat";
+//    private static final String DEFAULT_WEB_SERVER_DIRECTORY = "C:\\Users\\Public\\Documents\\";
 
     private @Nullable
     String webServerCmd = null;
@@ -720,7 +713,7 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
             EndCanonType end = new EndCanonType();
             setCommandId(end);
             crclProg.setEndCanon(end);
-            String crclProgText = new CRCLSocket().programToPrettyString(crclProg, true);
+            String crclProgText = CRCLSocket.getUtilSocket().programToPrettyString(crclProg, true);
             JFileChooser chooser = new JFileChooser();
             chooser.setSelectedFile(new File(CRCLUtils.getCrclUserHomeDir(), prog.name() + ".xml"));
             if (JFileChooser.APPROVE_OPTION == chooser.showSaveDialog(this)) {

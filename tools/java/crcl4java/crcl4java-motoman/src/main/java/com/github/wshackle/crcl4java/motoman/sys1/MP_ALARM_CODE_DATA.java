@@ -25,7 +25,6 @@ package com.github.wshackle.crcl4java.motoman.sys1;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
