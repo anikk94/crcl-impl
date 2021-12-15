@@ -29,7 +29,6 @@ import crcl.base.MiddleCommandType;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-
 /*
  * 
  * NOTE: Comments beginning with {@literal @} or {@literal >>>} are used by Checker Framework Comments
