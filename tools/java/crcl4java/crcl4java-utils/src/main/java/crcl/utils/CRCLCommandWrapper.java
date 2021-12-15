@@ -61,7 +61,6 @@ public class CRCLCommandWrapper extends MessageType {
 
     private int curProgramIndex = -1;
 
-    #ERROR Deliberately inserted
             
     /**
      * Default constructor
