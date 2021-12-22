@@ -2816,8 +2816,10 @@ public class FanucCRCLMain {
             crclServerSocket = new CRCLServerSocket<>(CRCLSocket.DEFAULT_PORT, FANUC_STATE_GENERATOR);
             crclServerSocket.addListener(crclSocketEventListener);
             setDefaultJointReports();
-        } catch (Exception exception) {
-            getLocalLogger().log(Level.SEVERE, "", exception);
+        } catch (Throwable exception) {
+            Logger localLogger = getLocalLogger();
+            localLogger.log(Level.SEVERE, "CRCLServerSocket.class.getProtectionDomain() = "+CRCLServerSocket.class.getProtectionDomain());
+            localLogger.log(Level.SEVERE, "", exception);
             if (exception instanceof RuntimeException) {
                 throw (RuntimeException) exception;
             } else {
