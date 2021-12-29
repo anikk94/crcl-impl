@@ -1254,7 +1254,8 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                     ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
                     logger.log(Level.SEVERE, "ClassLoader.getSystemClassLoader()={0}", systemClassLoader);
                     if(systemClassLoader instanceof URLClassLoader)  {
-                        URLClassLoader urlClassLoader = (URLClassLoader)  systemClassLoader;
+                        @SuppressWarnings("resource")
+			URLClassLoader urlClassLoader = (URLClassLoader)  systemClassLoader;
                         URL[] urLs = urlClassLoader.getURLs();
                         for (int i= 0; i < urLs.length; i++) {
                             logger.log(Level.SEVERE, "url{0} = {1}", new Object[]{i,urLs[i]});
