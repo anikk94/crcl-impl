@@ -6,6 +6,15 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/ATINetFT_proxy/pom.xml" />
+        <option value="$PROJECT_DIR$/crcl4java-fanuc/fanucCRCLServer/pom.xml" />
+        <option value="$PROJECT_DIR$/crcl4java-fanuc/fanucCom4JBase/pom.xml" />
+        <option value="$PROJECT_DIR$/crcl4java-fanuc/pom.xml" />
+        <option value="$PROJECT_DIR$/crcl4java-motoman/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 </project>
