@@ -53,7 +53,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: classworlds:classworlds:1.1-alpha-2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.plexus:plexus-io:2.0.4" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.20.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.wshackle:rcslib:2017.07.19" level="project" />
   </component>
 </module>
