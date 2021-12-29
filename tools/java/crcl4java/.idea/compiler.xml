@@ -8,13 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="crcl4java-ui" />
-        <module name="fanucCom4JBase" />
-        <module name="crcl4java-motoman" />
         <module name="generate-copier-maven-plugin" />
-        <module name="fanucCRCLServer" />
         <module name="crcl4java-utils" />
         <module name="crcl4java-base" />
-        <module name="ATINetFT_proxy" />
         <module name="crclcopier" />
       </profile>
     </annotationProcessing>
