@@ -143,7 +143,6 @@ public class TestForceControl {
                 = mpc.mpFcsGetForceData(MP_FCS_ROB_ID.MP_FCS_R1ID, FCS_COORD_TYPE.FCS_ROBO_TYPE, 0);
         System.out.println("getForceDataRet = " + getForceDataRet);
 
-        final int MAX_WAIT = mpc.mpGetMaxWait();
         try {
             mpc.mpSetServoPower(true);
             startFcsImpedanceControl(mpc);

@@ -23,6 +23,7 @@
 package com.github.wshackle.crcl4java.motoman.sys1;
 
 import static com.github.wshackle.crcl4java.motoman.sys1.MP_SVAR_RECV_INFO.MAX_SVAR_SIZE;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -30,7 +31,7 @@ import static com.github.wshackle.crcl4java.motoman.sys1.MP_SVAR_RECV_INFO.MAX_S
  */
 public class MP_SVAR_SEND_INFO {
     
-    public VarType usType;
+    public @Nullable VarType usType;
     public short usIndex;
     public final byte ucValue[] = new byte[MAX_SVAR_SIZE + 1];
 }

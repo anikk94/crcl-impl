@@ -53,8 +53,10 @@ public interface ServerJInternalFrameProviderInterface {
 
     public int getCrclPort();
 
-    public @Nullable
-    String getRemoteRobotHost();
+    public @Nullable String getRemoteRobotHost();
 
     public void setRemotRobotHost(String remoteRobotHost);
+    
+    public void disconnnectAllAndClose();
+    
 }

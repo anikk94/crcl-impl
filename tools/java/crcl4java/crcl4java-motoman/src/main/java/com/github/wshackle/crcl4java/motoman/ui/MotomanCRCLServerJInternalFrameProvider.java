@@ -26,6 +26,7 @@ import crcl.utils.server.ServerJInternalFrameProviderInterface;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -33,8 +34,16 @@ import java.util.logging.Logger;
  */
 public class MotomanCRCLServerJInternalFrameProvider implements ServerJInternalFrameProviderInterface {
 
-    private volatile MotomanCRCLServerJInternalFrame motomanCRCLServerJInternalFrame;
+    private volatile @Nullable MotomanCRCLServerJInternalFrame motomanCRCLServerJInternalFrame;
 
+    @Override
+    public void disconnnectAllAndClose() {
+        if(null != motomanCRCLServerJInternalFrame) {
+            motomanCRCLServerJInternalFrame.disconnectCrclMotoplus();
+            motomanCRCLServerJInternalFrame.doDefaultCloseAction();
+        }
+    }
+    
     @Override
     public void start(Object... args) {
         try {
@@ -82,18 +91,18 @@ public class MotomanCRCLServerJInternalFrameProvider implements ServerJInternalF
 
     @Override
     public File getPropertiesFile() {
-        return motomanCRCLServerJInternalFrame.getPropertiesFile();
+        return getJInternalFrame().getPropertiesFile();
     }
 
     @Override
     public void setPropertiesFile(File propertiesFile) {
-        motomanCRCLServerJInternalFrame.setPropertiesFile(propertiesFile);
+        getJInternalFrame().setPropertiesFile(propertiesFile);
     }
 
     @Override
     public void saveProperties() {
         try {
-            motomanCRCLServerJInternalFrame.saveProperties();
+            getJInternalFrame().saveProperties();
         } catch (Exception ex) {
             Logger.getLogger(MotomanCRCLServerJInternalFrameProvider.class.getName()).log(Level.SEVERE, "", ex);
             if (ex instanceof RuntimeException) {
@@ -107,7 +116,7 @@ public class MotomanCRCLServerJInternalFrameProvider implements ServerJInternalF
     @Override
     public void loadProperties() {
         try {
-            motomanCRCLServerJInternalFrame.loadProperties();
+            getJInternalFrame().loadProperties();
         } catch (Exception ex) {
             Logger.getLogger(MotomanCRCLServerJInternalFrameProvider.class.getName()).log(Level.SEVERE, "", ex);
             if (ex instanceof RuntimeException) {
@@ -120,22 +129,22 @@ public class MotomanCRCLServerJInternalFrameProvider implements ServerJInternalF
 
     @Override
     public void setCrclPort(int crclPort) {
-        motomanCRCLServerJInternalFrame.setCrclPort(crclPort);
+        getJInternalFrame().setCrclPort(crclPort);
     }
 
     @Override
     public int getCrclPort() {
-        return motomanCRCLServerJInternalFrame.getCrclPort();
+        return getJInternalFrame().getCrclPort();
     }
 
     @Override
     public String getRemoteRobotHost() {
-        return motomanCRCLServerJInternalFrame.getMotomanHost();
+        return getJInternalFrame().getMotomanHost();
     }
 
     @Override
     public void setRemotRobotHost(String remoteRobotHost) {
-        motomanCRCLServerJInternalFrame.setMotomanHost(remoteRobotHost);
+        getJInternalFrame().setMotomanHost(remoteRobotHost);
     }
 
     @Override

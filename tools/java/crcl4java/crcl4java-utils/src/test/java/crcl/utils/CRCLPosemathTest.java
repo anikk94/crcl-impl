@@ -873,7 +873,7 @@ public class CRCLPosemathTest {
 
         PoseType expResult = pose123;
         CRCLPosemath.setPose(stat, expResult);
-        PoseType result = CRCLPosemath.getNullablePose(stat);
+        PoseType result = CRCLPosemath.pose(stat);
         assertEquals(expResult, result);
     }
 
@@ -1024,7 +1024,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         PointType expResult = pt123;
         CRCLPosemath.setPoint(stat, expResult);
-        PointType result = CRCLPosemath.getNullablePoint(stat);
+        PointType result = CRCLPosemath.point(stat);
         checkEquals("point", expResult, result);
     }
 
@@ -1037,7 +1037,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         VectorType expResult = xvec;
         CRCLPosemath.setXAxis(stat, expResult);
-        VectorType result = CRCLPosemath.getNullableXAxis(stat);
+        VectorType result = CRCLPosemath.xAxis(stat);
         checkEquals("xaxis", expResult, result);
     }
 
@@ -1050,7 +1050,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         VectorType expResult = zvec;
         CRCLPosemath.setZAxis(stat, expResult);
-        VectorType result = CRCLPosemath.getNullableZAxis(stat);
+        VectorType result = CRCLPosemath.zAxis(stat);
         checkEquals("zaxis", expResult, result);
     }
 
@@ -1063,7 +1063,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         PoseType pose = pose123;
         CRCLPosemath.setPose(stat, pose);
-        assertTrue(CRCLPosemath.getNullablePose(stat) == pose);
+        assertTrue(CRCLPosemath.pose(stat) == pose);
     }
 
     /**
@@ -1075,7 +1075,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         PointType pt = pt123;
         CRCLPosemath.setPoint(stat, pt);
-        assertTrue(CRCLPosemath.getNullablePoint(stat) == pt);
+        assertTrue(CRCLPosemath.point(stat) == pt);
     }
 
     /**
@@ -1087,7 +1087,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         VectorType xAxis = xvec;
         CRCLPosemath.setXAxis(stat, xAxis);
-        assertTrue(CRCLPosemath.getNullableXAxis(stat) == xAxis);
+        assertTrue(CRCLPosemath.xAxis(stat) == xAxis);
     }
 
     /**
@@ -1099,7 +1099,7 @@ public class CRCLPosemathTest {
         CRCLStatusType stat = new CRCLStatusType();
         VectorType zAxis = zvec;
         CRCLPosemath.setZAxis(stat, zAxis);
-        assertTrue(CRCLPosemath.getNullableZAxis(stat) == zAxis);
+        assertTrue(CRCLPosemath.zAxis(stat) == zAxis);
     }
 
     /**

@@ -1816,7 +1816,7 @@ public class CRCLSocket implements AutoCloseable {
     private static String statToDebugString(@Nullable CRCLStatusType stat) {
         return stat == null ? "null" : stat.toString() + " { "
                 + "CommandStatus=" + commandStatToDebugString(stat.getCommandStatus()) + ","
-                + "Pose=" + poseToDebugString(CRCLPosemath.getNullablePose(stat)) + ","
+                + "Pose=" + poseToDebugString(CRCLPosemath.pose(stat)) + ","
                 + "JointStatuses=" + jointStatusesToDebugString(stat.getJointStatuses()) + " } ";
     }
 
@@ -2341,7 +2341,7 @@ public class CRCLSocket implements AutoCloseable {
             bufferedInputStream = null;
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, "", ex);
-            System.exit(0);
+            CRCLUtils.systemExit(0);
             throw new RuntimeException(ex);
         } catch (Exception ex) {
             logClassPath();

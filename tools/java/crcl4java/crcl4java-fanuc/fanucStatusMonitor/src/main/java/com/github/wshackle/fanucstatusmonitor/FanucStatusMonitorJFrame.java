@@ -20,30 +20,31 @@
  */
 package com.github.wshackle.fanucstatusmonitor;
 
-import com.github.wshackle.fanuc.robotserver.IAlarm;
-import com.github.wshackle.fanuc.robotserver.IAlarms;
-import com.github.wshackle.fanuc.robotserver.IRobot2;
-import com.github.wshackle.fanuc.robotserver.IRobotErrorInfo;
-import com.github.wshackle.fanuc.robotserver.IVar;
-import com.github.wshackle.fanuc.robotserver.IVars;
-import com.github.wshackle.fanuc.robotserver.events.IAlarmNotify;
-import com.github.wshackle.fanuc.robotserver.events.IRobotEvents;
-import com4j.Com4jObject;
-import com4j.EventCookie;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import javax.swing.table.DefaultTableModel;
+
+import com.github.wshackle.fanuc.robotserver.IAlarm;
+import com.github.wshackle.fanuc.robotserver.IAlarms;
+import com.github.wshackle.fanuc.robotserver.IRobot2;
+import com.github.wshackle.fanuc.robotserver.IRobotErrorInfo;
+import com.github.wshackle.fanuc.robotserver.events.IAlarmNotify;
+import com.github.wshackle.fanuc.robotserver.events.IRobotEvents;
+
+import com4j.Com4jObject;
+import com4j.EventCookie;
 
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings("serial")
 public class FanucStatusMonitorJFrame extends javax.swing.JFrame {
 
     /**
@@ -270,27 +271,6 @@ public class FanucStatusMonitorJFrame extends javax.swing.JFrame {
         this.remoteRobotHost = remoteRobotHost;
     }
 
-    private Map<String,IVar> flatMap(String path, IVars ivars) {
-        Map<String,IVar> map = new TreeMap<>();
-        for (Com4jObject c4jo : ivars) {
-            IVars internalIvars = c4jo.queryInterface(IVars.class);
-            if(null != internalIvars) {
-                String vname = internalIvars.varName();
-                if(!vname.endsWith("]") || vname.endsWith("[1]")) {
-                    map.putAll(flatMap(path+internalIvars.varName()+".",internalIvars));
-                }
-                continue;
-            }
-            try {
-                IVar iv = c4jo.queryInterface(IVar.class);
-                if (null != iv && iv.isInitialized()) {
-                    map.put(path + iv.varName(), iv);
-                }
-            } catch (Exception e) {
-            }
-        }
-        return map;
-    }
     
     private void update() {
         IRobot2 robot = null;

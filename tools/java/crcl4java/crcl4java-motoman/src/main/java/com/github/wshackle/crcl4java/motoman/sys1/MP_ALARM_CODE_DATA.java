@@ -71,7 +71,7 @@ public class MP_ALARM_CODE_DATA {
     }
 
     public static String getAlarmNoComment(short alarmNo) {
-        return alarmCommentMap.get(alarmNo);
+        return alarmCommentMap.getOrDefault(alarmNo,"Unrecognized alarmNo="+alarmNo);
     }
 
     public static String[] getAlarmNoComments(short alarmNos[]) {

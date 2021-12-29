@@ -20,6 +20,60 @@
  */
 package crcl.ui.server;
 
+import static crcl.base.CommandStateEnumType.CRCL_DONE;
+import static crcl.copier.CRCLCopier.copy;
+import static crcl.utils.CRCLPosemath.maxDiffDoubleArray;
+import static crcl.utils.CRCLPosemath.point;
+import static crcl.utils.CRCLPosemath.pose;
+import static crcl.utils.CRCLPosemath.toPmCartesian;
+import static crcl.utils.CRCLPosemath.toPmRotationVector;
+import static crcl.utils.CRCLPosemath.toPoseType;
+import static crcl.utils.CRCLPosemath.vector;
+import static crcl.utils.CRCLPosemath.vectorToPmCartesian;
+import static crcl.utils.CRCLSchemaUtils.filesToCmdSchema;
+import static crcl.utils.CRCLSchemaUtils.filesToStatSchema;
+import static crcl.utils.CRCLSchemaUtils.readCmdSchemaFiles;
+import static crcl.utils.CRCLSchemaUtils.readStatSchemaFiles;
+import static crcl.utils.CRCLUtils.getNonNullFilteredList;
+import static crcl.utils.CRCLUtils.getNonNullIterable;
+import static crcl.utils.CRCLUtils.requireNonNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.math.BigDecimal;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.Schema;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.xml.sax.SAXException;
+
 import crcl.base.ActuateJointType;
 import crcl.base.ActuateJointsType;
 import crcl.base.AngleUnitEnumType;
@@ -28,7 +82,6 @@ import crcl.base.CRCLCommandType;
 import crcl.base.CRCLStatusType;
 import crcl.base.CloseToolChangerType;
 import crcl.base.CommandStateEnumType;
-import static crcl.base.CommandStateEnumType.CRCL_DONE;
 import crcl.base.CommandStatusType;
 import crcl.base.ConfigureJointReportType;
 import crcl.base.ConfigureJointReportsType;
@@ -78,28 +131,11 @@ import crcl.base.TransSpeedAbsoluteType;
 import crcl.base.TransSpeedRelativeType;
 import crcl.base.TransSpeedType;
 import crcl.base.VectorType;
-import crcl.ui.DefaultSchemaFiles;
 import crcl.copier.CRCLCopier;
-import static crcl.copier.CRCLCopier.copy;
+import crcl.ui.DefaultSchemaFiles;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
-import static crcl.utils.CRCLPosemath.getNullablePose;
-import static crcl.utils.CRCLPosemath.maxDiffDoubleArray;
-import static crcl.utils.CRCLPosemath.point;
-import static crcl.utils.CRCLPosemath.pose;
-import static crcl.utils.CRCLPosemath.toPmCartesian;
-import static crcl.utils.CRCLPosemath.toPmRotationVector;
-import static crcl.utils.CRCLPosemath.toPoseType;
-import static crcl.utils.CRCLPosemath.vector;
-import static crcl.utils.CRCLPosemath.vectorToPmCartesian;
-import static crcl.utils.CRCLSchemaUtils.filesToCmdSchema;
-import static crcl.utils.CRCLSchemaUtils.filesToStatSchema;
-import static crcl.utils.CRCLSchemaUtils.readCmdSchemaFiles;
-import static crcl.utils.CRCLSchemaUtils.readStatSchemaFiles;
 import crcl.utils.CRCLSocket;
-import static crcl.utils.CRCLUtils.getNonNullFilteredList;
-import static crcl.utils.CRCLUtils.getNonNullIterable;
-import static crcl.utils.CRCLUtils.requireNonNull;
 import crcl.utils.PoseToleranceChecker;
 import crcl.utils.ThreadLockedHolder;
 import crcl.utils.XFuture;
@@ -114,40 +150,6 @@ import crcl.utils.server.CRCLServerSocket;
 import crcl.utils.server.CRCLServerSocketEvent;
 import crcl.utils.server.CRCLServerSocketStateGenerator;
 import crcl.utils.server.UnitsTypeSet;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.math.BigDecimal;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.Schema;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.xml.sax.SAXException;
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmException;
 import rcs.posemath.PmRotationVector;
@@ -851,7 +853,7 @@ public class SimServerInner {
         if (null == stat) {
             return false;
         }
-        final PoseType currentPose = getNullablePose(stat);
+        final PoseType currentPose = pose(stat);
         if (null == currentPose) {
             return false;
         }
@@ -2044,7 +2046,7 @@ public class SimServerInner {
         }
     }
 
-    @SuppressWarnings("nullness")
+    @SuppressWarnings({"nullness","keyfor"})
     public boolean isGripperCommand(CRCLCommandInstanceType cmdInstance) {
         return Optional.ofNullable(cmdInstance)
                 .map(CRCLCommandInstanceType::getCRCLCommand)
@@ -2053,115 +2055,12 @@ public class SimServerInner {
                 .orElse(false);
     }
 
-//    private void readCommandsRepeatedly(SimServerClientState state, final int start_close_count) {
-//        try {
-//            while (!Thread.currentThread().isInterrupted()) {
-//                if (closeCount.get() > start_close_count) {
-//                    return;
-//                }
-////                final CRCLSocket cs = state.getCs();
-//                final CRCLCommandInstanceType cmdInstance
-//                        = state.getCs().readCommand(validateXMLSelected);
-//                handleCommandReceived(cmdInstance, state);
-//            }
-//        } catch (SocketException se) {
-//            final CRCLSocket cs = state.getCs();
-//
-//            try {
-//                cs.close();
-//            } catch (IOException ex1) {
-//            }
-//            this.clientStates.remove(state);
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        } catch (CRCLException ex) {
-//            final CRCLSocket cs = state.getCs();
-//            if (ex.getCause() instanceof EOFException) {
-//                try {
-//                    cs.close();
-//                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, "", ex1);
-//                }
-//                this.clientStates.remove(state);
-//                clientStatesSize = clientStates.size();
-////                System.out.println("clientStates.size()=" + clientStatesSize);
-//                return;
-//            }
-//            if (null != ex.getCause() && ex.getCause().getCause() instanceof EOFException) {
-//                try {
-//                    cs.close();
-//                } catch (IOException ex1) {
-//                    LOGGER.log(Level.SEVERE, "", ex1);
-//                }
-//                this.clientStates.remove(state);
-//                clientStatesSize = clientStates.size();
-////                System.out.println("clientStates.size()=" + clientStatesSize);
-//                return;
-//            }
-//            if (closeCount.get() <= start_close_count) {
-//                System.err.println("String to parse was:" + cs.getLastCommandString());
-//                LOGGER.log(Level.SEVERE, "", ex);
-//                this.showMessage(ex.toString() + "\nString to parse was:" + cs.getLastCommandString());
-//            }
-//        } catch (IOException ex) {
-//            final CRCLSocket cs = state.getCs();
-//            if (closeCount.get() <= start_close_count) {
-//                String str = cs.getReadInProgressString();
-//                if (str.length() == 0) {
-//                    return;
-//                }
-//                LOGGER.log(Level.SEVERE, "ReadInProgressString:{0}", str);
-//                LOGGER.log(Level.SEVERE, "", ex);
-//            }
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        } finally {
-//            final CRCLSocket cs = state.getCs();
-//            try {
-//                cs.close();
-//            } catch (IOException ex1) {
-//            }
-//            this.clientStates.remove(state);
-//            clientStatesSize = clientStates.size();
-////            System.out.println("clientStates.size()=" + clientStatesSize);
-//        }
-//    }
+
     private void handleCommandReceived(final CRCLCommandInstanceType cmdInstance, SimServerClientState state) {
-//        LOGGER.log(Level.FINER, () -> "cmdInstance = " + cmdInstance);
         if (null != cmdInstance) {
             CRCLCommandType cmd = cmdInstance.getCRCLCommand();
             if (null != cmd) {
-//                LOGGER.log(Level.FINEST, () -> "SimServerInner.readCommandsRepeatedly() : cmd = " + cmd + ", state=" + state);
                 if (cmd instanceof GetStatusType) {
-//                    state.getStatusRequests++;
-//                    state.lastStatRequestTime = System.currentTimeMillis();
-//                    GetStatusType getStatus = (GetStatusType) cmd;
-//                    if (debug_this_command || menuOuter().isDebugReadCommandSelected()
-//                            && getStatus.getCommandID() != state.getStatusCmdId) {
-//                        outer.showDebugMessage("SimServerInner.readCommandsRepeatedly() :  (getStatus=" + getStatus + " ID=" + getStatus.getCommandID() + ") state = " + state);
-//                    }
-//                    state.getStatusCmdId = getStatus.getCommandID();
-//                    //                        if (enableGetStatusIDCheck && null != state.cmdId
-////                                && !state.getStatusCmdId.equals(state.cmdId)) {
-////                            LOGGER.log(Level.SEVERE, "SimServerInner.readCommandsRepeatedly() GetStatusIDCheck failed: state.getStatusCmdId={0}, state.cmdId = {1},status={2}", new Object[]{state.getStatusCmdId, state.cmdId, CRCLSocket.statToDebugString(status)});
-////                            LOGGER.setLevel(Level.OFF);
-////                            new Thread(() -> closeServer()).start();
-////                            return;
-////                        }
-//                    final CRCLStatusType stat = this.getLastUpdateServerSideStatusCopy();
-//                    synchronized (stat) {
-//                        CommandStatusType cst = stat.getCommandStatus();
-//                        if (null == cst) {
-//                            cst = new CommandStatusType();
-//                            cst.setCommandID(cmd.getCommandID());
-//                            cst.setStatusID(1);
-//                            cst.setCommandState(crclServerSocket.getCommandStateEnum());
-//                            stat.setCommandStatus(cst);
-//                        } else {
-//                            cst.setCommandState(crclServerSocket.getCommandStateEnum());
-//                        }
-//                        SimServerInner.this.sendStatus(state.getCs(), stat);
-//                    }
                     throw new RuntimeException("this command should have been handled by CRCLServerSocket.handleAutomaticEvents");
                 } else {
                     debug_this_command = false;
@@ -2198,6 +2097,7 @@ public class SimServerInner {
             }
         }
     }
+    
     private volatile int clientStatesSize = 0;
 
     private void handleCRCLServerSocketEvent(CRCLServerSocketEvent<SimServerClientState> evt) {

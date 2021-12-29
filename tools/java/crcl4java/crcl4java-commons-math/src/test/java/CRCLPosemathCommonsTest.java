@@ -19,12 +19,10 @@
  * 
  */
 
-import com.github.wshackle.crcl4java.commons.math.CRCLPosemathCommons;
-import crcl.base.PointType;
-import crcl.base.PoseType;
-import crcl.base.VectorType;
-import java.math.BigDecimal;
-import java.util.logging.Logger;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationConvention;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -33,7 +31,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import com.github.wshackle.crcl4java.commons.math.CRCLPosemathCommons;
+
+import crcl.base.PointType;
+import crcl.base.PoseType;
+import crcl.base.VectorType;
 
 @SuppressWarnings("nullness")
 public class CRCLPosemathCommonsTest {
@@ -64,13 +67,6 @@ public class CRCLPosemathCommonsTest {
         assertEquals(msg, v1, v2, ASSERT_TOLERANCE_DELTA);
     }
 
-    private void checkEquals(String msg, BigDecimal v1, BigDecimal v2) {
-        assertTrue(msg + " both are null or neither is null", (v1 == null) == (v2 == null));
-        if (v1 == null) {
-            return;
-        }
-        checkEquals(msg, v1.doubleValue(), v2.doubleValue());
-    }
 
     private void checkEquals(String msg, PointType pt1, PointType pt2) {
         checkEquals(msg + ".getX()", pt1.getX(), pt2.getX());
@@ -82,12 +78,6 @@ public class CRCLPosemathCommonsTest {
         checkEquals(msg + ".getI()", v1.getI(), v2.getI());
         checkEquals(msg + ".getJ()", v1.getJ(), v2.getJ());
         checkEquals(msg + ".getK()", v1.getK(), v2.getK());
-    }
-
-    private void checkEquals(String msg, PoseType pose1, PoseType pt2) {
-        checkEquals(msg + ".getPoint()", pose1.getPoint(), pt2.getPoint());
-        checkEquals(msg + ".getXAxis()", pose1.getXAxis(), pt2.getXAxis());
-        checkEquals(msg + ".getZAxis()", pose1.getZAxis(), pt2.getZAxis());
     }
 
     private void checkEquals(String msg, Rotation rot1, Rotation rot2) {
@@ -144,7 +134,6 @@ public class CRCLPosemathCommonsTest {
     private static final double BIG_DECIMAL_1 = 1.0;
     private static final double BIG_DECIMAL_2 = 2.0;
     private static final double BIG_DECIMAL_3 = 3.0;
-    private static final double BIG_DECIMAL_4 = 4.0;
 
     @After
     public void tearDown() {
@@ -254,7 +243,5 @@ public class CRCLPosemathCommonsTest {
         PointType result = CRCLPosemathCommons.toCRCLPoint(vIn);
         checkEquals("pt123", result, expResult);
     }
-
-    private static final Logger LOG = Logger.getLogger(CRCLPosemathCommonsTest.class.getName());
 
 }

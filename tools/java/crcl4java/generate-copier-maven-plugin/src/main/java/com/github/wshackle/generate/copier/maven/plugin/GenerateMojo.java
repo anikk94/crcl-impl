@@ -59,10 +59,10 @@ public class GenerateMojo
     @Parameter
     private String args[];
     
+    @Override
     public void execute()
             throws MojoExecutionException {
         try {
-            File f = outputDirectory;
             final Log log = getLog();
 
             log.info("outputDirectory=" + outputDirectory.getCanonicalPath());

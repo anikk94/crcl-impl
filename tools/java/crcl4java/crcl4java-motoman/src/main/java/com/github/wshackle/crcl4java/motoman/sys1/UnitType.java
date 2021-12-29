@@ -50,7 +50,11 @@ public enum UnitType {
     }
     
     public static UnitType fromId(int id) {
-        return map.get(id);
+        final UnitType ret = map.get(id);
+        if(null == ret) {
+            throw new RuntimeException("id "+id +" is NOT valid UnitType id.");
+        }
+        return ret;
     }
     
     public int getId() { 

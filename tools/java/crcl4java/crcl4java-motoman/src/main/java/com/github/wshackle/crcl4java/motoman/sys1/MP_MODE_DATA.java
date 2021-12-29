@@ -27,7 +27,7 @@ package com.github.wshackle.crcl4java.motoman.sys1;
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
 public class MP_MODE_DATA {
-    public ModeEnum mode;
+    public ModeEnum mode =ModeEnum.INVALID_MODE;
     public short sRemote;
 
     @Override

@@ -33,6 +33,7 @@ import java.net.URL;
  *
  *@author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings({"nullness","initialization"})
 public class ConfigurationReader {
 
     private final double[] m_daftMaxes = {100, 100, 100, 100, 100, 100};
@@ -193,65 +194,64 @@ public class ConfigurationReader {
         return activeConfig;
     }
 
-    /**
-     * Reads information about the sensor's configuration from the integrated
-     * web server.
-     *
-     * @return True if configuration was successfully read, false otherwise.
-     */
-    private boolean readConfigurationInfo() {
-        try {
-            String mDoc = readNetFTAPI(0);
-            int activeConfig = findActiveCFG(mDoc);
-            mDoc = readNetFTAPI(activeConfig);
-            m_strCfgIndex = "" + activeConfig;
-            String[] parseStep1 = mDoc.split("<cfgcalsel>");
-            String[] parseStep2 = parseStep1[1].split("</cfgcalsel>");
-            String mCal = readNetFTCalAPI(Integer.parseInt(parseStep2[0]));
-            m_strCalIndex = parseStep2[0];
-            parseStep1 = mCal.split("<calsn>");
-            parseStep2 = parseStep1[1].split("</calsn>");
-            m_strCalSN = parseStep2[0];
-            mDoc = readNetFTAPI(activeConfig);
-            parseStep1 = mDoc.split("<cfgnam>");
-            parseStep2 = parseStep1[1].split("</cfgnam>");
-            m_strCfgName = parseStep2[0];
-            parseStep1 = mDoc.split("<cfgcpf>");
-            parseStep2 = parseStep1[1].split("</cfgcpf>");
-            setCountsPerForce(Double.parseDouble(parseStep2[0]));
-            parseStep1 = mDoc.split("<cfgcpt>");
-            parseStep2 = parseStep1[1].split("</cfgcpt>");
-            setCountsPerTorque(Double.parseDouble(parseStep2[0]));
-            parseStep1 = mDoc.split("<comrdtrate>");
-            parseStep2 = parseStep1[1].split("</comrdtrate>");
-            m_iRDTSampleRate = (Integer.parseInt(parseStep2[0]));
-            parseStep1 = mDoc.split("<scfgfu>");
-            parseStep2 = parseStep1[1].split("</scfgfu>");
-            m_strForceUnits = parseStep2[0];
-            parseStep1 = mDoc.split("<scfgtu>");
-            parseStep2 = parseStep1[1].split("</scfgtu>");
-            m_strTorqueUnits = parseStep2[0];
-            parseStep1 = mDoc.split("<cfgmr>");
-            parseStep2 = parseStep1[1].split("</cfgmr>");
-            String[] asRatings = parseStep2[0].split(";");
-            for (int i = 0; i < asRatings.length; i++) {
-                m_daftMaxes[i] = Double.parseDouble(asRatings[i]);
-                if (0 == m_daftMaxes[i]) {
-                    m_daftMaxes[i] = 32768;
-                    /* Default maximum rating. */
-                }
-            }
-            m_ftvc.setMaxForce(m_daftMaxes[2]);
-            /* Use Fz rating as maximum. */
-            m_ftvc.setMaxTorque(m_daftMaxes[5]);
-            /* use Tz rating as maximum. */
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
+//    /**
+//     * Reads information about the sensor's configuration from the integrated
+//     * web server.
+//     *
+//     * @return True if configuration was successfully read, false otherwise.
+//     */
+//    private boolean readConfigurationInfo() {
+//        try {
+//            String mDoc = readNetFTAPI(0);
+//            int activeConfig = findActiveCFG(mDoc);
+//            mDoc = readNetFTAPI(activeConfig);
+//            m_strCfgIndex = "" + activeConfig;
+//            String[] parseStep1 = mDoc.split("<cfgcalsel>");
+//            String[] parseStep2 = parseStep1[1].split("</cfgcalsel>");
+//            String mCal = readNetFTCalAPI(Integer.parseInt(parseStep2[0]));
+//            m_strCalIndex = parseStep2[0];
+//            parseStep1 = mCal.split("<calsn>");
+//            parseStep2 = parseStep1[1].split("</calsn>");
+//            m_strCalSN = parseStep2[0];
+//            mDoc = readNetFTAPI(activeConfig);
+//            parseStep1 = mDoc.split("<cfgnam>");
+//            parseStep2 = parseStep1[1].split("</cfgnam>");
+//            m_strCfgName = parseStep2[0];
+//            parseStep1 = mDoc.split("<cfgcpf>");
+//            parseStep2 = parseStep1[1].split("</cfgcpf>");
+//            setCountsPerForce(Double.parseDouble(parseStep2[0]));
+//            parseStep1 = mDoc.split("<cfgcpt>");
+//            parseStep2 = parseStep1[1].split("</cfgcpt>");
+//            setCountsPerTorque(Double.parseDouble(parseStep2[0]));
+//            parseStep1 = mDoc.split("<comrdtrate>");
+//            parseStep2 = parseStep1[1].split("</comrdtrate>");
+//            m_iRDTSampleRate = (Integer.parseInt(parseStep2[0]));
+//            parseStep1 = mDoc.split("<scfgfu>");
+//            parseStep2 = parseStep1[1].split("</scfgfu>");
+//            m_strForceUnits = parseStep2[0];
+//            parseStep1 = mDoc.split("<scfgtu>");
+//            parseStep2 = parseStep1[1].split("</scfgtu>");
+//            m_strTorqueUnits = parseStep2[0];
+//            parseStep1 = mDoc.split("<cfgmr>");
+//            parseStep2 = parseStep1[1].split("</cfgmr>");
+//            String[] asRatings = parseStep2[0].split(";");
+//            for (int i = 0; i < asRatings.length; i++) {
+//                m_daftMaxes[i] = Double.parseDouble(asRatings[i]);
+//                if (0 == m_daftMaxes[i]) {
+//                    m_daftMaxes[i] = 32768;
+//                    /* Default maximum rating. */
+//                }
+//            }
+//            m_ftvc.setMaxForce(m_daftMaxes[2]);
+//            /* Use Fz rating as maximum. */
+//            m_ftvc.setMaxTorque(m_daftMaxes[5]);
+//            /* use Tz rating as maximum. */
+//        } catch (Exception e) {
+//            return false;
+//        }
+//        return true;
+//    }
 
-    @SuppressWarnings("ImplicitArrayToString")
     @Override
     public String toString() {
         return "ConfigurationReader{" + "m_daftMaxes=" + m_daftMaxes + ", m_daftCountsPerUnit=" + m_daftCountsPerUnit + ", m_strForceUnits=" + m_strForceUnits + ", m_strTorqueUnits=" + m_strTorqueUnits + ", m_strCalSN=" + m_strCalSN + ", m_strCalIndex=" + m_strCalIndex + ", m_strCfgName=" + m_strCfgName + ", m_strCfgIndex=" + m_strCfgIndex + ", m_iRDTSampleRate=" + m_iRDTSampleRate + ", m_ftvc=" + m_ftvc + ", m_strSensorAddress=" + m_strSensorAddress + ", countsPerForce=" + countsPerForce + ", countsPerTorque=" + countsPerTorque + '}';

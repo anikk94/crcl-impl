@@ -91,7 +91,7 @@ public class CRCLSocketBlockingClientExample {
                 System.out.println("Status:");
                 System.out.println("CommandID = " + IDback);
                 System.out.println("State = " + cmdStat.getCommandState());
-                PointType pt = CRCLPosemath.getNullablePoint(stat);
+                PointType pt = CRCLPosemath.point(stat);
                 if (null != pt) {
                     System.out.println("pose = " + pt.getX() + "," + pt.getY() + "," + pt.getZ());
                 }

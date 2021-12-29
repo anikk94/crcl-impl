@@ -34,9 +34,12 @@
         <actionName>CUSTOM-deploy_from_windows</actionName>
         <displayName>deploy_from_windows</displayName>
         <goals>
+            <goal>generate-sources</goal>
+            <goal>javadoc:javadoc</goal>
             <goal>deploy</goal>
         </goals>
         <activatedProfiles>
+            <activatedProfile>add_sources_jar</activatedProfile>
             <activatedProfile>release</activatedProfile>
             <activatedProfile>normal_dist</activatedProfile>
             <activatedProfile>skip_tests</activatedProfile>
@@ -47,6 +50,8 @@
         <actionName>CUSTOM-deploy_from_linux</actionName>
         <displayName>deploy_from_linux</displayName>
         <goals>
+            <goal>generate-sources</goal>
+            <goal>javadoc:javadoc</goal>
             <goal>deploy</goal>
         </goals>
         <activatedProfiles>
@@ -57,9 +62,12 @@
         <actionName>CUSTOM-deploy_all_from_linux</actionName>
         <displayName>deploy_all_from_linux</displayName>
         <goals>
+            <goal>generate-sources</goal>
+            <goal>javadoc:javadoc</goal>
             <goal>deploy</goal>
         </goals>
         <activatedProfiles>
+            <activatedProfile>add_sources_jar</activatedProfile>
             <activatedProfile>all_linux</activatedProfile>
             <activatedProfile>release</activatedProfile>
             <activatedProfile>skip_tests</activatedProfile>
@@ -93,29 +101,48 @@
         </properties>
     </action>
     <action>
-            <actionName>CUSTOM-clean</actionName>
-            <displayName>clean</displayName>
-            <goals>
-                <goal>clean</goal>
-            </goals>
-            <activatedProfiles>
-                <activatedProfile>all</activatedProfile>
-            </activatedProfiles>
-        </action>
+        <actionName>CUSTOM-clean</actionName>
+        <displayName>clean</displayName>
+        <goals>
+            <goal>clean</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>all</activatedProfile>
+        </activatedProfiles>
+    </action>
     <action>
-            <actionName>CUSTOM-prep</actionName>
-            <displayName>prep</displayName>
-            <goals>
-                <goal>clean</goal>
-                <goal>test</goal>
-                <goal>generate-sources</goal>
-                <goal>javadoc:javadoc</goal>
-                <goal>package</goal>
-                <goal>install</goal>
-            </goals>
-            <activatedProfiles>
-                <activatedProfile>allexceptice</activatedProfile>
-                <activatedProfile>release</activatedProfile>
-            </activatedProfiles>
-        </action>
+        <actionName>CUSTOM-prep</actionName>
+        <displayName>prep</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>test</goal>
+            <goal>generate-sources</goal>
+            <goal>javadoc:javadoc</goal>
+            <goal>package</goal>
+            <goal>install</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>allexceptice</activatedProfile>
+            <activatedProfile>release</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>CUSTOM-checkall8</actionName>
+        <displayName>checkall8</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>test</goal>
+            <goal>generate-sources</goal>
+            <goal>javadoc:javadoc</goal>
+            <goal>package</goal>
+            <goal>install</goal>
+            <goal>verify</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>add_sources_jar</activatedProfile>
+            <activatedProfile>checkerframework_jdk8</activatedProfile>
+            <activatedProfile>motomanfanuc</activatedProfile>
+            <activatedProfile>add_sources_jar</activatedProfile>
+        </activatedProfiles>
+    </action>
 </actions>

@@ -43,6 +43,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -820,14 +822,14 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
 
     private JDialog dialog = null;
     private boolean cancelled = false;
-    private Function<T, XFuture<Boolean>> isValid = null;
-    private volatile CRCLSocket crclSocket;
+    private @Nullable Function<T, XFuture<Boolean>> isValid = null;
+    private volatile @Nullable CRCLSocket crclSocket;
 
     private static <T> T editObjectPriv(JDialog _dialog, T _obj,
-            XpathUtils xpu,
+            @Nullable XpathUtils xpu,
             File schemaFiles @Nullable [],
-            Function<T, XFuture<Boolean>> isValid,
-            CRCLSocket crclSocket) {
+            @Nullable Function<T, XFuture<Boolean>> isValid,
+            @Nullable CRCLSocket crclSocket) {
         ObjTableJPanel<T> panel = new ObjTableJPanel<>();
         panel.dialog = _dialog;
         panel.setObj(_obj);
@@ -915,10 +917,10 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
             @Nullable Frame _owner,
             String _title,
             boolean _modal,
-            XpathUtils xpu,
+            @Nullable XpathUtils xpu,
             File schemaFiles @Nullable [],
-            Function<T, XFuture<Boolean>> isValid,
-            CRCLSocket crclSocket) {
+            @Nullable Function<T, XFuture<Boolean>> isValid,
+            @Nullable CRCLSocket crclSocket) {
         JDialog dialog = new JDialog(_owner, _obj.getClass().getCanonicalName() + ":" + _title, _modal);
         return editObjectPriv(dialog, _obj, xpu, schemaFiles, isValid, crclSocket);
     }
@@ -1228,18 +1230,44 @@ public class ObjTableJPanel<T> extends javax.swing.JPanel {
                         continue;
                     }
                     clssNameToLookup = prefix + name;
-                    Class<?> clss = Class.forName(clssNameToLookup);
+                    Class<?> clss=null;
+                    if(clssNameToLookup.startsWith("target.classes.")) {
+                        try {
+                            clss = ClassLoader.getSystemClassLoader().loadClass(clssNameToLookup);
+                        } catch (ClassNotFoundException ex) {
+                            clssNameToLookup = clssNameToLookup.substring("target.classes.".length());
+                        }
+                    }
+                    if(null == clss) {
+                        clss = Class.forName(clssNameToLookup);
+                    }
                     if (!Modifier.isAbstract(clss.getModifiers())
                             && !clss.isSynthetic()
                             && !clss.isAnonymousClass()
                             && !clss.isMemberClass()) {
                         classes.add(clss);
                     }
-                } catch (Exception ex) {
-                    Logger.getLogger(ObjTableJPanel.class
-                            .getName()).log(Level.SEVERE, "clssNameToLookup={0}", clssNameToLookup);
-                    Logger.getLogger(ObjTableJPanel.class
-                            .getName()).log(Level.SEVERE, "", ex);
+                } catch (Throwable ex) {
+                    Logger logger
+                            = Logger.getLogger(ObjTableJPanel.class
+                            .getName());
+                    ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                    logger.log(Level.SEVERE, "ClassLoader.getSystemClassLoader()={0}", systemClassLoader);
+                    if(systemClassLoader instanceof URLClassLoader)  {
+                        @SuppressWarnings("resource")
+			URLClassLoader urlClassLoader = (URLClassLoader)  systemClassLoader;
+                        URL[] urLs = urlClassLoader.getURLs();
+                        for (int i= 0; i < urLs.length; i++) {
+                            logger.log(Level.SEVERE, "url{0} = {1}", new Object[]{i,urLs[i]});
+                        }
+                    }
+                    logger.log(Level.SEVERE, "ObjTableJPanel.class.getProtectionDomain()={0}", ObjTableJPanel.class.getProtectionDomain());
+                    logger.log(Level.SEVERE, "dir={0}", dir);
+                    logger.log(Level.SEVERE, "f={0}", f);
+                    logger.log(Level.SEVERE, "prefix={0}", prefix);
+                    logger.log(Level.SEVERE, "clssNameToLookup={0}", clssNameToLookup);
+                    logger.log(Level.SEVERE, "", ex);
+                    throw  new RuntimeException(ex);
                 }
             }
         }

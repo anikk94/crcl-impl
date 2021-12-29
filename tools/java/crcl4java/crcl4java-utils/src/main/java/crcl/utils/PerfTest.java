@@ -118,7 +118,7 @@ class PerfTest {
 //        if (null != ff) {
 //            System.out.println("false, false,   " + ff.toStringCsv());
 //        }
-//        System.exit(0);
+//        CRCLUtils.systemExit(0);
 //    }
 
     public static class MinMaxAvg {

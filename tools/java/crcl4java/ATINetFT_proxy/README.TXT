@@ -26,7 +26,10 @@ C:\Users\Public\Documents\Downloaded_Tools\ApacheNetbeans10.0\netbeans\java\mave
     On linux with the source compiled in /home/shackle/NetBeansProjects/ATINetFT/ 
 it could be installed with
 
-mvn install:install-file -Dfile=/home/shackle/NetBeansProjects/ATINetFT/dist/ATINetFT.jar -DgroupId=com.ati-ia -DartifactId=ATINetFT -Dversion=1.0 -Dpackaging=jar
+wget -p /tmp/ https://www.ati-ia.com/Library/software/net_ft/ATINetFT.jar
+mvn install:install-file -Dfile=/tmp/ATINetFT.jar -DgroupId=com.ati-ia -DartifactId=ATINetFT -Dversion=1.0 -Dpackaging=jar
+
+    or use the script install_ATINet_jar.sh
 
        The project can then be built with the standard
 

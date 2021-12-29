@@ -28,6 +28,7 @@ import crcl.utils.server.SensorServerInterface;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
 public class ATIForceTorqueSensorFinder implements  SensorServerFinderInterface{
 
     @Override
-    public SensorServerInterface findSensorServer(String sensorId, List<ParameterSettingType> parameterList) {
+    public @Nullable SensorServerInterface findSensorServer(String sensorId, List<ParameterSettingType> parameterList) {
         if(sensorId.startsWith("ATINetFT")) {
             try {
                 return new ATIForceTorqueSensorServer(sensorId, parameterList);

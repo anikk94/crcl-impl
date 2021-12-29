@@ -51,7 +51,7 @@ public enum CycleEnum {
     }
     
     public static CycleEnum fromId(int id) {
-        return map.get(id);
+        return map.getOrDefault(id,CycleEnum.INVALID_CYCLE);
     }
     
     public int getId() { 

@@ -31,5 +31,13 @@ import crcl.base.CRCLStatusType;
  */
 public interface ProgramLineListener {
 
+    /**
+     * Called by CRCL Swing client to nofify another object of a change  of program/line/state in the client.
+     * 
+     * @param panel panel that detected/initiated a change.
+     * @param line new line number
+     * @param program CRCL program 
+     * @param status new CRCL status
+     */
     public void accept(CrclSwingClientJPanel panel, int line, CRCLProgramType program, CRCLStatusType status);
 }

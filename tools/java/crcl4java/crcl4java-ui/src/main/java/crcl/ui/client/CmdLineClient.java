@@ -22,6 +22,7 @@ package crcl.ui.client;
 
 import crcl.base.CRCLProgramType;
 import crcl.ui.DefaultSchemaFiles;
+import crcl.utils.CRCLUtils;
 import static crcl.utils.CRCLUtils.requireNonNull;
 import crcl.utils.stubs.PendantClientOuterStub;
 import java.io.File;
@@ -114,7 +115,7 @@ public class CmdLineClient {
                 System.err.println("No program specified");
                 System.err.println("Use --program option to set a program to run.");
                 pendantClientInner.disconnect();
-                System.exit(1);
+                CRCLUtils.systemExit(1);
             }
             if (null != poseFileName) {
                 try {

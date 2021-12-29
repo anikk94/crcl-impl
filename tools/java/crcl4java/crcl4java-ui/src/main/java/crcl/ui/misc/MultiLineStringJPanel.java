@@ -20,6 +20,7 @@
  */
 package crcl.ui.misc;
 
+import crcl.utils.CRCLUtils;
 import crcl.utils.XFuture;
 import java.awt.Component;
 import java.awt.Frame;
@@ -298,18 +299,30 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
     }
 
     public static XFuture<Boolean> showException(Throwable throwable) {
+        if(CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            return XFuture.completedFuture(false);
+        }
         return showText(throwable.getMessage() + "\n\n" + throwable.toString(), null, "Exception: " + throwable.getMessage(), false, true);
     }
 
     public static XFuture<Boolean> showException(Throwable throwable, StackTraceElement trace[]) {
+        if(CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            return XFuture.completedFuture(false);
+        }
         return showText(throwable.getMessage() + "\n\n" + throwable.toString() + "\n\n Thrown from:\r\n" + XFuture.traceToString(throwable.getStackTrace()) + "\n\n Logged from:\r\n" + XFuture.traceToString(trace), null, "Exception : " + throwable.getMessage(), false, true);
     }
 
     public static XFuture<Boolean> showText(String init) {
+        if(CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            return XFuture.completedFuture(false);
+        }
         return showText(init, null, "", false, false);
     }
 
     public static XFuture<Boolean> forceShowText(String init, JFrame parentJframe) {
+        if(CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            return XFuture.completedFuture(false);
+        }
         if (null == parentJframe) {
             throw new IllegalArgumentException("null == parentJframe");
         }
@@ -334,6 +347,9 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
             boolean _modal,
             boolean forceShow) {
 
+        if(CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            return XFuture.completedFuture(false);
+        }
         final XFuture<Boolean> ret = new XFuture<>("showText(" + init + "," + _title + ")");
         if (!disableShowText || (forceShow && !ignoreForceShow)) {
             runOnDispatchThread(() -> {

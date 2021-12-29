@@ -1476,7 +1476,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
     }//GEN-LAST:event_jCheckBoxForceFailActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        System.exit(0);
+        CRCLUtils.systemExit(0);
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemSavePropertiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSavePropertiesActionPerformed

@@ -22,6 +22,35 @@
  */
 package crcl.copier;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import crcl.base.CRCLProgramType;
 import crcl.base.CRCLStatusType;
 import crcl.base.CommandStateEnumType;
@@ -39,36 +68,14 @@ import crcl.base.PoseType;
 import crcl.base.TwistType;
 import crcl.base.VectorType;
 import crcl.base.WrenchType;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import rcs.posemath.PmCartesian;
 import rcs.posemath.PmPose;
-import rcs.posemath.PmQuaternion;
-import rcs.posemath.PmRotationMatrix;
 
 /**
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
-@SuppressWarnings({"nullness"})
+@SuppressWarnings({"nullness","unused"})
 public class CRCLCopierTest {
 
     public CRCLCopierTest() {
@@ -141,46 +148,6 @@ public class CRCLCopierTest {
 
     private void checkEquals(String msg, double v1, double v2) {
         assertEquals(msg, v1, v2, ASSERT_TOLERANCE_DELTA);
-    }
-
-    private void checkEquals(String msg, BigDecimal v1, double v2) {
-        assertEquals(msg, v1.doubleValue(), v2, ASSERT_TOLERANCE_DELTA);
-    }
-
-    private void checkEquals(String msg, double v1, BigDecimal v2) {
-        assertEquals(msg, v1, v2.doubleValue(), ASSERT_TOLERANCE_DELTA);
-    }
-
-    private void checkEquals(String msg, BigDecimal v1, BigDecimal v2) {
-        assertEquals(msg + " both are null or neither is null", (v1 == null), (v2 == null));
-        if (v1 == null) {
-            return;
-        }
-        checkEquals(msg, v1.doubleValue(), v2.doubleValue());
-    }
-
-    private void checkEquals(String msg, PmCartesian cart1, PmCartesian cart2) {
-        checkEquals(msg + ".x", cart1.x, cart2.x);
-        checkEquals(msg + ".y", cart1.y, cart2.y);
-        checkEquals(msg + ".z", cart1.z, cart2.z);
-    }
-
-    private void checkEquals(String msg, PmQuaternion quat1, PmQuaternion quat2) {
-        checkEquals(msg + ".s", quat1.s, quat2.s);
-        checkEquals(msg + ".x", quat1.x, quat2.x);
-        checkEquals(msg + ".y", quat1.y, quat2.y);
-        checkEquals(msg + ".z", quat1.z, quat2.z);
-    }
-
-    private void checkEquals(String msg, PmPose p1, PmPose p2) {
-        checkEquals(msg + ".tran", p1.tran, p2.tran);
-        checkEquals(msg + ".rot", p1.rot, p2.rot);
-    }
-
-    private void checkEquals(String msg, PmRotationMatrix cart1, PmRotationMatrix cart2) {
-        checkEquals(msg + ".x", cart1.x, cart2.x);
-        checkEquals(msg + ".y", cart1.y, cart2.y);
-        checkEquals(msg + ".z", cart1.z, cart2.z);
     }
 
     private void checkEquals(String msg, PointType pt1, PointType pt2) {
@@ -524,9 +491,6 @@ public class CRCLCopierTest {
                 }
             }
 
-            if (null == newObj) {
-                throw new NullPointerException("newObj = " + newObj);
-            }
             checkForNullObjectFields(clzz.getFields(), newObj, newExcludedClasses);
             checkForNullObjectFields(clzz.getDeclaredFields(), newObj, newExcludedClasses);
             checkForNullObjectFields(newObjClass.getFields(), newObj, newExcludedClasses);
@@ -535,7 +499,6 @@ public class CRCLCopierTest {
         }
     }
 
-    @SuppressWarnings({"unchecked"})
     private void reflectiveCheckEquals(String msg, Object o1, Object o2, int recursion) {
         if (recursion > 20) {
             throw new RuntimeException("msg=" + msg + ",o1=" + o1 + ",o2=" + o2 + ",recursion=" + recursion);
@@ -601,7 +564,6 @@ public class CRCLCopierTest {
         }
     }
 
-    @SuppressWarnings({"unchecked"})
     private void reflectiveCheckFields(Field[] fa, String msg, Object o1, Object o2, int recursion) {
         for (int i = 0; i < fa.length; i++) {
             Field field = fa[i];
@@ -675,6 +637,7 @@ public class CRCLCopierTest {
      * Test of copy method, of class CRCLPosemath.
      */
     @Test
+    @SuppressWarnings({"nullness","keyfor"})
     public void testCopy_CRCLProgramType() {
         System.out.println("CRCLCopier.copy(CRCLProgramType)");
 
@@ -709,34 +672,6 @@ public class CRCLCopierTest {
                 randProgram.getMiddleCommand().set(i, newMidCmdtype);
             }
             reflectiveCheckEquals("randProgramCopy2Copy", randProgramCopy, randProgramCopy2, 0);
-//            try {
-//
-//                String randProgramString = CRCLSocket.getUtilSocket().programToPrettyString(randProgram, true);
-////            System.out.println("randomProgramFile = " + randomProgramFile);
-//                try (PrintWriter pw = new PrintWriter(randomProgramFile)) {
-//                    pw.println(randProgramString);
-//                }
-//                CRCLProgramType readBackRandProgram = CRCLUtils.readProgramFile(randomProgramFile);
-//                reflectiveCheckEquals("readBackRandProgram", randProgram, readBackRandProgram, 0);
-////            System.out.println("randProgramString = " + randProgramString);
-//                CRCLProgramType randProgramCopy = CRCLCopier.copy(randProgram);
-//                reflectiveCheckEquals("randProgramCopy", randProgram, randProgramCopy, 0);
-//            } catch (Exception exception) {
-//                System.out.println("randomProgramFile = " + randomProgramFile);
-//                System.out.println("randProgram = " + randProgram);
-//                System.out.println("exception.getMessage() = " + exception.getMessage());
-//                try (BufferedReader br = new BufferedReader(new FileReader(randomProgramFile))) {
-//                    String line = br.readLine();
-//                    int count = 1;
-//                    while (null != line) {
-//                        System.out.printf("%04d:    %s\n", count, line);
-//                        count++;
-//                        line = br.readLine();
-//                    }
-//                }
-//                exception.printStackTrace();
-//                throw new RuntimeException(exception);
-//            }
         } catch (IOException iOException) {
             iOException.printStackTrace();
             throw new RuntimeException(iOException);

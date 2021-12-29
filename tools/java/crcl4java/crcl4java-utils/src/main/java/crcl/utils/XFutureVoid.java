@@ -542,4 +542,11 @@ public class XFutureVoid extends XFuture<Void> {
         retXFV.alsoCancelAddAll(Arrays.asList(cfs));
         return retXFV;
     }
+    
+    public static XFutureVoid completedExceptionally( Throwable throwable) {
+        XFutureVoid retXF = new XFutureVoid("completedExceptionally(throwable=" + throwable + ")");
+        retXF.completeExceptionally(throwable);
+        return retXF;
+    }
+    
 }

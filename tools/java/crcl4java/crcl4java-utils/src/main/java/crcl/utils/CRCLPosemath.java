@@ -244,7 +244,7 @@ public class CRCLPosemath {
      * @return pose or null if stat is null or has a null poseStatus field.
      */
     public static @Nullable
-    PoseType getNullablePose(@Nullable CRCLStatusType stat) {
+    PoseType pose(@Nullable CRCLStatusType stat) {
         if (stat != null) {
             PoseStatusType poseStatus = stat.getPoseStatus();
             if (null != poseStatus) {
@@ -1209,9 +1209,9 @@ public class CRCLPosemath {
      *
      */
     public static @Nullable
-    PointType getNullablePoint(@Nullable CRCLStatusType stat) {
+    PointType point(@Nullable CRCLStatusType stat) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (pose != null) {
                 return pose.getPoint();
             }
@@ -1229,9 +1229,9 @@ public class CRCLPosemath {
      *
      */
     public static @Nullable
-    VectorType getNullableXAxis(@Nullable CRCLStatusType stat) {
+    VectorType xAxis(@Nullable CRCLStatusType stat) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (pose != null) {
                 return pose.getXAxis();
             }
@@ -1249,9 +1249,9 @@ public class CRCLPosemath {
      *
      */
     public static @Nullable
-    VectorType getNullableZAxis(@Nullable CRCLStatusType stat) {
+    VectorType zAxis(@Nullable CRCLStatusType stat) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (pose != null) {
                 return pose.getZAxis();
             }
@@ -1299,7 +1299,7 @@ public class CRCLPosemath {
      */
     public static void setPoint(@Nullable CRCLStatusType stat, PointType pt) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (null != pose) {
                 pose.setPoint(pt);
             } else {
@@ -1319,7 +1319,7 @@ public class CRCLPosemath {
      */
     public static void setXAxis(@Nullable CRCLStatusType stat, VectorType xAxis) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (null != pose) {
                 pose.setXAxis(xAxis);
             } else {
@@ -1339,7 +1339,7 @@ public class CRCLPosemath {
      */
     public static void setZAxis(@Nullable CRCLStatusType stat, VectorType zAxis) {
         if (stat != null) {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (null != pose) {
                 pose.setZAxis(zAxis);
             } else {
@@ -1356,20 +1356,20 @@ public class CRCLPosemath {
      * @param status status object with possibly null pose to be initialized
      */
     public static void initPose(CRCLStatusType status) {
-        if (null == CRCLPosemath.getNullablePose(status)) {
+        if (null == CRCLPosemath.pose(status)) {
             CRCLPosemath.setPose(status, identityPose());
         }
-        if (null == CRCLPosemath.getNullablePoint(status)) {
+        if (null == CRCLPosemath.point(status)) {
             CRCLPosemath.setPoint(status, new PointType());
         }
-        if (null == CRCLPosemath.getNullableXAxis(status)) {
+        if (null == CRCLPosemath.xAxis(status)) {
             VectorType xAxis = new VectorType();
             xAxis.setI(1.0);
             xAxis.setJ(0.0);
             xAxis.setK(0.0);
             CRCLPosemath.setXAxis(status, xAxis);
         }
-        if (null == CRCLPosemath.getNullableZAxis(status)) {
+        if (null == CRCLPosemath.zAxis(status)) {
             VectorType zAxis = new VectorType();
             zAxis.setI(0.0);
             zAxis.setJ(0.0);
@@ -1596,9 +1596,9 @@ public class CRCLPosemath {
             throw new IllegalArgumentException("Can not convert null status to PmPose");
         }
         try {
-            PoseType pose = getNullablePose(stat);
+            PoseType pose = pose(stat);
             if (pose != null) {
-                PointType pt = getNullablePoint(stat);
+                PointType pt = point(stat);
                 if (null != pt) {
                     PmCartesian cart = toPmCartesian(pt);
                     PmRotationMatrix mat = toPmRotationMatrix(pose);
@@ -1834,6 +1834,16 @@ public class CRCLPosemath {
         return newPose;
     }
 
+    public static double @Nullable [][] toHomMat(@Nullable CRCLStatusType status) {
+        PoseType pose = pose(status);
+        if(null != pose) {
+            return toHomMat(pose);
+        } else {
+            return null;
+        }
+    }
+    
+    
     /**
      * Convert a CRCL PoseType to a 4x4 Homogeneous Transformation matrix in a
      * double array

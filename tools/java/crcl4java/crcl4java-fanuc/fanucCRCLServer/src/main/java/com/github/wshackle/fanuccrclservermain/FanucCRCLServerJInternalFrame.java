@@ -9,6 +9,7 @@ import com.github.wshackle.fanuc.robotserver.FREExecuteConstants;
 import com.github.wshackle.fanuc.robotserver.FREStepTypeConstants;
 import com.github.wshackle.fanuc.robotserver.ITPProgram;
 import com.github.wshackle.fanuc.robotserver.IVar;
+import crcl.utils.CRCLUtils;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -22,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -39,6 +39,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings("serial")
 public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame implements FanucCRCLServerDisplayInterface {
 
     /**
@@ -112,7 +113,7 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
         final Image img;
         try {
             final URL robotImageSystemResourceUrl
-                    = Objects.requireNonNull(ClassLoader.getSystemResource("robot.png"), "ClassLoader.getSystemResource(\"robot.png\")");
+                    = CRCLUtils.requireNonNull(ClassLoader.getSystemResource("robot.png"), "ClassLoader.getSystemResource(\"robot.png\")");
             img = ImageIO.read(robotImageSystemResourceUrl);
         } catch (IOException ex) {
             Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
@@ -122,8 +123,8 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
     }
 
     private static final Dimension ICON_SIZE = new Dimension(32, 32);
-    private static final Image BASE_IMAGE = Objects.requireNonNull(getRobotImage(), "BASE_IMAGE");
-    public static final Image SERVER_IMAGE = Objects.requireNonNull(createImage(ICON_SIZE, Color.MAGENTA, Color.BLACK, BASE_IMAGE), "SERVER_IMAGE");
+    private static final Image BASE_IMAGE = CRCLUtils.requireNonNull(getRobotImage(), "BASE_IMAGE");
+    public static final Image SERVER_IMAGE = CRCLUtils.requireNonNull(createImage(ICON_SIZE, Color.MAGENTA, Color.BLACK, BASE_IMAGE), "SERVER_IMAGE");
 
 //    private void shutDown() {
 //        fanucCRCLServerJPanel1.shutDown();
@@ -252,21 +253,6 @@ public class FanucCRCLServerJInternalFrame extends javax.swing.JInternalFrame im
 
     public void updateJointLimits(float lowerJointLimits[], float upperJointLimits[]) {
         fanucCRCLServerJPanel1.updateJointLimits(lowerJointLimits, upperJointLimits);
-    }
-
-    private void readPropertiesFile() {
-//        try {
-//            if (PROPERTIES_FILE.exists()) {
-//                props.load(new FileReader(PROPERTIES_FILE));
-//            }
-//            fingerSensorServerCmd = getProperty("fingerSensorServerCmd", DEFAULT_FINGER_SENSOR_SERVER_COMMAND);
-//            fingerSensorServerDirectory = getProperty("fingerSensorServerDirectory", DEFAULT_FINGER_SENSOR_SERVER_DIRECTORY);
-//            jCheckBoxMenuItemStartClient.setSelected(getBooleanProperty("autoStartClient", false));
-//            jCheckBoxMenuItemStartPressureServer.setSelected(getBooleanProperty("autoStartPressureSensorServer", false));
-//            jCheckBoxMenuItemShowPressureOutput.setSelected(getBooleanProperty("showPressureOutput", false));
-//        } catch (IOException ex) {
-//            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);
-//        }
     }
 
     public JMenuItem getjMenuItemReconnectRobot() {

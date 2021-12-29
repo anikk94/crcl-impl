@@ -20,13 +20,12 @@
  */
 package com.github.wshackle.crcl4java.commons.math;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import crcl.base.PointType;
 import crcl.base.PoseType;
 import crcl.base.VectorType;
-import java.math.BigDecimal;
-import java.util.logging.Logger;
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 
 /*
@@ -193,5 +192,5 @@ public class CRCLPosemathCommons {
         return toCRCLPoint(vIn, new PointType());
     }
 
-    private static final Logger LOG = Logger.getLogger(CRCLPosemathCommons.class.getName());
+//    private static final Logger LOG = Logger.getLogger(CRCLPosemathCommons.class.getName());
 }

@@ -22,16 +22,10 @@
  */
 package com.github.wshackle.atinetft_proxy;
 
-import com.atiia.automation.sensors.NetFTRDTCommand;
-import com.atiia.automation.sensors.NetFTRDTPacket;
-import crcl.base.ForceTorqueSensorStatusType;
-import crcl.base.ParameterSettingType;
-import crcl.utils.server.SensorServerInterface;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +33,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
+
+import crcl.base.ForceTorqueSensorStatusType;
+import crcl.base.ParameterSettingType;
+import crcl.utils.server.SensorServerInterface;
 
 /**
  *
@@ -61,7 +61,7 @@ public class ATIForceTorqueSensorServer implements SensorServerInterface {
         this.sensorParameterSetting = sensorParameterSetting;
         this.netFtSensor = netFtSensor;
         this.configurationReader = configurationReader;
-        this.logFileName = findParam(sensorParameterSetting, "logFileName");
+        this.logFileName = findParam(sensorParameterSetting, "logFileName",null);
     }
 
     public ATIForceTorqueSensorServer(String sensorId, List<ParameterSettingType> sensorParameterSetting, String host) throws UnknownHostException, IOException, IOException, IOException {
@@ -74,88 +74,97 @@ public class ATIForceTorqueSensorServer implements SensorServerInterface {
                 return param.getParameterValue();
             }
         }
-        return null;
+        throw new RuntimeException("parameter "+name+" not found in "+sensorParameterSetting);
+    }
+    
+    private static @PolyNull String findParam(List<ParameterSettingType> sensorParameterSetting, String name, @PolyNull String defaultValue) {
+        for (ParameterSettingType param : sensorParameterSetting) {
+            if (param.getParameterName().equals(name)) {
+                return param.getParameterValue();
+            }
+        }
+        return defaultValue;
     }
 
     public ATIForceTorqueSensorServer(String sensorId, List<ParameterSettingType> sensorParameterSetting) throws UnknownHostException, IOException {
         this(sensorId, sensorParameterSetting, findParam(sensorParameterSetting, "host"));
     }
 
-    private final int NETFT_RDT_COMMAND_LENGTH = 8;
-    private final int NETFT_RDT_DATA_LENGTH = 36;
+//    private final int NETFT_RDT_COMMAND_LENGTH = 8;
+//    private final int NETFT_RDT_DATA_LENGTH = 36;
 
-    private DatagramPacket getDatagramPacketFromNetFTRDTCommand(
-            NetFTRDTCommand netFTCommand) {
-        final int NUM_RDT_COMMAND_FIELDS = 3;
-        /*the number of fields in
-                                                   *an RDT command*/
-        byte[] dataBuf = new byte[NETFT_RDT_COMMAND_LENGTH];
-        /*the data
-                                                   *buffer of the datagram*/
-
-        dataBuf[0] = (byte) ((netFTCommand.getHeader() >> 8) & 0xff);
-        dataBuf[1] = (byte) (netFTCommand.getHeader() & 0xff);
-        dataBuf[2] = (byte) ((netFTCommand.getCommand() >> 8) & 0xff);
-        dataBuf[3] = (byte) (netFTCommand.getCommand() & 0xff);
-        dataBuf[4] = (byte) ((netFTCommand.getCount() >> 24) & 0xff);
-        dataBuf[5] = (byte) ((netFTCommand.getCount() >> 16) & 0xff);
-        dataBuf[6] = (byte) ((netFTCommand.getCount() >> 8) & 0xff);
-        dataBuf[7] = (byte) (netFTCommand.getCount() & 0xff);
-
-        return new DatagramPacket(dataBuf, NETFT_RDT_COMMAND_LENGTH);
-    }
+//    private DatagramPacket getDatagramPacketFromNetFTRDTCommand(
+//            NetFTRDTCommand netFTCommand) {
+//        final int NUM_RDT_COMMAND_FIELDS = 3;
+//        /*the number of fields in
+//                                                   *an RDT command*/
+//        byte[] dataBuf = new byte[NETFT_RDT_COMMAND_LENGTH];
+//        /*the data
+//                                                   *buffer of the datagram*/
+//
+//        dataBuf[0] = (byte) ((netFTCommand.getHeader() >> 8) & 0xff);
+//        dataBuf[1] = (byte) (netFTCommand.getHeader() & 0xff);
+//        dataBuf[2] = (byte) ((netFTCommand.getCommand() >> 8) & 0xff);
+//        dataBuf[3] = (byte) (netFTCommand.getCommand() & 0xff);
+//        dataBuf[4] = (byte) ((netFTCommand.getCount() >> 24) & 0xff);
+//        dataBuf[5] = (byte) ((netFTCommand.getCount() >> 16) & 0xff);
+//        dataBuf[6] = (byte) ((netFTCommand.getCount() >> 8) & 0xff);
+//        dataBuf[7] = (byte) (netFTCommand.getCount() & 0xff);
+//
+//        return new DatagramPacket(dataBuf, NETFT_RDT_COMMAND_LENGTH);
+//    }
 
     private final AtomicInteger requestNetFTDataCount = new AtomicInteger();
 
-    private void requestNetFTData(DatagramSocket cNetFTSocket) throws
-            IOException {
-        NetFTRDTCommand netFTCommand = new NetFTRDTCommand();
-        netFTCommand.setCount(1);
-        DatagramPacket commandPacket
-                = getDatagramPacketFromNetFTRDTCommand(netFTCommand);
-        cNetFTSocket.send(commandPacket);
-        requestNetFTDataCount.incrementAndGet();
-    }
+//    private void requestNetFTData(DatagramSocket cNetFTSocket) throws
+//            IOException {
+//        NetFTRDTCommand netFTCommand = new NetFTRDTCommand();
+//        netFTCommand.setCount(1);
+//        DatagramPacket commandPacket
+//                = getDatagramPacketFromNetFTRDTCommand(netFTCommand);
+//        cNetFTSocket.send(commandPacket);
+//        requestNetFTDataCount.incrementAndGet();
+//    }
 
-    private NetFTRDTPacket getNetFTRDTPacketFromDatagramPacket(
-            DatagramPacket NetFTRDTDataPacket) {
-
-        final int NUM_RDT_FIELDS = 9;
-        int[] rdtFields = new int[NUM_RDT_FIELDS];
-        /*the 9 fields of an RDT
-                                           *data packet*/
-        byte[] dataBuf = NetFTRDTDataPacket.getData();
-        /*the received data*/
-
-        int i, j;
-        /*loop/array indices*/
- /*precondition: dataBuf has the data received from the network
-             *postcondition: rdtFields has the fields of an rdt data packet,
-             *in the order RDTSequence, FTSequence, Status, Fx, Fy, Fz, Tx, Ty,
-             *and Tz. i = -1, j = 4.
-         */
-        for (i = (NUM_RDT_FIELDS - 1); i >= 0; i--) {
-            rdtFields[i] = (int) dataBuf[(i * 4)] & 0xff;
-            for (j = ((i * 4) + 1); j < ((i * 4) + 4); j++) {
-                rdtFields[i] = (rdtFields[i] << 8) | ((int) dataBuf[j]
-                        & 0xff);
-            }
-        }
-
-        return new NetFTRDTPacket(rdtFields);
-    }
+//    private NetFTRDTPacket getNetFTRDTPacketFromDatagramPacket(
+//            DatagramPacket NetFTRDTDataPacket) {
+//
+//        final int NUM_RDT_FIELDS = 9;
+//        int[] rdtFields = new int[NUM_RDT_FIELDS];
+//        /*the 9 fields of an RDT
+//                                           *data packet*/
+//        byte[] dataBuf = NetFTRDTDataPacket.getData();
+//        /*the received data*/
+//
+//        int i, j;
+//        /*loop/array indices*/
+// /*precondition: dataBuf has the data received from the network
+//             *postcondition: rdtFields has the fields of an rdt data packet,
+//             *in the order RDTSequence, FTSequence, Status, Fx, Fy, Fz, Tx, Ty,
+//             *and Tz. i = -1, j = 4.
+//         */
+//        for (i = (NUM_RDT_FIELDS - 1); i >= 0; i--) {
+//            rdtFields[i] = (int) dataBuf[(i * 4)] & 0xff;
+//            for (j = ((i * 4) + 1); j < ((i * 4) + 4); j++) {
+//                rdtFields[i] = (rdtFields[i] << 8) | ((int) dataBuf[j]
+//                        & 0xff);
+//            }
+//        }
+//
+//        return new NetFTRDTPacket(rdtFields);
+//    }
 
     private final AtomicInteger receiveRequestedNetFTDataCount = new AtomicInteger();
 
-    private NetFTRDTPacket receiveRequestedNetFTData(DatagramSocket cNetFTSocket) throws
-            IOException {
-        DatagramPacket NetFTRDTDataPacket = new DatagramPacket(
-                new byte[NETFT_RDT_DATA_LENGTH], NETFT_RDT_DATA_LENGTH);
-        cNetFTSocket.receive(NetFTRDTDataPacket);
-
-        receiveRequestedNetFTDataCount.incrementAndGet();
-        return getNetFTRDTPacketFromDatagramPacket(NetFTRDTDataPacket);
-    }
+//    private NetFTRDTPacket receiveRequestedNetFTData(DatagramSocket cNetFTSocket) throws
+//            IOException {
+//        DatagramPacket NetFTRDTDataPacket = new DatagramPacket(
+//                new byte[NETFT_RDT_DATA_LENGTH], NETFT_RDT_DATA_LENGTH);
+//        cNetFTSocket.receive(NetFTRDTDataPacket);
+//
+//        receiveRequestedNetFTDataCount.incrementAndGet();
+//        return getNetFTRDTPacketFromDatagramPacket(NetFTRDTDataPacket);
+//    }
 
     private volatile double z = 0;
 

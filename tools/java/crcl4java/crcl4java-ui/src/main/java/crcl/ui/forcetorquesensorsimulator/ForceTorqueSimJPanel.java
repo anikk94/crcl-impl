@@ -5,35 +5,8 @@
  */
 package crcl.ui.forcetorquesensorsimulator;
 
-import crcl.base.CRCLStatusType;
-import crcl.base.ConfigureStatusReportType;
-import crcl.base.ForceTorqueSensorStatusType;
-import crcl.base.GetStatusType;
-import crcl.base.GripperStatusType;
-import crcl.base.PointType;
-import crcl.base.PoseStatusType;
-import crcl.base.PoseType;
-import crcl.base.SensorStatusesType;
-import crcl.base.SettingsStatusType;
-import crcl.ui.AutomaticPropertyFileUtils;
-import crcl.ui.PoseDisplay;
-import crcl.ui.PoseDisplayMode;
-import crcl.ui.client.CrclSwingClientJPanel;
-import crcl.ui.client.CurrentPoseListener;
-import crcl.ui.client.CurrentPoseListenerUpdateInfo;
-import crcl.copier.CRCLCopier;
-import crcl.utils.CRCLException;
-import crcl.utils.CRCLSocket;
-import crcl.utils.CRCLUtils;
-import crcl.utils.ThreadLockedHolder;
-import crcl.utils.XFuture;
-import crcl.utils.XFutureVoid;
-import crcl.utils.outer.interfaces.PropertyOwner;
-import crcl.utils.server.CRCLServerClientState;
-import crcl.utils.server.CRCLServerSocket;
-import crcl.utils.server.CRCLServerSocketEvent;
-import crcl.utils.server.CRCLServerSocketEventListener;
-import crcl.utils.server.CRCLServerSocketStateGenerator;
+import static crcl.utils.CRCLUtils.requireNonNull;
+
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import static crcl.utils.CRCLUtils.requireNonNull;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -57,18 +29,50 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JFileChooser;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.checkerframework.checker.guieffect.qual.UIEffect;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import crcl.base.CRCLStatusType;
+import crcl.base.ConfigureStatusReportType;
+import crcl.base.ForceTorqueSensorStatusType;
+import crcl.base.GetStatusType;
+import crcl.base.GripperStatusType;
+import crcl.base.PointType;
+import crcl.base.PoseStatusType;
+import crcl.base.PoseType;
+import crcl.base.SensorStatusesType;
+import crcl.base.SettingsStatusType;
+import crcl.copier.CRCLCopier;
+import crcl.ui.AutomaticPropertyFileUtils;
+import crcl.ui.PoseDisplay;
+import crcl.ui.PoseDisplayMode;
+import crcl.ui.client.CrclSwingClientJPanel;
+import crcl.ui.client.CurrentPoseListener;
+import crcl.ui.client.CurrentPoseListenerUpdateInfo;
+import crcl.utils.CRCLException;
+import crcl.utils.CRCLSocket;
+import crcl.utils.CRCLUtils;
+import crcl.utils.ThreadLockedHolder;
+import crcl.utils.XFuture;
+import crcl.utils.XFutureVoid;
+import crcl.utils.outer.interfaces.PropertyOwner;
+import crcl.utils.server.CRCLServerClientState;
+import crcl.utils.server.CRCLServerSocket;
+import crcl.utils.server.CRCLServerSocketEvent;
+import crcl.utils.server.CRCLServerSocketEventListener;
+import crcl.utils.server.CRCLServerSocketStateGenerator;
 
 /**
  *
@@ -80,14 +84,102 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     /**
      * Creates new form ForceTorqueSimJPanel
      */
-    @SuppressWarnings({"nullness", "initialization"})
+    @SuppressWarnings({"nullness", "initialization", "rawtypes"})
     public ForceTorqueSimJPanel() {
         statusOut = new ThreadLockedHolder<>("ForceTorqueSimJPanel.statusOut", new CRCLStatusType(), false);
         final CRCLStatusType statOut = this.statusOut.get();
         statOut.setSensorStatuses(new SensorStatusesType());
         sensorStatus = new ForceTorqueSensorStatusType();
         statOut.getSensorStatuses().getForceTorqueSensorStatus().add(sensorStatus);
-        initComponents();
+        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
+            initComponents();
+
+        } else {
+            jTablePose = new javax.swing.JTable();
+            jTablePose.setModel(new javax.swing.table.DefaultTableModel(
+                    new Object[][]{
+                        {"X", null},
+                        {"Y", null},
+                        {"Z", null},
+                        {"XI", null},
+                        {"XJ", null},
+                        {"XK", null},
+                        {"ZI", null},
+                        {"ZJ", null},
+                        {"Zk", null}
+                    },
+                    new String[]{
+                        "Pose Axis", "Position"
+                    }
+            ) {
+                Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.Double.class
+                };
+                boolean[] canEdit = new boolean[]{
+                    false, false
+                };
+
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
+                    return types[columnIndex];
+                }
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit[columnIndex];
+                }
+            });
+
+            jTablePoseForceOut = new javax.swing.JTable();
+            jTablePoseForceOut.setModel(new javax.swing.table.DefaultTableModel(
+                    new Object[][]{
+                        {"X", null},
+                        {"Y", null},
+                        {"Z", null},
+                        {"XI", null},
+                        {"XJ", null},
+                        {"XK", null},
+                        {"ZI", null},
+                        {"ZJ", null},
+                        {"Zk", null}
+                    },
+                    new String[]{
+                        "Pose Axis", "Position"
+                    }
+            ) {
+                Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.Double.class
+                };
+                boolean[] canEdit = new boolean[]{
+                    false, false
+                };
+
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
+                    return types[columnIndex];
+                }
+
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit[columnIndex];
+                }
+            });
+            jTableObjects = new javax.swing.JTable();
+            jTableObjects.setModel(new javax.swing.table.DefaultTableModel(
+                    new Object[][]{},
+                    new String[]{
+                        "Name", "Count", "Width", "Length", "Height", "X", "Y", "Z", "Rotation", "Scale"
+                    }
+            ) {
+                Class[] types = new Class[]{
+                    java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class
+                };
+
+                @SuppressWarnings("unchecked")
+		public Class getColumnClass(int columnIndex) {
+                    return types[columnIndex];
+                }
+            });
+            inOutJPanel1 = new crcl.ui.forcetorquesensorsimulator.InOutJPanel();
+        }
         PoseDisplay.updateDisplayMode(jTablePose, PoseDisplayMode.XYZ_RPY, false);
         PoseDisplay.updateDisplayMode(jTablePoseForceOut, PoseDisplayMode.XYZ_RPY, false);
         internalUpdateSensorStatus();
@@ -108,7 +200,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings({"unchecked", "rawtypes", "nullness","CanBeFinal"})
+    @SuppressWarnings({"unchecked", "rawtypes", "nullness", "CanBeFinal"})
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -791,7 +883,9 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     }//GEN-LAST:event_jButtonSaveObjectsFileActionPerformed
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
-        inOutJPanel1.setHeightViewAngle((double) jSlider1.getValue());
+        if (null != inOutJPanel1 && null != jSlider1) {
+            inOutJPanel1.setHeightViewAngle((double) jSlider1.getValue());
+        }
     }//GEN-LAST:event_jSlider1StateChanged
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -819,7 +913,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             File crcljavaDir = new File(CRCLUtils.getCrclUserHomeDir(), CRCLJAVA_USER_DIR);
             boolean made_dir = crcljavaDir.mkdirs();
             File settingsRef = new File(crcljavaDir, SETTINGSREF);
-            try (PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
+            try ( PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
                 psRef.println(propertiesFile.getCanonicalPath());
             } catch (Exception ex) {
                 showMessage(ex);
@@ -880,7 +974,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         final int zColumn = model.findColumn("Z");
         final int rotationColumn = model.findColumn("Rotation");
         final int scaleColumn = model.findColumn("Scale");
-        @SuppressWarnings({"rawtypes","unchecked"})
+        @SuppressWarnings({"rawtypes", "unchecked"})
         final Vector<Vector> dataVector = model.getDataVector();
 //        System.out.println("dataVector = " + dataVector);
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -968,7 +1062,11 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
 
     private void loadObjectsFile(final File selectedFile) {
         try {
-            jTextFieldObjectsFile.setText(selectedFile.getCanonicalPath());
+            final String selectedFileCanonicalPath = selectedFile.getCanonicalPath();
+            if (null != jTextFieldObjectsFile) {
+                jTextFieldObjectsFile.setText(selectedFileCanonicalPath);
+            }
+            this.objectsFileName = selectedFileCanonicalPath;
             final DefaultTableModel model = (DefaultTableModel) jTableObjects.getModel();
             readCsvFileToTableAndMap(false, model, selectedFile, null, null, null);
             this.inOutJPanel1.setStacks(modelToList(model));
@@ -995,7 +1093,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     }
 
     private static void saveTableModel(File f, TableModel tm) throws IOException {
-        try (CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f)), CSVFormat.DEFAULT.withHeader(tableHeaders(tm)))) {
+        try ( CSVPrinter printer = new CSVPrinter(new PrintStream(new FileOutputStream(f)), CSVFormat.DEFAULT.withHeader(tableHeaders(tm)))) {
 
             List<String> colNameList = new ArrayList<>();
             for (int i = 0; i < tm.getColumnCount(); i++) {
@@ -1029,16 +1127,38 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         }
     }
 
+    private volatile String objectsFileName = "";
+
     public String getObjectsFileName() {
-        return jTextFieldObjectsFile.getText();
+        if (null == jTextFieldObjectsFile) {
+            return objectsFileName;
+        } else {
+            return jTextFieldObjectsFile.getText();
+        }
     }
 
     public void setObjectsFileName(String name) {
         if (name == null || name.trim().length() < 1) {
-            jTextFieldObjectsFile.setText("");
+            if (null != jTextFieldObjectsFile) {
+                jTextFieldObjectsFile.setText("");
+            }
+            this.objectsFileName = "";
             return;
         }
-        loadObjectsFile(new File(name));
+        this.objectsFileName = name;
+        File f = new File(name);
+        if (f.exists()) {
+            loadObjectsFile(f);
+        } else {
+            File f2 = new File(propertiesFile.getParentFile(), f.getName());
+            if (f2.exists()) {
+                loadObjectsFile(f2);
+                this.objectsFileName = f.getName();
+                if (null != jTextFieldObjectsFile) {
+                    jTextFieldObjectsFile.setText(f.getName());
+                }
+            }
+        }
     }
 
     @UIEffect
@@ -1053,7 +1173,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         if (null != dtm) {
             dtm.setRowCount(0);
         }
-        try (CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
+        try ( CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
             Map<String, Integer> headerMap = parser.getHeaderMap();
             if (forceColumns && null != dtm) {
                 dtm.setRowCount(0);
@@ -1143,53 +1263,83 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
 
     public int getCRCLSensorOutPort() {
         if (crclServerSocket != null) {
-            return crclServerSocket.getPort();
+            int p = crclServerSocket.getPort();
+            this.crclSensorOutPort = p;
+            return p;
+        } else if (null != jTextFieldCRCLSensorOutPort) {
+            int p = Integer.parseInt(jTextFieldCRCLSensorOutPort.getText());
+            this.crclSensorOutPort = p;
+            return p;
         } else {
-            return Integer.parseInt(jTextFieldCRCLSensorOutPort.getText());
+            return this.crclSensorOutPort;
         }
     }
+
+    private int crclSensorOutPort = 8888;
 
     public void setCRCLSensorOutPort(int port) {
         if (crclServerSocket != null && crclServerSocket.getPort() != port) {
             crclServerSocket.close();
             crclServerSocket = null;
-            jTextFieldCRCLSensorOutPort.setText(Integer.toString(port));
             try {
                 startServer(port);
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(ForceTorqueSimJPanel.class.getName()).log(Level.SEVERE, "", ex);
             }
-        } else {
+        }
+        if (null != jTextFieldCRCLSensorOutPort) {
             jTextFieldCRCLSensorOutPort.setText(Integer.toString(port));
         }
+        this.crclSensorOutPort = port;
     }
+
+    private int poseCrclPort = 64444;
 
     public int getPoseCRCLPort() {
         if (poseInConnection != null) {
-            return poseInConnection.getPort();
+            int p = poseInConnection.getPort();
+            this.poseCrclPort = p;
+            return p;
+        } else if (null != jTextFieldPoseCRCLPort) {
+            int p = Integer.parseInt(jTextFieldPoseCRCLPort.getText());
+            this.poseCrclPort = p;
+            return p;
+        } else {
+            return this.poseCrclPort;
         }
-        return Integer.parseInt(jTextFieldPoseCRCLPort.getText());
     }
 
     public void setPoseCRCLPort(int port) {
         if (poseInConnection != null && port != poseInConnection.getPort() && null == this.crclClientPanel) {
             stopPoseInConnection();
-            jTextFieldPoseCRCLPort.setText(Integer.toString(port));
             if (null != getPoseServiceThread) {
                 getPoseServiceThread.setName(tcount.incrementAndGet() + "ForceTorqueSimGetPose" + port);
             }
             startPoseInConnection();
-        } else {
+        }
+        if (null != jTextFieldPoseCRCLPort) {
             jTextFieldPoseCRCLPort.setText(Integer.toString(port));
+        }
+        this.poseCrclPort = port;
+    }
+
+    private String poseCrclHost;
+
+    public String getPoseCRCLHost() {
+        if (null != jTextFieldPoseCRCLHost) {
+            String h = jTextFieldPoseCRCLHost.getText();
+            this.poseCrclHost = h;
+            return h;
+        } else {
+            return this.poseCrclHost;
         }
     }
 
-    public String getPoseCRCLHost() {
-        return jTextFieldPoseCRCLHost.getText();
-    }
-
     public void setPoseCRCLHost(String host) {
-        jTextFieldPoseCRCLHost.setText(host);
+        if (null != jTextFieldPoseCRCLHost) {
+            jTextFieldPoseCRCLHost.setText(host);
+        }
+        this.poseCrclHost = host;
     }
 
     private final AtomicInteger getPoseCount = new AtomicInteger();
@@ -1213,32 +1363,42 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
     public void setCrclClientPanel(CrclSwingClientJPanel crclClientPanel) {
         this.crclClientPanel = crclClientPanel;
         if (null != crclClientPanel) {
-            this.jTextFieldPoseCRCLHost.setEditable(false);
-            this.jTextFieldPoseCRCLHost.setEnabled(false);
-            this.jTextFieldPoseCRCLPort.setEditable(false);
-            this.jTextFieldPoseCRCLPort.setEnabled(false);
+            if (null != jTextFieldPoseCRCLHost) {
+                this.jTextFieldPoseCRCLHost.setEditable(false);
+                this.jTextFieldPoseCRCLHost.setEnabled(false);
+            }
+            if (null != jTextFieldPoseCRCLPort) {
+                this.jTextFieldPoseCRCLPort.setEditable(false);
+                this.jTextFieldPoseCRCLPort.setEnabled(false);
+            }
             this.setPoseCRCLPort(crclClientPanel.getPort());
             this.setPoseCRCLHost(crclClientPanel.getHost());
             this.crclClientPanel.addCurrentPoseListener(currentPoseListener);
-            final Border border = jPanelCRCLPositionIn.getBorder();
-            if (border instanceof TitledBorder) {
-                TitledBorder titledBorder = (TitledBorder) border;
-                titledBorder.setTitle("CRCL Pose In Connection : " + crclClientPanel);
+            if (null != jPanelCRCLPositionIn) {
+                final Border border = jPanelCRCLPositionIn.getBorder();
+                if (border instanceof TitledBorder) {
+                    TitledBorder titledBorder = (TitledBorder) border;
+                    titledBorder.setTitle("CRCL Pose In Connection : " + crclClientPanel);
+                }
             }
         } else {
-            this.jTextFieldPoseCRCLHost.setEditable(true);
-            this.jTextFieldPoseCRCLHost.setEnabled(true);
-            this.jTextFieldPoseCRCLPort.setEditable(true);
-            this.jTextFieldPoseCRCLPort.setEnabled(true);
-            final Border border = jPanelCRCLPositionIn.getBorder();
-            if (border instanceof TitledBorder) {
-                TitledBorder titledBorder = (TitledBorder) border;
-                titledBorder.setTitle("CRCL Pose In Connection");
+            if (null != jTextFieldPoseCRCLHost) {
+                this.jTextFieldPoseCRCLHost.setEditable(true);
+                this.jTextFieldPoseCRCLHost.setEnabled(true);
+            }
+            if (null != jTextFieldPoseCRCLPort) {
+                this.jTextFieldPoseCRCLPort.setEditable(true);
+                this.jTextFieldPoseCRCLPort.setEnabled(true);
+            }
+            if (null != jPanelCRCLPositionIn) {
+                final Border border = jPanelCRCLPositionIn.getBorder();
+                if (border instanceof TitledBorder) {
+                    TitledBorder titledBorder = (TitledBorder) border;
+                    titledBorder.setTitle("CRCL Pose In Connection");
+                }
             }
         }
     }
-
-
 
     private volatile boolean lastIsHoldingObjectExpected = false;
     private final AtomicInteger holdingObjectChanges = new AtomicInteger();
@@ -1293,7 +1453,8 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         }
     }
 
-    private volatile @Nullable Thread getPoseServiceThread = null;
+    private volatile @Nullable
+    Thread getPoseServiceThread = null;
 
     private static final AtomicInteger tcount = new AtomicInteger();
 
@@ -1342,7 +1503,7 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         if (!jCheckBoxStartSensorOutServer.isSelected()) {
             jCheckBoxStartSensorOutServer.setSelected(true);
         }
-        CRCLServerSocket<ForceTorqueSimClientState> newCrclServerSocket 
+        CRCLServerSocket<ForceTorqueSimClientState> newCrclServerSocket
                 = new CRCLServerSocket<>(port, FORCE_TORQUE_SIM_STATE_GENERATOR);
         newCrclServerSocket.addListener(crclSocketEventListener);
         newCrclServerSocket.setServerSideStatus(statusOut);
@@ -1394,16 +1555,18 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
             File crcljavaDir = new File(CRCLUtils.getCrclUserHomeDir(), CRCLJAVA_USER_DIR);
             boolean made_dir = crcljavaDir.mkdirs();
             File settingsRef = new File(crcljavaDir, SETTINGSREF);
-            try (PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
+            try ( PrintStream psRef = new PrintStream(new FileOutputStream(settingsRef))) {
                 psRef.println(f.getCanonicalPath());
             }
             Map<String, Object> targetMap = new TreeMap<>();
             targetMap.put("inOutJPanel1.", inOutJPanel1);
             Object defaultTarget = this;
             AutomaticPropertyFileUtils.loadPropertyFile(f, targetMap, defaultTarget);
-            this.jSlider1.setValue((int) inOutJPanel1.getHeightViewAngle());
+            if (null != jSlider1) {
+                this.jSlider1.setValue((int) inOutJPanel1.getHeightViewAngle());
+            }
         } catch (IOException iOException) {
-            showMessage(iOException);
+            showMessage("Failed to loadPrefsFile " + f + " : " + iOException);
         }
     }
 
