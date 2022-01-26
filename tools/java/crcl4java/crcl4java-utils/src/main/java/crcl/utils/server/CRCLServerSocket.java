@@ -759,7 +759,8 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     public void setCommandStateEnum(CommandStateEnumType newCommandStateEnum) {
 
         if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR
-                || (initialized && this.commandStateEnum == CommandStateEnumType.CRCL_ERROR)) {
+                && initialized 
+                && this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
             System.out.println("");
             System.err.println("");
             System.out.flush();

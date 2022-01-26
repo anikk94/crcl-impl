@@ -352,7 +352,7 @@ public class FanucCRCLMain {
                     robot.alarms().reset();
                     robot.tasks().abortAll(true);
                     this.lastRobotIsConnected = true;
-                    this.lastServoReady = true;
+                    this.lastServoReady = checkServoReady();
                     this.last_safety_stat = 0;
                 } else {
                     showError("Can NOT reset alarms since robot is not initialized.");
@@ -950,8 +950,9 @@ public class FanucCRCLMain {
                         jointStatuses.getJointStatus().add(js);
                         checkDonePrevCmd();
                     }
-                    if (null == prevCmd || !(prevCmd instanceof InitCanonType)
-                            || commandStatus.getCommandState() != CRCL_WORKING) {
+                    if (null != prevCmd
+                            && commandStatus.getCommandState() != CRCL_ERROR
+                            && !(prevCmd instanceof InitCanonType)) {
                         checkServoReady();
                     }
                     updateTimes.add(System.currentTimeMillis() - start);
@@ -1222,7 +1223,7 @@ public class FanucCRCLMain {
 //                                if(diff > 5) {
 //                                    showError("dwell took:" + diff + " additional milliseconds over the expected "+((long)(((DwellType)prevCmd).getDwellTime().doubleValue()*1000.0)));
 //                                }
-                        lastServoReady = true;
+                        lastServoReady = checkServoReady();
 //                                logDebug("robotResetCount = " + robotResetCount);
                         boolean secondInitSafetyStatError = checkSafetyStatError();
 //                                logDebug("secondInitSafetyStatError = " + secondInitSafetyStatError);
@@ -1233,11 +1234,7 @@ public class FanucCRCLMain {
                             boolean secondInitCheckServoReady = checkServoReady();
                             logDebug("secondInitCheckServoReady = " + secondInitCheckServoReady);
                             if (!secondInitCheckServoReady) {
-                                final IRobot2 localRobot = robot;
-                                if (null != localRobot) {
-                                    localRobot.alarms().reset();
-                                    localRobot.tasks().abortAll(true);
-                                }
+                                resetRobot();
                                 dwellEndTime = System.currentTimeMillis() + 2000;
                                 robotResetCount++;
                                 setCommandState(CRCL_WORKING);
@@ -1385,27 +1382,25 @@ public class FanucCRCLMain {
     private boolean checkServoReady() {
         boolean readyNow = false;
         boolean safetyStatError = checkSafetyStatError();
-        if (safetyStatError) {
-            lastServoReady = true;
-        } else if (null != moveGroup1ServoReadyVar) {
+        if (!safetyStatError
+                && null != moveGroup1ServoReadyVar) {
             moveGroup1ServoReadyVar.refresh();
             Object val = moveGroup1ServoReadyVar.value();
             if (val instanceof Boolean) {
                 boolean servoReady = (boolean) val;
                 if (!servoReady) {
                     CRCLStatusType localStatus = this.status.get();
+                    final String servoNotReadyErrorMessage = "Fanuc: SERVO_NOT_READY (Need to reset fault?) $MOR_GRP[1].$SERVO_READY is false. ";
                     if (lastServoReady) {
-                        showError("SERVO_NOT_READY (Need to reset fault?)");
+                        showError(servoNotReadyErrorMessage);
                     } else if (localStatus.getCommandStatus().getCommandState() == CRCL_WORKING) {
-                        setStatusErrorDescription("SERVO_NOT_READY (Need to reset fault?)");
+                        setStatusErrorDescription(servoNotReadyErrorMessage);
                     }
                 }
-                lastServoReady = servoReady;
                 readyNow = servoReady;
             }
-        } else {
-            lastServoReady = true;
         }
+        lastServoReady = readyNow;
         return readyNow;
     }
 
@@ -1443,8 +1438,8 @@ public class FanucCRCLMain {
         return robotService;
     }
 
-    int last_safety_stat = 0;
-    boolean lastServoReady = true;
+    private volatile int last_safety_stat = 0;
+    private volatile boolean lastServoReady = false;
 
     public static class FanucClientState extends CRCLServerClientState {
 
@@ -1498,9 +1493,9 @@ public class FanucCRCLMain {
                     internalStopMotion();
                     crclServerSocket.comleteGuardTrigger();
                     break;
-                    
+
                 case BAD_GUARD_SENSOR_ID:
-                	break;
+                    break;
             }
         } catch (Exception ex) {
             getLocalLogger().log(Level.SEVERE, "evt=" + evt, ex);
@@ -1675,40 +1670,45 @@ public class FanucCRCLMain {
     private volatile int robotResetCount = 0;
 
     private void handleInitCanon(InitCanonType initCmd) {
-        lastServoReady = true;
-
         recheckOverride();
         boolean initSafetyStatError = checkSafetyStatError();
 //        logDebug("initSafetyStatError = " + initSafetyStatError);
         if (initSafetyStatError) {
             setStatusErrorDescription(morSafetyStatToString(last_safety_stat));
             setCommandState(CRCL_ERROR);
-        } else {
+        } else if (lastServoReady) {
             boolean initCheckServoReady = checkServoReady();
 //            logDebug("initCheckServoReady = " + initCheckServoReady);
             if (!initCheckServoReady) {
                 setCommandState(CRCL_WORKING);
                 dwellEndTime = System.currentTimeMillis() + 1000;
+                resetRobot();
             } else {
                 setCommandState(CommandStateEnumType.CRCL_DONE);
             }
+        } else {
+            setCommandState(CRCL_WORKING);
+            dwellEndTime = System.currentTimeMillis() + 1000;
+            resetRobot();
         }
-        final IRobot2 localRobot = robot;
-        if (null != localRobot) {
-            localRobot.alarms().reset();
-            localRobot.tasks().abortAll(true);
-        }
+
         handleCommandCount = 0;
         updateStatusCount = 0;
         maxHandleCommandTime = 0;
         totalHandleCommandTime = 0;
         maxUpdateStatusTime = 0;
         totalUpdateStatusTime = 0;
-        lastServoReady = true;
-
         robotResetCount = 0;
         initCommandRecieved = true;
 //        checkAlarms();
+    }
+
+    private void resetRobot() {
+        final IRobot2 localRobot = robot;
+        if (null != localRobot) {
+            localRobot.alarms().reset();
+            localRobot.tasks().abortAll(true);
+        }
     }
 
     private void recheckOverride() {
@@ -2178,8 +2178,8 @@ public class FanucCRCLMain {
             if (moveCmd.getGuard().isEmpty()) {
                 runMotionTpProgram(CRCLUtils.requireNonNull(move_linear_prog, "move_linear_prog"));
             } else {
-                PoseType startPose = CRCLUtils.requireNonNull(getPose(),"getPose()");
-                PointType startPoint = CRCLUtils.requireNonNull(startPose.getPoint(),"startPose.getPoint()");
+                PoseType startPose = CRCLUtils.requireNonNull(getPose(), "getPose()");
+                PointType startPoint = CRCLUtils.requireNonNull(startPose.getPoint(), "startPose.getPoint()");
                 final double s = 1.0 / posReg80Array.length;
                 for (int i = 0; i < posReg80Array.length; i++) {
                     IXyzWpr posRegIXyzWpr = posReg80Array[i].formats(FRETypeCodeConstants.frXyzWpr).queryInterface(IXyzWpr.class);
@@ -2356,7 +2356,7 @@ public class FanucCRCLMain {
     }
 
     public double distRotFrom(PoseType pose) throws PmException {
-        final PoseType poseLocal = CRCLUtils.requireNonNull(getPose(),"getPose()");
+        final PoseType poseLocal = CRCLUtils.requireNonNull(getPose(), "getPose()");
         PmRotationVector rotvCurrent = CRCLPosemath.toPmRotationVector(poseLocal);
         PmRotationVector rotvArg = CRCLPosemath.toPmRotationVector(pose);
         PmRotationVector rotvDiff = rotvArg.multiply(rotvCurrent.inv());
@@ -2818,7 +2818,7 @@ public class FanucCRCLMain {
             setDefaultJointReports();
         } catch (Throwable exception) {
             Logger localLogger = getLocalLogger();
-            localLogger.log(Level.SEVERE, "CRCLServerSocket.class.getProtectionDomain() = "+CRCLServerSocket.class.getProtectionDomain());
+            localLogger.log(Level.SEVERE, "CRCLServerSocket.class.getProtectionDomain() = " + CRCLServerSocket.class.getProtectionDomain());
             localLogger.log(Level.SEVERE, "", exception);
             if (exception instanceof RuntimeException) {
                 throw (RuntimeException) exception;
@@ -2859,7 +2859,7 @@ public class FanucCRCLMain {
 //            }
             if (null == moveLogFile || null == moveLogFilePrintStream) {
 //                if (null == directory) {
-                    moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv");
+                moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv");
 //                } 
 //                else {
 //                    moveLogFile = File.createTempFile("fanucCrclMoveLog_" + getDateTimeString() + "_", ".csv", directory);
@@ -3271,7 +3271,7 @@ public class FanucCRCLMain {
     public void loadProperties() {
         if (null != this.propertiesFile && propertiesFile.exists()) {
             Properties props = new Properties();
-            try (FileReader reader = new FileReader(propertiesFile)) {
+            try ( FileReader reader = new FileReader(propertiesFile)) {
                 props.load(reader);
                 String keepMoveToLogString = (String) props.get("keepMoveToLog");
                 if (null != keepMoveToLogString) {
@@ -3295,7 +3295,7 @@ public class FanucCRCLMain {
         if (null != locaPropertiesFile) {
             Properties props = new Properties();
             props.put("keepMoveToLog", keepMoveToLog);
-            try (FileWriter fw = new FileWriter(locaPropertiesFile)) {
+            try ( FileWriter fw = new FileWriter(locaPropertiesFile)) {
                 props.store(fw, "");
             } catch (IOException exception) {
                 exception.printStackTrace();
@@ -3416,7 +3416,7 @@ public class FanucCRCLMain {
     }
 
     public void saveCartLimits(PmCartesian min, PmCartesian max) {
-        try (PrintWriter pw = new PrintWriter(cartLimitsFile)) {
+        try ( PrintWriter pw = new PrintWriter(cartLimitsFile)) {
             pw.println("min.x=" + min.x);
             pw.println("min.y=" + min.y);
             pw.println("min.z=" + min.z);
@@ -3448,7 +3448,7 @@ public class FanucCRCLMain {
     }
 
     public void saveJointLimits(float[] min, float[] max) {
-        try (PrintWriter pw = new PrintWriter(jointLimitsFile)) {
+        try ( PrintWriter pw = new PrintWriter(jointLimitsFile)) {
             for (int i = 0; i < max.length && i < min.length; i++) {
                 pw.println("min[" + i + "]=" + min[i]);
                 pw.println("max[" + i + "]=" + max[i]);
@@ -3530,7 +3530,7 @@ public class FanucCRCLMain {
         PmCartesian min = new PmCartesian(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         PmCartesian max = new PmCartesian(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         if (null != cartLimitsFile && cartLimitsFile.exists()) {
-            try (BufferedReader br = new BufferedReader(new FileReader(cartLimitsFile))) {
+            try ( BufferedReader br = new BufferedReader(new FileReader(cartLimitsFile))) {
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     findString(line, "min.x=", t -> min.x = Double.parseDouble(t));
@@ -3554,7 +3554,7 @@ public class FanucCRCLMain {
             max[i] = Float.POSITIVE_INFINITY;
             min[i] = Float.NEGATIVE_INFINITY;
         }
-        try (BufferedReader br = new BufferedReader(new FileReader(jointLimitsFile))) {
+        try ( BufferedReader br = new BufferedReader(new FileReader(jointLimitsFile))) {
             String line = null;
             while ((line = br.readLine()) != null) {
                 findIndexedString(line, "min[]=", (i, t) -> min[i] = Float.parseFloat(t));
@@ -3600,7 +3600,7 @@ public class FanucCRCLMain {
             this.lastIsMoving = false;
             this.lastRobotIsConnected = true;
             this.last_safety_stat = 0;
-            this.lastServoReady = true;
+            this.lastServoReady = checkServoReady();
             if (preferRobotNeighborhood) {
                 if (null == neighborhood) {
                     logDebug("Calling createFRCRobotNeighborhood ...");
@@ -4003,15 +4003,15 @@ public class FanucCRCLMain {
     }
 
     public static void main(String[] args) throws IOException, CRCLException {
-    	FanucCRCLMain localmain  = new FanucCRCLMain();
-    	FanucCRCLMain.main = localmain;
+        FanucCRCLMain localmain = new FanucCRCLMain();
+        FanucCRCLMain.main = localmain;
         String neighborhoodname = args.length > 0 ? args[0] : DEFAULT_AGILITY_FANUC_NEIGHBORHOOD_NAME;
         String host = args.length > 1 ? args[1] : DEFAULT_AGILITY_LAB_REMOTE_ROBOT_HOST; //"129.6.78.111";
         int port = args.length > 2 ? Integer.parseInt(args[2]) : CRCLSocket.DEFAULT_PORT;
         boolean prefRNN = args.length > 3 && Boolean.parseBoolean(args[3]);
         localmain.startDisplayInterface();
         localmain.start(prefRNN, neighborhoodname, host, port);
-        
+
 //        logDebug("Press enter \"stop\" to quit");
 //        Scanner in = new Scanner(System.in);
 //        while (!in.nextLine().equals("stop")) {
