@@ -619,7 +619,7 @@ public class CrclSwingClientJPanel
                 if (null != outerJFrame) {
                     this.outerJFrame = outerJFrame;
                 } else {
-                    if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
+                    if (!CRCLUtils.isGraphicsEnvironmentHeadless()) {
                         this.outerJFrame = new JFrame("CrclSwingClientJPanel created empty frame");
                         this.outerJFrame.add(outerContainer);
                         this.outerJFrame.pack();
@@ -631,7 +631,7 @@ public class CrclSwingClientJPanel
                 this.outerContainer = outerJFrame;
                 this.outerJFrame = outerJFrame;
             } else {
-                if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
+                if (!CRCLUtils.isGraphicsEnvironmentHeadless()) {
                     this.outerContainer = this.outerJFrame = new JFrame("CrclSwingClientJPanel created empty frame");
                     this.outerJFrame.add(this);
                     this.outerJFrame.pack();
@@ -1130,6 +1130,9 @@ public class CrclSwingClientJPanel
 
     @Override
     public void showLastStopCommandString(String string) {
+        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+            return;
+        }
         if (javax.swing.SwingUtilities.isEventDispatchThread()) {
             jTextAreaLastStopCommand.setText(string);
         } else {
@@ -1325,7 +1328,7 @@ public class CrclSwingClientJPanel
         jTextFieldPollTime.setEnabled(false);
         int startPollStopCount = pollStopCount.incrementAndGet();
         ExecutorService service = this.pollStatusService;
-        if (null == service) {
+        if (null == service || service.isShutdown() || service.isTerminated()) {
             service = Executors.newSingleThreadExecutor(new ThreadFactory() {
                 @Override
                 public Thread newThread(Runnable r) {
@@ -1404,9 +1407,23 @@ public class CrclSwingClientJPanel
         return internal.isDebugInterrupts();
     }
 
+    public void shutdownPollService() throws InterruptedException {
+        stopPollTimer();
+        disconnect();
+        ExecutorService service = this.pollStatusService;
+        if(null != service) {
+            service.shutdown();
+        }
+        Thread thread = this.pollStatusServiceThread;
+        if(null != thread && thread.isAlive()) {
+            thread.join();
+        }
+    }
+    
     @Override
     public void stopPollTimer() {
         pollStopCount.incrementAndGet();
+        
         showNotJogReady();
     }
 

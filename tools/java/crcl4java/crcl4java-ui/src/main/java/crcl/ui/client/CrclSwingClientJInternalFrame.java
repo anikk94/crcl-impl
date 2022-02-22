@@ -216,6 +216,11 @@ public class CrclSwingClientJInternalFrame
     public void setIgnoreTimeouts(boolean ignoreTimeouts) {
         pendantClientJPanel1.setIgnoreTimeouts(ignoreTimeouts);
     }
+    
+    public void shutdownPollService() throws InterruptedException {
+        pendantClientJPanel1.shutdownPollService();
+    }
+            
 
     public synchronized void disconnect() {
         pendantClientJPanel1.disconnect();

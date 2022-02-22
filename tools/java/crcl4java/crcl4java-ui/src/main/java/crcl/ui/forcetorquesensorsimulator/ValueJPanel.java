@@ -19,7 +19,7 @@ public class ValueJPanel extends javax.swing.JPanel {
      */
     @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel() {
-        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
+        if (!CRCLUtils.isGraphicsEnvironmentHeadless()) {
             initComponents();
             jLabelName.setText(super.getName());
         }
@@ -30,7 +30,7 @@ public class ValueJPanel extends javax.swing.JPanel {
      */
     @SuppressWarnings({"nullness", "initialization"})
     public ValueJPanel(String name) {
-        if (!CRCLUtils.graphicsEnvironmentIsHeadless()) {
+        if (!CRCLUtils.isGraphicsEnvironmentHeadless()) {
             initComponents();
             jLabelName.setText(name);
         }

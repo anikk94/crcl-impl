@@ -130,19 +130,19 @@ public class XFutureVoid extends XFuture<Void> {
         return this.thenComposeAsync(defaultName(), supplier, es);
     }
 
-    public XFutureVoid thenComposeToVoid(String name, Supplier< ? extends XFuture<Void>> supplier) {
-        XFuture<Void> f = super.thenCompose(name, c -> supplier.get());
-        XFutureVoid retXFV = staticwrapvoid(f.getName(), f);
-        retXFV.alsoCancelAdd(f);
-        return retXFV;
-    }
+//    public XFutureVoid thenComposeToVoid(String name, Supplier< ? extends XFuture<Void>> supplier) {
+//        XFuture<Void> f = super.thenCompose(name, c -> supplier.get());
+//        XFutureVoid retXFV = staticwrapvoid(f.getName(), f);
+//        retXFV.alsoCancelAdd(f);
+//        return retXFV;
+//    }
+//
+//    public XFutureVoid thenComposeToVoid(Supplier< ? extends XFuture<Void>> supplier) {
+//        return this.thenComposeToVoid(defaultName(), supplier);
+//    }
 
-    public XFutureVoid thenComposeToVoid(Supplier< ? extends XFuture<Void>> supplier) {
-        return this.thenComposeToVoid(defaultName(), supplier);
-    }
-
-    public XFutureVoid thenComposeAsyncToVoid(String name, Supplier< ? extends XFuture<Void>> supplier) {
-        XFuture<Void> future = this.thenComposeAsync(name, x -> supplier.get());
+    public XFutureVoid thenComposeAsyncToVoid(String name, Supplier< ? extends XFuture<Void>> supplier,ExecutorService es) {
+        XFuture<Void> future = this.thenComposeAsync(name, x -> supplier.get(),es);
         XFutureVoid retXFV = new XFutureVoid(name);
         setupFutureHandling(future, retXFV);
         retXFV.alsoCancelAdd(future);
@@ -152,18 +152,6 @@ public class XFutureVoid extends XFuture<Void> {
     private void setupFutureHandling(XFuture<Void> future, XFutureVoid retXFV) {
         XFuture<Void> handledFuture = future.handle(createVoidHandleBiFunction(retXFV));
         retXFV.alsoCancelAdd(handledFuture);
-    }
-
-    public XFutureVoid thenComposeAsyncToVoid(Supplier< ? extends XFuture<Void>> supplier) {
-        return this.thenComposeAsyncToVoid(defaultName(), supplier);
-    }
-
-    public XFutureVoid thenComposeAsyncToVoid(String name, Supplier< ? extends XFuture<Void>> supplier, ExecutorService es) {
-        XFuture<Void> future = this.thenComposeAsync(name, x -> supplier.get(), es);
-        XFutureVoid retXFV = new XFutureVoid(name);
-        setupFutureHandling(future, retXFV);
-        retXFV.alsoCancelAdd(future);
-        return retXFV;
     }
 
     public XFutureVoid thenComposeAsyncToVoid(Supplier< ? extends XFuture<Void>> supplier, ExecutorService es) {

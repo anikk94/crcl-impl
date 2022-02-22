@@ -240,7 +240,7 @@ public class XFuture<T> extends CompletableFuture<T> {
                     printWriter.println("\t \t// skipping (firstExternal=" + firstExternal + ") ");
 // + Arrays.toString(Arrays.copyOfRange(trace, 0, firstExternal)));
                 } else {
-                    firstExternal =0;
+                    firstExternal = 0;
                 }
                 for (int i = firstExternal; i <= lastExternal; i++) {
                     StackTraceElement stackTraceElement = trace[i];
@@ -337,8 +337,8 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     /**
-     * Get a collection of future's that should also be cancelled if this future is
-     * cancelled.
+     * Get a collection of future's that should also be cancelled if this future
+     * is cancelled.
      *
      * @return future's that should also be cancelled
      */
@@ -353,11 +353,11 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     public String getProfileString() {
         setCompleteTime();
-        if(!closingMode) {
+        if (!closingMode) {
             if (null != getProfileStringTrace) {
                 System.out.println("getProfileStringThreadName = " + getProfileStringThreadName);
             }
-            if(null != getProfileStringTrace) {
+            if (null != getProfileStringTrace) {
                 System.out.println("getProfileStringTrace = " + Arrays.toString(getProfileStringTrace));
             }
         }
@@ -587,15 +587,23 @@ public class XFuture<T> extends CompletableFuture<T> {
 
             @Override
             public Thread newThread(Runnable r) {
+                if (disableDefaultThreadPool) {
+                    throw new RuntimeException("propert crcl.utils.XFuture.disableDefaultThreadPool is true");
+                }
                 Thread newThraed = new Thread(r, "XFutureThread_" + count.incrementAndGet());
                 newThraed.setDaemon(true);
                 return newThraed;
             }
         };
         public static final ExecutorService DEFAULT_EXECUTOR_SERVICE = Executors.newCachedThreadPool(THREAD_FACTORY);
+
+        public static final boolean disableDefaultThreadPool = true; //  Boolean.getBoolean("crcl.utils.XFuture.disableDefaultThreadPool");
     }
 
     public static ExecutorService getDefaultThreadPool() {
+        if (Hider.disableDefaultThreadPool) {
+            throw new RuntimeException("propert crcl.utils.XFuture.disableDefaultThreadPool is true");
+        }
         return Hider.DEFAULT_EXECUTOR_SERVICE;
     }
 
@@ -668,7 +676,6 @@ public class XFuture<T> extends CompletableFuture<T> {
 ////                });
 //        Thread.sleep(2000);
 //    }
-
     private final ConcurrentLinkedDeque<CompletableFuture<?>> alsoCancel = new ConcurrentLinkedDeque<>();
 
 //    public static final  Function<Throwable, ?> RETHROWER = XFuture::rethrow;
@@ -798,7 +805,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         retXF.completeExceptionally(throwable);
         return retXF;
     }
-    
+
     public static XFutureVoid runAsync(String name, Runnable r) {
         return XFutureVoid.runAsync(name, r);
     }
@@ -862,39 +869,47 @@ public class XFuture<T> extends CompletableFuture<T> {
         return this.thenCompose(defaultName(), fn);
     }
 
-    
-    @SuppressWarnings("keyfor")
-    public <U> XFuture<U> thenComposeIO(IOFunction<? super T, ? extends CompletionStage<U>> fn) {
-        return this.thenComposeIO(defaultName(), fn);
-    }
-    
-    public XFutureVoid thenComposeToVoid(Function<? super T, ? extends XFuture<Void>> fn) {
-        return this.thenComposeAsyncToVoid(defaultName(), fn);
-    }
-
-    public XFutureVoid thenComposeAsyncToVoid(Function<? super T, ? extends XFuture<Void>> fn) {
-        return this.thenComposeAsyncToVoid(defaultName(), fn);
-    }
+//    @SuppressWarnings("keyfor")
+//    public <U> XFuture<U> thenComposeIO(IOFunction<? super T, ? extends CompletionStage<U>> fn) {
+//        return this.thenComposeIO(defaultName(), fn);
+//    }
+//
+//    public XFutureVoid thenComposeToVoid(Function<? super T, ? extends XFuture<Void>> fn) {
+//        return this.thenComposeAsyncToVoid(defaultName(), fn);
+//    }
+//
+//    public XFutureVoid thenComposeAsyncToVoid(Function<? super T, ? extends XFuture<Void>> fn) {
+//        return this.thenComposeAsyncToVoid(defaultName(), fn);
+//    }
 
     public XFutureVoid thenComposeAsyncToVoid(Function<? super T, ? extends XFuture<Void>> fn, ExecutorService es) {
         return this.thenComposeAsyncToVoid(defaultName(), fn, es);
     }
 
-    public XFutureVoid thenComposeToVoid(String name, Function<? super T, ? extends XFuture<Void>> fn) {
-        XFuture<Void> future = this.thenCompose(name, fn);
-        XFutureVoid retXF = new XFutureVoid(name);
-        future.handle(createVoidHandleBiFunction(retXF));
-        retXF.alsoCancelAdd(future);
-        return retXF;
-    }
+//    public XFutureVoid thenComposeToVoid(String name, Function<? super T, ? extends XFuture<Void>> fn) {
+//        XFuture<Void> future = this.thenCompose(name, fn);
+//        XFutureVoid retXF = new XFutureVoid(name);
+//        future.handle(createVoidHandleBiFunction(retXF));
+//        retXF.alsoCancelAdd(future);
+//        return retXF;
+//    }
 
-    public XFutureVoid thenComposeAsyncToVoid(String name, Function<? super T, ? extends XFuture<Void>> fn) {
-        XFuture<Void> future = this.thenComposeAsync(name, fn);
-        XFutureVoid retXF = new XFutureVoid(name);
-        future.handle(createVoidHandleBiFunction(retXF));
-        retXF.alsoCancelAdd(future);
-        return retXF;
-    }
+//    private Function<? super T, ? extends XFuture<Void>> identity = (T x) -> (XFuture<Void>)x;
+//    public XFutureVoid toXFutureVoid() {
+//        XFuture<Void> future = this.thenCompose(identity);
+//        XFutureVoid retXF = new XFutureVoid(name);
+//        future.handle(createVoidHandleBiFunction(retXF));
+//        retXF.alsoCancelAdd(future);
+//        return retXF;
+//    }
+//
+//    public XFutureVoid thenComposeAsyncToVoid(String name, Function<? super T, ? extends XFuture<Void>> fn) {
+//        XFuture<Void> future = this.thenComposeAsync(name, fn);
+//        XFutureVoid retXF = new XFutureVoid(name);
+//        future.handle(createVoidHandleBiFunction(retXF));
+//        retXF.alsoCancelAdd(future);
+//        return retXF;
+//    }
 
     public XFutureVoid thenComposeAsyncToVoid(String name, Function<? super T, ? extends XFuture<Void>> fn, ExecutorService es) {
         XFuture<Void> future = this.thenComposeAsync(name, fn, es);
@@ -1096,7 +1111,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     public <U> XFuture<U> thenComposeIO(String name, IOFunction<? super T, ? extends CompletionStage<U>> fn) {
-        
+
         XFuture<U> retXF = new XFuture<>(name);
         retXF.setKeepOldProfileStrings(this.keepOldProfileStrings);
         final Function<CompletionStage<U>, CompletionStage<U>> composeFunction = (CompletionStage<U> stage) -> {
@@ -1114,14 +1129,14 @@ public class XFuture<T> extends CompletableFuture<T> {
             retXF.alsoCancelAdd(stageCf);
             return stage;
         };
-        
-        Function<? super T, ? extends CompletionStage<U>> fnwrapped = 
-                (T param) -> {
+
+        Function<? super T, ? extends CompletionStage<U>> fnwrapped
+                = (T param) -> {
                     try {
                         return fn.apply(param);
-                    } catch(IOException ex) {
-                        Logger.getLogger(XFuture.class.getName()).log(Level.SEVERE, "name="+name, ex);
-                        XFuture<U> retXF2 = new XFuture<>(name+":"+ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(XFuture.class.getName()).log(Level.SEVERE, "name=" + name, ex);
+                        XFuture<U> retXF2 = new XFuture<>(name + ":" + ex);
                         retXF2.completeExceptionally(ex);
                         return retXF2;
                     }
@@ -1136,8 +1151,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         retXF.alsoCancelAdd(this);
         return retXF;
     }
-    
-    
+
     public <U> XFuture<U> thenCompose(String name, Function<? super T, ? extends CompletionStage<U>> fn) {
 
         XFuture<U> retXF = new XFuture<>(name);
@@ -1202,7 +1216,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     @Override
-    @SuppressWarnings({"nullness","keyfor"})
+    @SuppressWarnings({"nullness", "keyfor"})
     public <U> XFuture<U> thenComposeAsync(Function<? super T, ? extends CompletionStage<U>> fn, Executor executor) {
         return this.thenComposeAsync(defaultName(), fn, executor);
     }
@@ -1421,7 +1435,6 @@ public class XFuture<T> extends CompletableFuture<T> {
     @SuppressWarnings("serial")
     public static class PrintedXFutureRuntimeException extends PrintedException {
 
-
         public PrintedXFutureRuntimeException(Throwable cause) {
             super(cause);
         }
@@ -1525,25 +1538,25 @@ public class XFuture<T> extends CompletableFuture<T> {
         return newFuture;
     }
 
-//    private <A, R> Function<A, R> fWrap(Function<A, R> f) {
-//        return x -> {
-//            try {
-//                return f.apply(x);
-//            } catch (Throwable t) {
-//                checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
-//                if (t instanceof RuntimeException) {
-//                    throw ((RuntimeException) t);
-//                } else {
-//                    throw new RuntimeException(t);
-//                }
-//            }
-//        };
-//    }
-
     private <A, B, R> BiFunction<A, B, R> biWrap(BiFunction<A, B, R> f) {
         return (A a, B b) -> {
             try {
                 return f.apply(a, b);
+            } catch (Throwable t) {
+                checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
+                if (t instanceof RuntimeException) {
+                    throw ((RuntimeException) t);
+                } else {
+                    throw new RuntimeException(t);
+                }
+            }
+        };
+    }
+
+    private <A, R> Function<A, R> fWrap(Function<A, R> f) {
+        return (A a) -> {
+            try {
+                return f.apply(a);
             } catch (Throwable t) {
                 checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
                 if (t instanceof RuntimeException) {
@@ -1917,7 +1930,7 @@ public class XFuture<T> extends CompletableFuture<T> {
         };
     }
 
-    private  T logAndRethrow(Throwable t) {
+    private T logAndRethrow(Throwable t) {
         checkAndLogExceptioni(t, () -> "Exception in XFuture " + XFuture.this.forExceptionString());
         return rethrow(t);
     }
@@ -1967,7 +1980,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     @Override
     @SuppressWarnings("keyfor")
     public <U> XFuture<U> thenApplyAsync(Function<? super T, ? extends U> fn) {
-        return wrap(this.name + ".thenApplyAsync", super.thenApplyAsync(fn, getDefaultThreadPool()));
+        return wrap(this.name + ".thenApplyAsync", super.thenApplyAsync(fWrap(fn), getDefaultThreadPool()));
     }
 
     @Override
@@ -2104,7 +2117,7 @@ public class XFuture<T> extends CompletableFuture<T> {
     }
 
     public XFuture<T> alwaysComposeAsyncToInput(String name, Supplier<XFutureVoid> supplier, ExecutorService service) {
-        return alwaysComposeAsync(name, supplier,service)
+        return alwaysComposeAsync(name, supplier, service)
                 .thenApply((ComposedPair<T, Void> pair) -> pair.getInput());
     }
 

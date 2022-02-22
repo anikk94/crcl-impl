@@ -543,7 +543,7 @@ public class CRCLUtils {
         }
     }
     
-    static public boolean graphicsEnvironmentIsHeadless() {
+    static public boolean isGraphicsEnvironmentHeadless() {
         return GraphicsEnvironment.isHeadless() || forceHeadless;
     }
 }
