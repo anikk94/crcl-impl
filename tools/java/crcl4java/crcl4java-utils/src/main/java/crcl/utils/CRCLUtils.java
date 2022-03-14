@@ -123,7 +123,7 @@ public class CRCLUtils {
      */
     @SuppressWarnings("nullness")
     @EnsuresNonNull("#1")
-    public static <T extends Object> T requireNonNull(@Nullable T ref, String message) {
+    public static <T extends Object> T requireNonNull(@Nullable T ref, String message) throws NullPointerException {
         return Objects.requireNonNull(ref, message);
     }
 
