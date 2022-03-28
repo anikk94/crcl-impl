@@ -574,7 +574,7 @@ public class GripperJFrame extends javax.swing.JFrame {
                 System.err.println("Invalid selected component name: " + this.jTabbedPane1.getSelectedComponent().getName());
                 break;
         }
-        GripperStatusType gripperStatus = Objects.requireNonNull(this.status.getGripperStatus(), "this.status.getGripperStatus()");
+        GripperStatusType gripperStatus = CRCLUtils.requireNonNull(this.status.getGripperStatus(), "this.status.getGripperStatus()");
         gripperStatus.setGripperName(this.jTabbedPane1.getSelectedComponent().getName());
 
         if (this.jCheckBoxSendStatusWithoutRequest.isSelected()) {

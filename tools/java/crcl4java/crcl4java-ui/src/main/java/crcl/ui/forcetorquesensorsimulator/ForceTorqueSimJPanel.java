@@ -1426,11 +1426,11 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
                 getStatusCmd.setName("ForceTorqueSimGetPose" + getPoseCount.incrementAndGet());
                 poseInConnectionStackCopy.writeCommand(getStatusCmd);
                 CRCLStatusType newStatus
-                        = Objects.requireNonNull(poseInConnectionStackCopy.readStatus(),
+                        = CRCLUtils.requireNonNull(poseInConnectionStackCopy.readStatus(),
                                 "poseInConnection.readStatus()");
                 this.poseStatus = newStatus;
-                final PoseStatusType newPoseStatus = Objects.requireNonNull(newStatus.getPoseStatus(), "newStatus.getPoseStatus()");
-                final PoseType pose = Objects.requireNonNull(newPoseStatus.getPose(), "newPoseStatus.getPose()");
+                final PoseStatusType newPoseStatus = CRCLUtils.requireNonNull(newStatus.getPoseStatus(), "newStatus.getPoseStatus()");
+                final PoseType pose = CRCLUtils.requireNonNull(newPoseStatus.getPose(), "newPoseStatus.getPose()");
                 GripperStatusType gripperStatus = newStatus.getGripperStatus();
                 boolean holdingObjectExpected = false;
                 if (null == gripperStatus) {

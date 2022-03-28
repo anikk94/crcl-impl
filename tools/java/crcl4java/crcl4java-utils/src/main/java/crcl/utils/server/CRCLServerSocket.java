@@ -2730,7 +2730,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         Map<String, SensorStatusType> sensorStatMap = new HashMap<>();
         for (GuardType guard : guards) {
             final String guardMapId = guardMapId(guard);
-            final GuardLimitEnumType guarLimitType = Objects.requireNonNull(guard.getLimitType());
+            final GuardLimitEnumType guarLimitType = CRCLUtils.requireNonNull(guard.getLimitType());
             final double limitValue = guard.getLimitValue();
             boolean sensorStatMapWasEmpty = sensorStatMap.isEmpty();
 

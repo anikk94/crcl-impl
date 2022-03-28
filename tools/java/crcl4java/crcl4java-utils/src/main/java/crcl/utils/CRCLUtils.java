@@ -97,7 +97,7 @@ public class CRCLUtils {
     /**
      * This is a work-around for missing annotations for some versions of the
      * JDK / CheckerFramework. It is just a wrapper for
-     * java.util.Objects.requireNonNull
+     * java.util.CRCLUtils.requireNonNull
      *
      * @param ref the object reference to check for nullity
      * @param <T> the type of the reference
@@ -106,13 +106,13 @@ public class CRCLUtils {
      */
     @SuppressWarnings("nullness")
     public static <T extends Object> T requireNonNull(@Nullable T ref) {
-        return Objects.requireNonNull(ref);
+        return CRCLUtils.requireNonNull(ref);
     }
 
     /**
      * This is a work-around for missing annotations for some versions of the
      * JDK / CheckerFramework. It is just a wrapper for
-     * java.util.Objects.requireNonNull
+     * java.util.CRCLUtils.requireNonNull
      *
      * @param ref the object reference to check for nullity
      * @param message detail message to be used in the event that a {@code
@@ -124,7 +124,7 @@ public class CRCLUtils {
     @SuppressWarnings("nullness")
     @EnsuresNonNull("#1")
     public static <T extends Object> T requireNonNull(@Nullable T ref, String message) throws NullPointerException {
-        return Objects.requireNonNull(ref, message);
+        return CRCLUtils.requireNonNull(ref, message);
     }
 
     /**

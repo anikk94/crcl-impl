@@ -2671,7 +2671,7 @@ public class SimServerInner {
 //                    settingsStatus.setAngleUnitName(setAngle.getUnitName());
                 } else if (cmd instanceof SetEndPoseToleranceType) {
                     SetEndPoseToleranceType endPoseTol = (SetEndPoseToleranceType) cmd;
-                    this.setExpectedEndPoseTolerance(Objects.requireNonNull(endPoseTol.getTolerance(), "endPoseTol.getTolerance()"));
+                    this.setExpectedEndPoseTolerance(CRCLUtils.requireNonNull(endPoseTol.getTolerance(), "endPoseTol.getTolerance()"));
                     setCommandState(CRCL_DONE);
                     crclServerSocket1.addToUpdateServerSideRunnables(() -> {
                         CRCLStatusType statToChange = this.status.get();
@@ -2680,7 +2680,7 @@ public class SimServerInner {
                     });
                 } else if (cmd instanceof SetIntermediatePoseToleranceType) {
                     SetIntermediatePoseToleranceType intermediatePoseTol = (SetIntermediatePoseToleranceType) cmd;
-                    this.setExpectedIntermediatePoseTolerance(Objects.requireNonNull(intermediatePoseTol.getTolerance(), "intermediatePoseTol.getTolerance()"));
+                    this.setExpectedIntermediatePoseTolerance(CRCLUtils.requireNonNull(intermediatePoseTol.getTolerance(), "intermediatePoseTol.getTolerance()"));
                     setCommandState(CRCL_DONE);
                     crclServerSocket1.addToUpdateServerSideRunnables(() -> {
                         CRCLStatusType statToChange = this.status.get();

@@ -1530,23 +1530,23 @@ public class CrclSwingClientInner {
 		initSent = true;
 	    } else if (cmd instanceof SetAngleUnitsType) {
 		SetAngleUnitsType setAngle = (SetAngleUnitsType) cmd;
-		final AngleUnitEnumType angleUnitName = Objects.requireNonNull(setAngle.getUnitName(),
+		final AngleUnitEnumType angleUnitName = CRCLUtils.requireNonNull(setAngle.getUnitName(),
 			"setAngle.getUnitName()");
 		this.setAngleType(angleUnitName);
 	    } else if (cmd instanceof SetLengthUnitsType) {
 		SetLengthUnitsType setLengthUnit = (SetLengthUnitsType) cmd;
-		final LengthUnitEnumType cmdLengthUnitName = Objects.requireNonNull(setLengthUnit.getUnitName(),
+		final LengthUnitEnumType cmdLengthUnitName = CRCLUtils.requireNonNull(setLengthUnit.getUnitName(),
 			"setLengthUnit.getUnitName()");
 		this.setLengthUnit(cmdLengthUnitName);
 		this.lengthUnitSent = true;
 	    } else if (cmd instanceof SetEndPoseToleranceType) {
 		SetEndPoseToleranceType endPoseTol = (SetEndPoseToleranceType) cmd;
-		final PoseToleranceType tolerance = Objects.requireNonNull(endPoseTol.getTolerance(),
+		final PoseToleranceType tolerance = CRCLUtils.requireNonNull(endPoseTol.getTolerance(),
 			"endPoseTol.getTolerance()");
 		this.setExpectedEndPoseTolerance(tolerance);
 	    } else if (cmd instanceof SetIntermediatePoseToleranceType) {
 		SetIntermediatePoseToleranceType intermediatePoseTol = (SetIntermediatePoseToleranceType) cmd;
-		final PoseToleranceType tolerance = Objects.requireNonNull(intermediatePoseTol.getTolerance(),
+		final PoseToleranceType tolerance = CRCLUtils.requireNonNull(intermediatePoseTol.getTolerance(),
 			"intermediatePoseTol.getTolerance()");
 		this.setExpectedIntermediatePoseTolerance(tolerance);
 	    } else if (cmd instanceof ConfigureJointReportsType) {
@@ -2792,7 +2792,7 @@ public class CrclSwingClientInner {
 	long curTime = System.currentTimeMillis();
 	CommandStatusLogElement lastEl = getLastCommandStatusLogElement();
 	CommandStatusType curCmdStatus = CRCLUtils.getNonNullCommandStatus(curStatus);
-	CommandStateEnumType curState = Objects.requireNonNull(curCmdStatus.getCommandState(),
+	CommandStateEnumType curState = CRCLUtils.requireNonNull(curCmdStatus.getCommandState(),
 		"curCmdStatus.getCommandState()");
 	final boolean notAlreadyDone = lastStatusLogState == CRCL_WORKING
 		|| (lastCommandStatusLogElement instanceof CommandLogElement);
@@ -3319,7 +3319,7 @@ public class CrclSwingClientInner {
 		showMessage("ActuateJoints failed : no jointStatus for " + aj.getJointNumber());
 		return false;
 	    }
-	    final double testJointPosition = Objects.requireNonNull(jointStatusTest.getJointPosition(),
+	    final double testJointPosition = CRCLUtils.requireNonNull(jointStatusTest.getJointPosition(),
 		    "jointStatusTest.getJointPosition()");
 	    double jointDiff = Math.abs(testJointPosition - aj.getJointPosition());
 	    if (jointDiff > jointTol) {
@@ -3433,7 +3433,7 @@ public class CrclSwingClientInner {
 	PointType origPoint = requireNonNull(CRCLPosemath.point(origStatus),
 		"CRCLPosemath.getPoint(testCommandStartStatus)");
 	PointType curPoint = this.currentStatusPoint();
-	final LengthUnitEnumType sluUnitName = Objects.requireNonNull(slu.getUnitName(), "slu.getUnitName()");
+	final LengthUnitEnumType sluUnitName = CRCLUtils.requireNonNull(slu.getUnitName(), "slu.getUnitName()");
 	double newScale = unitToScale(sluUnitName);
 	double oldScale = unitToScale(testCommandStartLengthUnit);
 	double convertScale = newScale / oldScale;
@@ -3535,7 +3535,7 @@ public class CrclSwingClientInner {
     private final String NEW_LINE = System.lineSeparator();
 
     private boolean testMoveToEffect(MoveToType moveTo) {
-	if (!Objects.requireNonNull(moveTo.getGuard(), "moveTo.getGuard()").isEmpty()) {
+	if (!CRCLUtils.requireNonNull(moveTo.getGuard(), "moveTo.getGuard()").isEmpty()) {
 	    return true;
 	}
 	PoseType curPose = this.currentStatusPose();
@@ -4065,7 +4065,7 @@ public class CrclSwingClientInner {
 			+ ", startRunProgramAbortCount=" + startRunProgramAbortCount);
 	    }
 	    long id = commandId.get();
-	    final InitCanonType initCmd = Objects.requireNonNull(prog.getInitCanon(), "prog.getInitCanon()");
+	    final InitCanonType initCmd = CRCLUtils.requireNonNull(prog.getInitCanon(), "prog.getInitCanon()");
 	    long progId = initCmd.getCommandID();
 	    if (null != middleCommands(prog)) {
 		setOutgoingProgramLength(middleCommands(prog).size());
@@ -4287,7 +4287,7 @@ public class CrclSwingClientInner {
 	    }
 
 	    programCommandStartTime = System.currentTimeMillis();
-	    EndCanonType endCmd = Objects.requireNonNull(prog.getEndCanon(), "prog.getEndCanon()");
+	    EndCanonType endCmd = CRCLUtils.requireNonNull(prog.getEndCanon(), "prog.getEndCanon()");
 	    programName = prog.getName();
 	    index = -1;
 	    programIndex = -1;
@@ -4736,7 +4736,7 @@ public class CrclSwingClientInner {
 		int maxJoint = Integer.parseInt(testProperies.getOrDefault("maxJoint", "10"));
 		Iterable<JointStatusType> jointStatusIterable2 = CRCLUtils.getNonNullJointStatusIterable(jointStatuses);
 		for (JointStatusType jointStatus2 : jointStatusIterable2) {
-		    double origPosition = Objects.requireNonNull(jointStatus2.getJointPosition(),
+		    double origPosition = CRCLUtils.requireNonNull(jointStatus2.getJointPosition(),
 			    "jointStatus2.getJointPosition()");
 		    final double newJointPosition = origPosition + jointPosIncrement;
 		    ActuateJointsType firstActuateJointsCmd = createActuateJointsCmd(jointStatus2, newJointPosition,
@@ -4914,7 +4914,7 @@ public class CrclSwingClientInner {
 	Iterable<JointStatusType> jsIterable = CRCLUtils.getNonNullJointStatusIterable(jointStatuses);
 	for (JointStatusType js : jsIterable) {
 	    if (js.getJointNumber() == jointNumber) {
-		return Objects.requireNonNull(js.getJointPosition(), "js.getJointPosition()");
+		return CRCLUtils.requireNonNull(js.getJointPosition(), "js.getJointPosition()");
 	    }
 	}
 	throw new IllegalStateException(
@@ -5970,7 +5970,7 @@ public class CrclSwingClientInner {
 	lastStartRunProgramThreadStartLine = startLine;
 	long id = commandId.get();
 	lastStartRunProgramThreadCommandId = id;
-	InitCanonType initCmd = Objects.requireNonNull(prog.getInitCanon(), "prog.getInitCanon()");
+	InitCanonType initCmd = CRCLUtils.requireNonNull(prog.getInitCanon(), "prog.getInitCanon()");
 	if (startLine == 0) {
 	    long progId = initCmd.getCommandID();
 	    System.out.println("startRunProgramThread(startLine = " + startLine + ") :id = " + id

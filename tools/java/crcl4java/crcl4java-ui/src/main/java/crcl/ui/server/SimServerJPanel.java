@@ -260,7 +260,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                                     = getNonNullJointStatusIterable(jsst);
                             for (JointStatusType jst : jsIterable) {
                                 final Double jointPosition
-                                        = Objects.requireNonNull(jst.getJointPosition(), "jst.getJointPosition()");
+                                        = CRCLUtils.requireNonNull(jst.getJointPosition(), "jst.getJointPosition()");
                                 final int jointNumber = jst.getJointNumber();
                                 inner.setJointPosition(jointPosition, jointNumber - 1);
                             }

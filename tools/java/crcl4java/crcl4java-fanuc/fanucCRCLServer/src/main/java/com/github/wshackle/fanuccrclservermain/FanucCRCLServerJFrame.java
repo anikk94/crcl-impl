@@ -133,7 +133,7 @@ public class FanucCRCLServerJFrame extends javax.swing.JFrame implements FanucCR
 //    public static Image getRobotImage() {
 //        final Image img;
 //        try {
-//            final URL systemResourceRobotImageUrl = Objects.requireNonNull(ClassLoader.getSystemResource("robot.png"),"ClassLoader.getSystemResource(\"robot.png\")");
+//            final URL systemResourceRobotImageUrl = CRCLUtils.requireNonNull(ClassLoader.getSystemResource("robot.png"),"ClassLoader.getSystemResource(\"robot.png\")");
 //            img = ImageIO.read(systemResourceRobotImageUrl);
 //        } catch (IOException ex) {
 //            Logger.getLogger(FanucCRCLServerJFrame.class.getName()).log(Level.SEVERE, "", ex);

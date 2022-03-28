@@ -369,7 +369,7 @@ public class CrclSwingClientJPanel
         } else if (newProgram != programShowingLocal) {
             final List<MiddleCommandType> programShowingMiddleCommandsList
                     = CRCLUtils.getNonNullFilteredList(programShowingLocal.getMiddleCommand());
-            final int newProgramSize = Objects.requireNonNull(middleCommandsList, "program.getMiddleCommand()").size();
+            final int newProgramSize = CRCLUtils.requireNonNull(middleCommandsList, "program.getMiddleCommand()").size();
             final InitCanonType showingInit = programShowingLocal.getInitCanon();
             final InitCanonType newInit = newProgram.getInitCanon();
             final EndCanonType showingEnd = programShowingLocal.getEndCanon();
@@ -969,7 +969,7 @@ public class CrclSwingClientJPanel
             middleCommandsList.add(moveToCmd);
             setCommandId(moveToCmd, middleCommandsList.size() + 1);
             final EndCanonType endCommand
-                    = Objects.requireNonNull(
+                    = CRCLUtils.requireNonNull(
                             program.getEndCanon(),
                             "program.getEndCanon()");
             if (moveToCmd.getCommandID() + 1 > endCommand.getCommandID()) {
@@ -1560,7 +1560,7 @@ public class CrclSwingClientJPanel
 //            internal.setOutgoingProgramFile(null);
         } else if (showProgramCopy == null
                 || prevSetProgramProgram != program
-                || Objects.requireNonNull(program.getMiddleCommand(), "program.getMiddleCommand()").size() != prevSetProgramLength) {
+                || CRCLUtils.requireNonNull(program.getMiddleCommand(), "program.getMiddleCommand()").size() != prevSetProgramLength) {
             showProgramCopy = copy(program);
             prevSetProgramProgram = program;
             prevSetProgramLength = middleCommands(program).size();
@@ -1937,7 +1937,7 @@ public class CrclSwingClientJPanel
             stateDescription = "";
         }
         final CommandStateEnumType state
-                = Objects.requireNonNull(
+                = CRCLUtils.requireNonNull(
                         ccst.getCommandState(),
                         "ccst.getCommandState()");
         String stateString = state.toString();
@@ -2640,7 +2640,7 @@ public class CrclSwingClientJPanel
                         showMessage("Can't when status commandState = " + CommandStateEnumType.CRCL_ERROR);
                         jogStop();
                     }
-                    final double currentJointPositionn = Objects.requireNonNull(js.getJointPosition(), "js.getJointPosition()");
+                    final double currentJointPositionn = CRCLUtils.requireNonNull(js.getJointPosition(), "js.getJointPosition()");
                     double pos = currentJointPositionn;
                     if (apCount > 1) {
                         if (commandStatus.getCommandState() != CommandStateEnumType.CRCL_DONE) {
@@ -3508,11 +3508,11 @@ public class CrclSwingClientJPanel
             }
             logShowProgramInfo(program, progRunDataList, line);
             InitCanonType init
-                    = Objects.requireNonNull(program.getInitCanon(), "program.getInitCanon()");
+                    = CRCLUtils.requireNonNull(program.getInitCanon(), "program.getInitCanon()");
             List<MiddleCommandType> middleCommands
                     = CRCLUtils.getNonNullFilteredList(program.getMiddleCommand());
             EndCanonType endCommand
-                    = Objects.requireNonNull(program.getEndCanon(), "program.getEndCanon()");
+                    = CRCLUtils.requireNonNull(program.getEndCanon(), "program.getEndCanon()");
             dtm.setRowCount(2 + middleCommands.size());
             long initCmdId = init.getCommandID();
             dtm.setValueAt(-1, 0, 0);
@@ -5913,8 +5913,8 @@ public class CrclSwingClientJPanel
     }//GEN-LAST:event_jButtonMoveToActionPerformed
 
     private void addGuard(CRCLCommandType cmd, GuardType guard) {
-        Objects.requireNonNull(
-                Objects.requireNonNull(cmd, "cmd").getGuard(),
+        CRCLUtils.requireNonNull(
+                CRCLUtils.requireNonNull(cmd, "cmd").getGuard(),
                 "getGuard()")
                 .add(guard);
     }
