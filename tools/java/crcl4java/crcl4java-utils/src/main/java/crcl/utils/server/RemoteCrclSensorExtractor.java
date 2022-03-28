@@ -65,7 +65,7 @@ public class RemoteCrclSensorExtractor implements SensorServerInterface {
 
     private static String findParam(List<ParameterSettingType> sensorParameterSetting, String name, String defaultValue) {
         for (ParameterSettingType param : sensorParameterSetting) {
-            final String parameterName = CRCLUtils.requireNonNull(param.getParameterName(), "param.getParameterName()");
+            final String parameterName = Objects.requireNonNull(param.getParameterName(), "param.getParameterName()");
             final String parameterValue = param.getParameterValue();
             if (Objects.equals(parameterName, name) && null != parameterValue) {
                 return parameterValue;

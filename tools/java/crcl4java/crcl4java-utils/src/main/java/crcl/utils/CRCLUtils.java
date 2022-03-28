@@ -106,7 +106,7 @@ public class CRCLUtils {
      */
     @SuppressWarnings("nullness")
     public static <T extends Object> T requireNonNull(@Nullable T ref) {
-        return CRCLUtils.requireNonNull(ref);
+        return Objects.requireNonNull(ref);
     }
 
     /**
@@ -124,7 +124,7 @@ public class CRCLUtils {
     @SuppressWarnings("nullness")
     @EnsuresNonNull("#1")
     public static <T extends Object> T requireNonNull(@Nullable T ref, String message) throws NullPointerException {
-        return CRCLUtils.requireNonNull(ref, message);
+        return Objects.requireNonNull(ref, message);
     }
 
     /**
