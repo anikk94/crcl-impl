@@ -136,6 +136,7 @@ import crcl.ui.DefaultSchemaFiles;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;
+import crcl.utils.CRCLUtils;
 import crcl.utils.PoseToleranceChecker;
 import crcl.utils.ThreadLockedHolder;
 import crcl.utils.XFuture;
