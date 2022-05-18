@@ -33,7 +33,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.JPanel;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -69,9 +71,23 @@ public class InOutJPanel extends JPanel {
      */
     public void setStacks(List<TrayStack> stacks) {
         this.stacks = stacks;
+        for(Consumer<List<TrayStack>> listener : trayStacksListeners) {
+            listener.accept(stacks);
+        }
         this.repaint();
     }
 
+    
+    final private  List<Consumer<List<TrayStack>>> trayStacksListeners = new ArrayList<>();
+    
+    public void addTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        trayStacksListeners.add(listener);
+    }
+    
+    public void removeTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        trayStacksListeners.remove(listener);
+    }
+    
     private class InOutMouseAdapter extends MouseAdapter {
 
         @Override

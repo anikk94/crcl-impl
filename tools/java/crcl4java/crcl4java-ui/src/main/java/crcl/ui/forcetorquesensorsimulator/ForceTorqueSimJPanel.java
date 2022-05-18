@@ -1720,7 +1720,15 @@ public class ForceTorqueSimJPanel extends javax.swing.JPanel implements Property
         inOutJPanel1.setStacks(stacks);
         this.repaint();
     }
-
+    
+    public void addTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        inOutJPanel1.addTrayStacksListListener(listener);
+    }
+    
+    public void removeTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        inOutJPanel1.addTrayStacksListListener(listener);
+    }
+    
     private volatile int lastUpdateSensorStatusWithPoseHoldingObjectChanges = -1;
 
     private synchronized ForceTorqueSensorStatusType updateSensorStatusWithPose(@Nullable PoseType pose) {
