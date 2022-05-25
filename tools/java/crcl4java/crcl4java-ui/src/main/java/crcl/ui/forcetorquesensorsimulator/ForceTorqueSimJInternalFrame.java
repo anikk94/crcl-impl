@@ -26,6 +26,9 @@ import crcl.ui.client.CrclSwingClientJPanel;
 import crcl.utils.outer.interfaces.PropertyOwner;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -127,5 +130,29 @@ public class ForceTorqueSimJInternalFrame extends javax.swing.JInternalFrame imp
     @Override
     public void saveProperties() {
         forceTorqueSimJPanel2.saveProperties();
+    }
+    
+    
+    public List<TrayStack> getStacks() {
+        return forceTorqueSimJPanel2.getStacks();
+    }
+
+//    /**
+//     * Set the value of stacks
+//     *
+//     * @param stacks new value of stacks
+//     */
+//    public void setStacks(List<TrayStack> stacks) {
+//        listToModel((DefaultTableModel) jTableObjects.getModel(), stacks);
+//        inOutJPanel1.setStacks(stacks);
+//        this.repaint();
+//    }
+    
+    public void addTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        forceTorqueSimJPanel2.addTrayStacksListListener(listener);
+    }
+    
+    public void removeTrayStacksListListener(Consumer<List<TrayStack>> listener) {
+        forceTorqueSimJPanel2.addTrayStacksListListener(listener);
     }
 }
