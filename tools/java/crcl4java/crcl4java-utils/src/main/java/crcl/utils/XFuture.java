@@ -497,6 +497,10 @@ public class XFuture<T> extends CompletableFuture<T> {
 
     @Override
     public String toString() {
+        String exString = getExceptionString();
+        if(exString != null ) {
+            return super.toString() + "{" + name + "(" + getRunTime() + "ms ago) } \r\n"+exString;
+        }
         return super.toString() + "{" + name + "(" + getRunTime() + "ms ago) }";
     }
 
@@ -1783,6 +1787,17 @@ public class XFuture<T> extends CompletableFuture<T> {
     @Override
     public XFutureVoid runAfterBothAsync(CompletionStage<?> other, Runnable action, Executor executor) {
         return wrapvoid(this.name + ".runAfterBothAsync", super.runAfterBothAsync(other, action, executor));
+    }
+
+    public @Nullable  String getExceptionString() {
+        StringWriter sw = new StringWriter();
+        Throwable t = this.getThrowable();
+        if(null == t) {
+            return null;
+        }
+        PrintWriter printWriter = new PrintWriter(sw);
+        t.printStackTrace(printWriter);
+        return  sw.toString();
     }
 
     @Override
