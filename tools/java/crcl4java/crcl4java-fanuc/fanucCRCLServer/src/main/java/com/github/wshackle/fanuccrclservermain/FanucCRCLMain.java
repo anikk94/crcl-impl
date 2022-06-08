@@ -3093,6 +3093,8 @@ public class FanucCRCLMain {
         localServerSocketStatus.setSettingsStatus(localStatus.getSettingsStatus());
         localServerSocketStatus.setSensorStatuses(localStatus.getSensorStatuses());
         localServerSocketStatus.setGuardsStatuses(localStatus.getGuardsStatuses());
+        this.serverSocketStatus.releaseLockThread();
+        this.status.releaseLockThread();
         crclServerSocket.setServerSideStatus(this.serverSocketStatus);
         crclServerSocket.setUpdateStatusSupplier(this::readCachedStatusFromRobot);
         crclServerSocket.setAutomaticallySendServerSideStatus(true);

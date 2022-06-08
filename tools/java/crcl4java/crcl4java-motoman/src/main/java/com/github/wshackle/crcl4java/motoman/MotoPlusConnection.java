@@ -349,6 +349,11 @@ public class MotoPlusConnection implements AutoCloseable {
     private volatile @Nullable Thread lastThreadUsed = null;
     private volatile StackTraceElement lastThreadSetTrace @Nullable []  = null;
 
+    void clearLastThreadUsed() {
+        lastThreadSetTrace = null;
+        lastThreadUsed = null;
+    }
+    
     private void writeDataOutputStream(ByteBuffer bb) throws IOException {
         final Thread t = Thread.currentThread();
         if (t != lastThreadUsed && !closing) {

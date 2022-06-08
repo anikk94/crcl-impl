@@ -36,15 +36,17 @@ public class ThreadLockedHolder<T> implements Supplier<T> {
     private final String name;
 
     private final StackTraceElement createTrace[];
-    private volatile StackTraceElement lockTrace  @Nullable [];
-    private volatile StackTraceElement unlockTrace @Nullable [];
+    private volatile StackTraceElement lockTrace  @Nullable [] ;
+    private volatile StackTraceElement unlockTrace @Nullable [] ;
     private volatile @Nullable Thread lockThread;
     private final AtomicInteger getCountAI = new AtomicInteger();
     private final AtomicInteger releaseCountAI = new AtomicInteger();
 
-    public @Nullable Thread getLockThread() {
+    public @Nullable
+    Thread getLockThread() {
         return lockThread;
     }
+
     public ThreadLockedHolder(String name, T object) {
         this.name = name;
         this.object = object;
@@ -128,12 +130,13 @@ public class ThreadLockedHolder<T> implements Supplier<T> {
     }
 
     public void releaseLockThread() {
-        if(null == object) {
+        if (null == object) {
             throw new NullPointerException("object");
         }
         synchronized (object) {
             releaseCountAI.incrementAndGet();
             lockThread = null;
+            lockTrace = null;
             unlockTrace = Thread.currentThread().getStackTrace();
         }
     }
