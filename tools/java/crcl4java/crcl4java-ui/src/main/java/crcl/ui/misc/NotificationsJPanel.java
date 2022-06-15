@@ -22,6 +22,8 @@
  */
 package crcl.ui.misc;
 
+import static crcl.ui.misc.CRCLUiUtils.autoResizeTableColWidths;
+import static crcl.ui.misc.CRCLUiUtils.scrollToVisible;
 import crcl.utils.CRCLUtils;
 import crcl.utils.XFuture;
 import java.awt.Component;
@@ -240,6 +242,8 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         } else {
             throw new RuntimeException("table model is not a DefaultTimeModel");
         }
+        autoResizeTableColWidths(notificationsJPanel.jTable1);
+        scrollToVisible(notificationsJPanel.jTable1,notificationsJPanel.jTable1.getRowCount()-1,0);
         jFrame.setTitle(title);
         jFrame.setVisible(true);
         jFrame.toFront();

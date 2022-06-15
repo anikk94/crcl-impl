@@ -75,6 +75,8 @@ import static crcl.base.CommandStateEnumType.CRCL_ERROR;
 import static crcl.copier.CRCLCopier.copy;
 import static crcl.ui.IconImages.*;
 import static crcl.ui.PoseDisplay.*;
+import static crcl.ui.misc.CRCLUiUtils.autoResizeTableColWidths;
+import static crcl.ui.misc.CRCLUiUtils.scrollToVisible;
 import static crcl.ui.misc.ObjTableJPanel.getAssignableClasses;
 import static crcl.utils.CRCLPosemath.*;
 import static crcl.utils.CRCLUtils.middleCommands;
@@ -296,18 +298,7 @@ public class CrclSwingClientJPanel
         errorsPop.show(evt.getComponent(), evt.getX(), evt.getY());
     }
 
-    private static void scrollToVisible(JTable table, int rowIndex, int vColIndex) {
-        Container container = table.getParent();
-        if (container instanceof JViewport) {
-            JViewport viewport = (JViewport) container;
-            Rectangle rect = table.getCellRect(rowIndex, vColIndex, true);
-            Point pt = viewport.getViewPosition();
-            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
-            viewport.scrollRectToVisible(rect);
-        } else {
-            throw new IllegalStateException("Tables parent " + container + " needs to be a JViewPort");
-        }
-    }
+    
 
     public int getCurrentProgramLine() {
         if (internal.isRunningProgram()) {
@@ -6326,43 +6317,7 @@ public class CrclSwingClientJPanel
         return timeFormat.format(date);
     }
 
-    public static void autoResizeTableColWidths(JTable table) {
-
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-        int fullsize = 0;
-        Container parent = table.getParent();
-        if (null != parent) {
-            fullsize = Math.max(parent.getPreferredSize().width, parent.getSize().width);
-        }
-        int sumWidths = 0;
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
-            TableColumn col = colModel.getColumn(i);
-            int width = 0;
-
-            TableCellRenderer renderer = col.getHeaderRenderer();
-            if (renderer == null) {
-                renderer = table.getTableHeader().getDefaultRenderer();
-            }
-            Component headerComp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(),
-                    false, false, 0, i);
-            width = Math.max(width, headerComp.getPreferredSize().width);
-            for (int r = 0; r < table.getRowCount(); r++) {
-                renderer = table.getCellRenderer(r, i);
-                Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, i),
-                        false, false, r, i);
-                width = Math.max(width, comp.getPreferredSize().width);
-            }
-            if (i == table.getColumnCount() - 1) {
-                if (width < fullsize - sumWidths) {
-                    width = fullsize - sumWidths;
-                }
-            }
-            col.setPreferredWidth(width + 2);
-            sumWidths += width + 2;
-        }
-    }
+    
 
     public void printCommandStatusLog() throws IOException {
         internal.printCommandStatusLog(System.out, false, true, internal.getCommandStatusLogHeadings(), 20);
