@@ -36,6 +36,7 @@ import crcl.ui.DefaultSchemaFiles;
 import crcl.utils.XFuture;
 
 import crcl.ui.misc.MultiLineStringJPanel;
+import crcl.ui.misc.NotificationsJPanel;
 import crcl.ui.misc.ObjTableJPanel;
 import crcl.utils.CRCLException;
 import crcl.utils.CRCLSchemaUtils;
@@ -1226,7 +1227,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
     public XFuture<Boolean> checkStatusValid(CRCLStatusType statusObj) {
         try {
             String s = inner.getCheckerCRCLSocket().statusToPrettyString(statusObj, true);
-            return MultiLineStringJPanel.showText(s);
+            return MultiLineStringJPanel.checkUserText(s);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
@@ -1322,7 +1323,7 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 long t = System.currentTimeMillis();
                 if (t - last_message_show_time > 500) {
                     last_message_show_time = System.currentTimeMillis();
-                    MultiLineStringJPanel.showText(s, getOuterFrame(), "SimServer Message", true);
+                    NotificationsJPanel.addNotification( getOuterFrame().getTitle(), s);
                 }
                 last_message_show_time = System.currentTimeMillis();
                 showing_message = false;

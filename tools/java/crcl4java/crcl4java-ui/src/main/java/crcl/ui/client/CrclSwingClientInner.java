@@ -158,6 +158,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.swing.SwingUtilities;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
@@ -595,6 +596,8 @@ public class CrclSwingClientInner {
     private volatile StackTraceElement @Nullable [] closeTestProgramThreadTrace = null;
     private volatile @Nullable Thread closeTestProgramThreadThead = null;
 
+    private final AtomicInteger stillRunningErrorCount = new AtomicInteger();
+
     public void closeTestProgramThread() {
         if (!isRunningProgram()) {
             return;
@@ -617,12 +620,28 @@ public class CrclSwingClientInner {
             runProgramFuture = null;
         }
         if (isRunningProgram()) {
+<<<<<<< HEAD
             if (null != closeTestProgramRunProgramThreadTrace) {
                 System.err.println("closeTestProgramRunProgramThreadTrace = "
                         + Arrays.toString(closeTestProgramRunProgramThreadTrace));
             }
             showErrorMessage("still running after cancel: runProgramFuture=" + runProgramFutureFinal
                     + ", runProgramThread=" + crclSocketActionThread);
+=======
+            int count = stillRunningErrorCount.incrementAndGet();
+            showErrorMessage("still running after cancel(" + count + ".1): runProgramFuture=" + runProgramFutureFinal);
+            if (null != runProgramFutureFinal) {
+                showErrorMessage("still running after cancel(" + count + ".2): runProgramFuture.getCreateTrace()=" + XFuture.traceToString(runProgramFutureFinal.getCreateTrace()));
+            }
+            showErrorMessage("still running after cancel(" + count + ".3): runProgramThread=" + crclSocketActionThread);
+            if (null != crclSocketActionThread) {
+                showErrorMessage("still running after cancel(" + count + ".4): runProgramThread.getStackTrace()=" + XFuture.traceToString(crclSocketActionThread.getStackTrace()));
+            }
+            if (null != closeTestProgramRunProgramThreadTrace) {
+                showErrorMessage("still running after cancel(" + count + ".5) : closeTestProgramRunProgramThreadTrace = "
+                        + XFuture.traceToString(closeTestProgramRunProgramThreadTrace));
+            }
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         }
     }
 
@@ -916,7 +935,19 @@ public class CrclSwingClientInner {
                 checkerCommandInstance = new CRCLCommandInstanceType();
             }
             String s = getTempCRCLSocket().programToPrettyString(prog, true);
+<<<<<<< HEAD
             return MultiLineStringJPanel.showText(s);
+=======
+            if (SwingUtilities.isEventDispatchThread()) {
+                return XFuture.completedFuture(MultiLineStringJPanel.checkUserTextOnDisplay(s));
+            } else {
+                final XFuture<Boolean> ret = new XFuture<>("checkProgramValid");
+                SwingUtilities.invokeLater(() -> {
+                    ret.complete(MultiLineStringJPanel.checkUserTextOnDisplay(s));
+                });
+                return ret;
+            }
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "", ex);
             showMessage(ex);
@@ -966,7 +997,11 @@ public class CrclSwingClientInner {
             if (MultiLineStringJPanel.disableShowText) {
                 return XFuture.completedFuture(true);
             }
+<<<<<<< HEAD
             return MultiLineStringJPanel.showText(s);
+=======
+            return MultiLineStringJPanel.checkUserText(s);
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         } catch (Exception ex) {
             System.err.println("cmdSchemaFiles = " + Arrays.toString(cmdSchemaFiles));
             LOGGER.log(Level.SEVERE, "cmdObj=" + cmdObj, ex);
@@ -2731,12 +2766,15 @@ public class CrclSwingClientInner {
             return curStatus;
 //            this.setStatus(curStatus);
         } catch (Exception ex) {
+<<<<<<< HEAD
             while (!unsatisfiedNewStatusFutures.isEmpty()) {
                 XFuture<CRCLStatusType> f = unsatisfiedNewStatusFutures.poll();
                 if (f != null && !f.isDone()) {
                     f.completeExceptionally(ex);
                 }
             }
+=======
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
             if (disconnecting || ex instanceof SocketException || ex.getCause() instanceof SocketException) {
                 return null;
             }
@@ -3061,6 +3099,7 @@ public class CrclSwingClientInner {
 
     private final AtomicInteger connectChangeCount = new AtomicInteger();
 
+<<<<<<< HEAD
     public synchronized void disconnect() {
 
         while (!unsatisfiedNewStatusFutures.isEmpty()) {
@@ -3069,6 +3108,10 @@ public class CrclSwingClientInner {
                 f.completeExceptionally(new RuntimeException("CRCLSwingClientInner.disconnect() called while !unsatisfiedNewStatusFutures.isEmpty()"));
             }
         }
+=======
+    public void disconnect() {
+
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         int ccc = connectChangeCount.incrementAndGet();
         try {
             if (!preClosing && isRunningProgram()) {
@@ -3635,7 +3678,11 @@ public class CrclSwingClientInner {
         return System.currentTimeMillis() - pauseStartTime;
     }
 
+<<<<<<< HEAD
     private synchronized void internalSetPausedTrue() {
+=======
+    private void internalSetPausedTrue() {
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         if (!paused) {
             pauseThread = Thread.currentThread();
             pauseTrace = pauseThread.getStackTrace();
@@ -3706,7 +3753,11 @@ public class CrclSwingClientInner {
     private volatile long unpauseTime = 0;
     private volatile long unpausePauseCount = 0;
 
+<<<<<<< HEAD
     private synchronized void internalSetPausedFalse() {
+=======
+    private void internalSetPausedFalse() {
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         if (paused) {
             paused = false;
             unpauseThread = Thread.currentThread();
@@ -4182,6 +4233,7 @@ public class CrclSwingClientInner {
             showCurrentProgramLine(startLine, prog, getStatus());
             List<MiddleCommandType> middleCommands = middleCommands(prog);
             MiddleCommandType cmd = null;
+<<<<<<< HEAD
             final ConcurrentHashMap<String, ProgBlockInfo> loopMap;
             final Stack<String> blockStack;
             if (!stepMode) {
@@ -4198,6 +4250,10 @@ public class CrclSwingClientInner {
                 loopMap = new ConcurrentHashMap<>();
                 retainedLoopMap = loopMap;
             }
+=======
+            ConcurrentHashMap<String, ProgBlockInfo> loopMap = new ConcurrentHashMap<>();
+            Stack<String> blockStack = new Stack<>();
+>>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
             for (int i = (Math.max(startLine, 1)); i < middleCommands.size() + 1; i++) {
                 if (null != future && future.isCancelled()) {
                     try {
