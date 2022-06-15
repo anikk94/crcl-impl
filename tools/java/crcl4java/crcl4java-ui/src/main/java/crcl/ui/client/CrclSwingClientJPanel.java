@@ -146,7 +146,7 @@ public class CrclSwingClientJPanel
 
     @Override
     public boolean checkUserText(String text) throws InterruptedException, ExecutionException {
-        return MultiLineStringJPanel.showText(text).get();
+        return MultiLineStringJPanel.checkUserTextOnDisplay(text);
     }
 
     public void pauseCrclProgram() {
@@ -465,7 +465,7 @@ public class CrclSwingClientJPanel
                 && lastshowSelectedProgramLineProgram == program) {
             return;
         }
-        
+
         lastShowSelectedProgramLineLine = line;
         lastshowSelectedProgramLineProgram = program;
         final List<MiddleCommandType> middleCommandsList
@@ -1130,7 +1130,7 @@ public class CrclSwingClientJPanel
 
     @Override
     public void showLastStopCommandString(String string) {
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+        if (CRCLUtils.isGraphicsEnvironmentHeadless()) {
             return;
         }
         if (javax.swing.SwingUtilities.isEventDispatchThread()) {
@@ -1411,19 +1411,19 @@ public class CrclSwingClientJPanel
         stopPollTimer();
         disconnect();
         ExecutorService service = this.pollStatusService;
-        if(null != service) {
+        if (null != service) {
             service.shutdown();
         }
         Thread thread = this.pollStatusServiceThread;
-        if(null != thread && thread.isAlive()) {
+        if (null != thread && thread.isAlive()) {
             thread.join();
         }
     }
-    
+
     @Override
     public void stopPollTimer() {
         pollStopCount.incrementAndGet();
-        
+
         showNotJogReady();
     }
 
@@ -1746,7 +1746,7 @@ public class CrclSwingClientJPanel
     public void showMessage(final String s) {
         System.out.println(s);
         showDebugMessage(s);
-        MultiLineStringJPanel.showText(s);
+        NotificationsJPanel.showText(s);
     }
 
     @Override
@@ -2403,8 +2403,8 @@ public class CrclSwingClientJPanel
     }
 
     public void updateTitle(@Nullable CommandStatusType ccst, @Nullable String stateString, @Nullable String stateDescription) {
-        String program="";
-        if(null != ccst) {
+        String program = "";
+        if (null != ccst) {
             String ccstProgramFile = ccst.getProgramFile();
             Integer ccstProgramIndex = ccst.getProgramIndex();
             program = (null != ccstProgramFile && null != ccstProgramIndex)
@@ -2416,7 +2416,7 @@ public class CrclSwingClientJPanel
             if (program.length() > 1) {
                 program = " " + program.trim() + " ";
             }
-        } 
+        }
         JInternalFrame internalFrame = null;
         if (outerContainer instanceof JInternalFrame) {
             internalFrame = (JInternalFrame) outerContainer;
@@ -2479,44 +2479,49 @@ public class CrclSwingClientJPanel
     Thread disconnectThread = null;
 
     public synchronized void disconnect() {
-        showNotJogReady();
-        closeShowProgramLogPrintStream();
-        disconnecting = true;
-        disconnectThread = Thread.currentThread();
-        disconnectTrace = Thread.currentThread().getStackTrace();
-        if (isRunningProgram()) {
-            internal.showErrorMessage("diconnect while isRunningProgram");
-            throw new IllegalStateException("disconnect while isRunningProgram");
-        }
-        this.jTextFieldStatus.setBackground(Color.GRAY);
-        Window window = this.getOuterWindow();
-        if (window instanceof CrclSwingClientJFrame) {
-            CrclSwingClientJFrame frm = (CrclSwingClientJFrame) window;
-            if (null != frm) {
-                frm.setIconImage(DISCONNECTED_IMAGE);
-                frm.setTitle("CRCL Client: Disconnected");
-            }
-        }
-        if (outerContainer instanceof JInternalFrame) {
-            JInternalFrame jInternalFrame = (JInternalFrame) outerContainer;
-            jInternalFrame.setTitle("CRCL Client: Disconnected");
-        }
+        final boolean wasRunningProgram = isRunningProgram();
+        try {
+            showNotJogReady();
+            closeShowProgramLogPrintStream();
+            disconnecting = true;
+            disconnectThread = Thread.currentThread();
+            disconnectTrace = Thread.currentThread().getStackTrace();
 
-        stopPollTimer();
-        final XFutureVoid lastStartPollTimerFutureLocalCopy = this.lastStartPollTimerFuture;
-        if (null == lastStartPollTimerFutureLocalCopy || lastStartPollTimerFutureLocalCopy.isDone()) {
-            completeDisconnect();
-        } else {
-            System.out.println("lastStartPollTimerFutureLocalCopy = " + lastStartPollTimerFutureLocalCopy);
-            lastStartPollTimerFutureLocalCopy.thenRun(this::completeDisconnect);
-            try {
-                Thread.sleep(11 + 2L * internal.getPoll_ms());
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
-                throw new RuntimeException(ex);
+            this.jTextFieldStatus.setBackground(Color.GRAY);
+            Window window = this.getOuterWindow();
+            if (window instanceof CrclSwingClientJFrame) {
+                CrclSwingClientJFrame frm = (CrclSwingClientJFrame) window;
+                if (null != frm) {
+                    frm.setIconImage(DISCONNECTED_IMAGE);
+                    frm.setTitle("CRCL Client: Disconnected");
+                }
             }
-            if (isConnected()) {
-                throw new RuntimeException("timed out waiting for lastStartPollTimerFuture to complete");
+            if (outerContainer instanceof JInternalFrame) {
+                JInternalFrame jInternalFrame = (JInternalFrame) outerContainer;
+                jInternalFrame.setTitle("CRCL Client: Disconnected");
+            }
+
+            stopPollTimer();
+            final XFutureVoid lastStartPollTimerFutureLocalCopy = this.lastStartPollTimerFuture;
+            if (null == lastStartPollTimerFutureLocalCopy || lastStartPollTimerFutureLocalCopy.isDone()) {
+                completeDisconnect();
+            } else {
+                System.out.println("lastStartPollTimerFutureLocalCopy = " + lastStartPollTimerFutureLocalCopy);
+                lastStartPollTimerFutureLocalCopy.thenRun(this::completeDisconnect);
+                try {
+                    Thread.sleep(11 + 2L * internal.getPoll_ms());
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(CrclSwingClientJPanel.class.getName()).log(Level.SEVERE, "", ex);
+                    throw new RuntimeException(ex);
+                }
+                if (isConnected()) {
+                    throw new RuntimeException("timed out waiting for lastStartPollTimerFuture to complete");
+                }
+            }
+        } finally {
+            if (wasRunningProgram) {
+                internal.showErrorMessage("diconnect while isRunningProgram");
+                throw new IllegalStateException("disconnect while isRunningProgram");
             }
         }
     }
@@ -3162,7 +3167,7 @@ public class CrclSwingClientJPanel
     }
 
     public void showCommandLog() {
-        MultiLineStringJPanel.showText(internal.getRecordedCommandsList().stream().map(cmd -> internal.getTempCRCLSocket().commandToPrettyString(cmd, "")).collect(Collectors.joining("\n\n")));
+        NotificationsJPanel.showText(internal.getRecordedCommandsList().stream().map(cmd -> internal.getTempCRCLSocket().commandToPrettyString(cmd, "")).collect(Collectors.joining("\n\n")));
     }
 
     public void loadPrefsAction() {
@@ -3503,7 +3508,7 @@ public class CrclSwingClientJPanel
             programShowing = program;
             if (null == program) {
                 dtm.setRowCount(0);
-                updateTitle(null, null,null);
+                updateTitle(null, null, null);
                 return;
             }
             logShowProgramInfo(program, progRunDataList, line);

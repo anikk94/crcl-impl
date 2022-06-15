@@ -256,35 +256,35 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
         return editTextPrivate(dialog, init);
     }
 
-    private static boolean showTextPrivate(JDialog _dialog, String init) {
-        MultiLineStringJPanel panel = new MultiLineStringJPanel();
-        panel.jTextArea1.setText(init);
-//        panel.jTextArea1.setEditable(false);
-        panel.jScrollPane1.getVerticalScrollBar().setValue(0);
-        panel.jTextArea1.setCaretPosition(0);
-        _dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        _dialog.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                _dialog.setVisible(false);
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-                _dialog.setVisible(false);
-            }
-
-        });
-        panel.dialog = _dialog;
-        _dialog.add(panel);
-        _dialog.pack();
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            _dialog.toFront();
-        });
-        _dialog.setVisible(true);
-        return !panel.cancelled;
-    }
+//    private static boolean showTextPrivate(JDialog _dialog, String init) {
+//        MultiLineStringJPanel panel = new MultiLineStringJPanel();
+//        panel.jTextArea1.setText(init);
+////        panel.jTextArea1.setEditable(false);
+//        panel.jScrollPane1.getVerticalScrollBar().setValue(0);
+//        panel.jTextArea1.setCaretPosition(0);
+//        _dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+//        _dialog.addWindowListener(new WindowAdapter() {
+//
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                _dialog.setVisible(false);
+//            }
+//
+//            @Override
+//            public void windowClosed(WindowEvent e) {
+//                _dialog.setVisible(false);
+//            }
+//
+//        });
+//        panel.dialog = _dialog;
+//        _dialog.add(panel);
+//        _dialog.pack();
+//        javax.swing.SwingUtilities.invokeLater(() -> {
+//            _dialog.toFront();
+//        });
+//        _dialog.setVisible(true);
+//        return !panel.cancelled;
+//    }
 
     public static volatile boolean disableShowText = Boolean.parseBoolean("crcl.ui.misc.MultiLineString.disableShowText");
 
@@ -298,78 +298,78 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
         return ignoreForceShow;
     }
 
-    public static XFuture<Boolean> showException(Throwable throwable) {
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
-            return XFuture.completedFuture(false);
-        }
-        return showText(throwable.getMessage() + "\n\n" + throwable.toString(), null, "Exception: " + throwable.getMessage(), false, true);
-    }
+//    public static XFuture<Boolean> showException(Throwable throwable) {
+//        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+//            return XFuture.completedFuture(false);
+//        }
+//        return showText(throwable.getMessage() + "\n\n" + throwable.toString(), null, "Exception: " + throwable.getMessage(), false, true);
+//    }
+//
+//    public static XFuture<Boolean> showException(Throwable throwable, StackTraceElement trace[]) {
+//        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+//            return XFuture.completedFuture(false);
+//        }
+//        return showText(throwable.getMessage() + "\n\n" + throwable.toString() + "\n\n Thrown from:\r\n" + XFuture.traceToString(throwable.getStackTrace()) + "\n\n Logged from:\r\n" + XFuture.traceToString(trace), null, "Exception : " + throwable.getMessage(), false, true);
+//    }
+//
+//    public static XFuture<Boolean> showText(String init) {
+//        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+//            return XFuture.completedFuture(false);
+//        }
+//        return showText(init, null, "", false, false);
+//    }
+//
+//    public static XFuture<Boolean> forceShowText(String init, JFrame parentJframe) {
+//        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+//            return XFuture.completedFuture(false);
+//        }
+//        if (null == parentJframe) {
+//            throw new IllegalArgumentException("null == parentJframe");
+//        }
+//        return showText(init, parentJframe, "Message from " + parentJframe.getTitle(), false, true);
+//    }
+//
+//    public static XFuture<Boolean> showText(String init,
+//            @Nullable JFrame _owner,
+//            String _title,
+//            boolean _modal) {
+//        return showText(init, _owner, _title, _modal, false);
+//    }
+//
+//    public static XFuture<Boolean> showText(String init,
+//            @Nullable JFrame _owner) {
+//        return showText(init, _owner, "", false, false);
+//    }
 
-    public static XFuture<Boolean> showException(Throwable throwable, StackTraceElement trace[]) {
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
-            return XFuture.completedFuture(false);
-        }
-        return showText(throwable.getMessage() + "\n\n" + throwable.toString() + "\n\n Thrown from:\r\n" + XFuture.traceToString(throwable.getStackTrace()) + "\n\n Logged from:\r\n" + XFuture.traceToString(trace), null, "Exception : " + throwable.getMessage(), false, true);
-    }
-
-    public static XFuture<Boolean> showText(String init) {
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
-            return XFuture.completedFuture(false);
-        }
-        return showText(init, null, "", false, false);
-    }
-
-    public static XFuture<Boolean> forceShowText(String init, JFrame parentJframe) {
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
-            return XFuture.completedFuture(false);
-        }
-        if (null == parentJframe) {
-            throw new IllegalArgumentException("null == parentJframe");
-        }
-        return showText(init, parentJframe, "Message from " + parentJframe.getTitle(), false, true);
-    }
-
-    public static XFuture<Boolean> showText(String init,
-            @Nullable JFrame _owner,
-            String _title,
-            boolean _modal) {
-        return showText(init, _owner, _title, _modal, false);
-    }
-
-    public static XFuture<Boolean> showText(String init,
-            @Nullable JFrame _owner) {
-        return showText(init, _owner, "", false, false);
-    }
-
-    public static XFuture<Boolean> showText(String init,
-            @Nullable JFrame _owner,
-            String _title,
-            boolean _modal,
-            boolean forceShow) {
-
-        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
-            return XFuture.completedFuture(false);
-        }
-        final XFuture<Boolean> ret = new XFuture<>("showText(" + init + "," + _title + ")");
-        if (!disableShowText || (forceShow && !ignoreForceShow)) {
-            runOnDispatchThread(() -> {
-
-                final JDialog dialog;
-                if (null != _owner) {
-                    dialog = new JDialog(_owner, _title, _modal);
-                } else {
-                    dialog = new JDialog();
-                    dialog.setTitle(_title);
-                    dialog.setModal(_modal);
-                }
-
-                ret.complete(showTextPrivate(dialog, init));
-            });
-        } else {
-            ret.complete(false);
-        }
-        return ret;
-    }
+//    public static XFuture<Boolean> showText(String init,
+//            @Nullable JFrame _owner,
+//            String _title,
+//            boolean _modal,
+//            boolean forceShow) {
+//
+//        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+//            return XFuture.completedFuture(false);
+//        }
+//        final XFuture<Boolean> ret = new XFuture<>("showText(" + init + "," + _title + ")");
+//        if (!disableShowText || (forceShow && !ignoreForceShow)) {
+//            runOnDispatchThread(() -> {
+//
+//                final JDialog dialog;
+//                if (null != _owner) {
+//                    dialog = new JDialog(_owner, _title, _modal);
+//                } else {
+//                    dialog = new JDialog();
+//                    dialog.setTitle(_title);
+//                    dialog.setModal(_modal);
+//                }
+//
+//                ret.complete(showTextPrivate(dialog, init));
+//            });
+//        } else {
+//            ret.complete(false);
+//        }
+//        return ret;
+//    }
 
     private static void runOnDispatchThread(final Runnable r) {
         if (javax.swing.SwingUtilities.isEventDispatchThread()) {
@@ -378,7 +378,33 @@ public class MultiLineStringJPanel extends javax.swing.JPanel {
             javax.swing.SwingUtilities.invokeLater(r);
         }
     }
+    
+    public static  boolean checkUserTextOnDisplay(String init) {
+       MultiLineStringJPanel panel = new MultiLineStringJPanel();
+        panel.jTextArea1.setText(init);
+        panel.jScrollPane1.getVerticalScrollBar().setValue(0);
+        panel.jTextArea1.setCaretPosition(0);
+        JDialog dialog = new JDialog();
+        dialog.setModal(true);
+        panel.dialog = dialog;
+        dialog.add(panel);
+        dialog.pack();
+        dialog.setVisible(true);
+        return panel.cancelled;
+    }
 
+    public static  XFuture<Boolean> checkUserText(String init) {
+        if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+            return XFuture.completedFuture(checkUserTextOnDisplay(init));
+        } else {
+            XFuture<Boolean> ret  = new XFuture<>("checkUserText");
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                ret.complete(checkUserTextOnDisplay(init));
+            });
+            return ret;
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonOK;
