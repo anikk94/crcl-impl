@@ -620,14 +620,6 @@ public class CrclSwingClientInner {
             runProgramFuture = null;
         }
         if (isRunningProgram()) {
-<<<<<<< HEAD
-            if (null != closeTestProgramRunProgramThreadTrace) {
-                System.err.println("closeTestProgramRunProgramThreadTrace = "
-                        + Arrays.toString(closeTestProgramRunProgramThreadTrace));
-            }
-            showErrorMessage("still running after cancel: runProgramFuture=" + runProgramFutureFinal
-                    + ", runProgramThread=" + crclSocketActionThread);
-=======
             int count = stillRunningErrorCount.incrementAndGet();
             showErrorMessage("still running after cancel(" + count + ".1): runProgramFuture=" + runProgramFutureFinal);
             if (null != runProgramFutureFinal) {
@@ -641,7 +633,6 @@ public class CrclSwingClientInner {
                 showErrorMessage("still running after cancel(" + count + ".5) : closeTestProgramRunProgramThreadTrace = "
                         + XFuture.traceToString(closeTestProgramRunProgramThreadTrace));
             }
->>>>>>> ca10fd1dd239121f40d66f7f46293830fa7f232d
         }
     }
 
