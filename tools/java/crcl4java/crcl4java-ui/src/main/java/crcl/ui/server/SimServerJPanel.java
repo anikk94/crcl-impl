@@ -1323,7 +1323,13 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                 long t = System.currentTimeMillis();
                 if (t - last_message_show_time > 500) {
                     last_message_show_time = System.currentTimeMillis();
-                    NotificationsJPanel.addNotification( getOuterFrame().getTitle(), s);
+                    final JFrame outerFrame1 = getOuterFrame();
+                    if(null != outerFrame1) {
+                        NotificationsJPanel.addNotification(outerFrame1.getTitle(), s);
+                    }
+                    else {
+                        NotificationsJPanel.showText(s);
+                    }
                 }
                 last_message_show_time = System.currentTimeMillis();
                 showing_message = false;

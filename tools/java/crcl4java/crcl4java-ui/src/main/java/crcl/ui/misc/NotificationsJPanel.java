@@ -45,6 +45,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * @author Will Shackleford {@literal <william.shackleford@nist.gov>}
  */
+@SuppressWarnings({"initialization","nullness"})
 public class NotificationsJPanel extends javax.swing.JPanel {
 
     /**
