@@ -22,10 +22,14 @@
  */
 package crcl.utils.server;
 
+import crcl.base.CRCLStatusType;
 import crcl.utils.CRCLSocket;
+import crcl.utils.XFuture;
+import crcl.utils.XFutureVoid;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -37,13 +41,30 @@ public class CRCLServerClientState implements AutoCloseable {
     public int cmdsRecieved = 0;
     public long lastCmdTime = 0;
     public long cmdId = -999;
+    public boolean pureLocal = false;
     public final CRCLStatusFilterSettings filterSettings;
+    public @Nullable XFutureVoid directReturnedStatusSupplierFuture ;
+    private volatile @Nullable CRCLStatusType directReturnedStatus;
+    private volatile StackTraceElement[] directReturnedStatusSetTrace;
+     private volatile Thread directReturnedStatusSetThread;
     
     public CRCLServerClientState(CRCLSocket cs) {
         this.cs = cs;
         this.filterSettings = new CRCLStatusFilterSettings();
     }
 
+    public CRCLStatusType getDirectReturnedStatus() {
+        return directReturnedStatus;
+    }
+
+    public void setDirectReturnedStatus(CRCLStatusType directReturnedStatus) {
+        this.directReturnedStatus = directReturnedStatus;
+        final Thread currentThread = Thread.currentThread();
+        directReturnedStatusSetThread= currentThread;
+        directReturnedStatusSetTrace = currentThread.getStackTrace();
+    }
+
+    
     @Override
     public void close() {
         try {
@@ -65,6 +86,10 @@ public class CRCLServerClientState implements AutoCloseable {
                 ", lastCmdTime=" + lastCmdTime +
                 ", cmdId=" + cmdId +
                 ", filterSettings=" + filterSettings +
+                ", pureLocal=" + pureLocal +
+                ", directReturnedStatus=" + directReturnedStatus +
+                ", directReturnedStatusSetThread=" + directReturnedStatusSetThread +
+                ", directReturnedStatusSetTrace=" + XFuture.traceToString(directReturnedStatusSetTrace) +
                 '}';
     }
 }

@@ -34,6 +34,8 @@ import crcl.base.PoseType;
 import crcl.base.VectorType;
 import static crcl.utils.CRCLUtils.getNonNullCmd;
 import static crcl.utils.CRCLUtils.getNonNullJointStatusIterable;
+import crcl.utils.server.CRCLServerClientState;
+import crcl.utils.server.CRCLServerSocket;
 import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.File;
@@ -45,6 +47,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
@@ -58,6 +61,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,7 +103,6 @@ import org.checkerframework.checker.nullness.qual.*;
  */
 public class CRCLSocket implements AutoCloseable {
 
-	
     /**
      * @return the randomPacketing
      */
@@ -245,7 +248,7 @@ public class CRCLSocket implements AutoCloseable {
     private static final boolean DEBUG_JAXB_SELECTION
             = Boolean.getBoolean("crcl.DEBUG_JAXB_SELECTION");
 
-    private volatile StackTraceElement cmdSchemSetTrace @Nullable [];
+    private volatile StackTraceElement cmdSchemSetTrace @Nullable [] ;
     private volatile File @Nullable [] cmdSchemaFiles = null;
 
     /**
@@ -278,6 +281,11 @@ public class CRCLSocket implements AutoCloseable {
      *
      */
     public boolean isConnected() {
+        if (null != localServer
+                    && localServer.isAllowDirectCommands()
+                    && null != clientState) {
+            return true;
+        }
         Socket returnedSocket = getSocket();
         if (null == returnedSocket) {
             return false;
@@ -322,6 +330,11 @@ public class CRCLSocket implements AutoCloseable {
      * been initialized.
      */
     public int getPort() {
+       if (null != localServer
+                    && localServer.isAllowDirectCommands()
+                    && null != clientState) {
+           return localServer.getPort();
+       }
         if (null != socketChannel) {
             return socketChannel.socket().getLocalPort();
         }
@@ -547,8 +560,6 @@ public class CRCLSocket implements AutoCloseable {
 //        super.finalize();
 //        this.close();
 //    }
-
-
     static String readUntilEndTag(final String tag, final InputStream is) throws IOException {
         String rips = "";
         final String endTagStartString = "</" + tag;
@@ -953,11 +964,11 @@ public class CRCLSocket implements AutoCloseable {
             } catch (Exception ex) {
                 try {
                     final File tmpFile = File.createTempFile("stringToStatus", ".xml");
-                    try (PrintWriter pw = new PrintWriter(new FileWriter(tmpFile))) {
+                    try ( PrintWriter pw = new PrintWriter(new FileWriter(tmpFile))) {
                         pw.println(str);
                     }
                     File[] defaultStatSchemaFiles = CRCLSchemaUtils.getDefaultStatSchemaFiles();
-                    if(defaultStatSchemaFiles!=null) {
+                    if (defaultStatSchemaFiles != null) {
                         System.err.println("defaultStatSchemaFiles = " + Arrays.toString(defaultStatSchemaFiles));
                     }
                     throw new CRCLException("tmpFile=" + tmpFile, ex);
@@ -1041,6 +1052,27 @@ public class CRCLSocket implements AutoCloseable {
             throws CRCLException {
         long t0 = System.currentTimeMillis();
         try {
+            if (null != localServer
+                    && localServer.isAllowDirectCommands()
+                    && null != clientState) {
+                final XFutureVoid directReturnedStatusSupplierFuture = clientState.directReturnedStatusSupplierFuture;
+                if(null != directReturnedStatusSupplierFuture) {
+                    if(soTimeout > 0) {
+                        directReturnedStatusSupplierFuture.get(soTimeout, TimeUnit.MILLISECONDS);
+                    } else {
+                        directReturnedStatusSupplierFuture.get();
+                    }
+                }
+                final CRCLStatusType directReturnedStatus = clientState.getDirectReturnedStatus();
+                if (null != directReturnedStatus) {
+                    CRCLStatusType ret = directReturnedStatus;
+                    clientState.setDirectReturnedStatus(null);
+                    clientState.directReturnedStatusSupplierFuture = null;
+                    return ret;
+                }
+            }
+
+            assert false : "Thread.currentThread=" + Thread.currentThread() + ", clientState=" + clientState;
             this.lastStatusString = CRCLSocket.readUntilEndTag("CRCLStatus", getBufferedInputStream(soTimeout));
             if (null == this.lastStatusString) {
                 throw new EOFException("readUntilEndTag returned null");
@@ -1182,7 +1214,7 @@ public class CRCLSocket implements AutoCloseable {
         }
     }
 
-    @SuppressWarnings({"nullness", "initialization","cast"})
+    @SuppressWarnings({"nullness", "initialization", "cast"})
     private static <T> @NonNull JAXBElement<@NonNull T> filterJaxbElement(@Nullable JAXBElement<T> in) {
         if (null == in) {
             throw new NullPointerException("JAXBElement< T> in");
@@ -1512,6 +1544,10 @@ public class CRCLSocket implements AutoCloseable {
      */
     public synchronized void writeCommand(CRCLCommandInstanceType cmd, boolean validate) throws CRCLException {
         try {
+            if (null != localServer && localServer.isAllowDirectCommands() && null != clientState) {
+                localServer.handleDirectCommand(clientState, cmd);
+                return;
+            }
             final CRCLCommandType cc = cmd.getCRCLCommand();
             if (null == cc) {
                 throw new IllegalArgumentException("cmd.getCRCLCommand() must not be null. Use setCRCLCommand(...).");
@@ -1536,7 +1572,7 @@ public class CRCLSocket implements AutoCloseable {
                 throw new CRCLException(ex);
             }
             throw new CRCLException(socketException);
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             throw new CRCLException(ex);
         }
     }
@@ -2008,7 +2044,6 @@ public class CRCLSocket implements AutoCloseable {
 //        public int getMaxFields() {
 //            return maxFields;
 //        }
-
         public void setMaxFields(int maxFields) {
             this.maxFields = maxFields;
         }
@@ -2274,6 +2309,8 @@ public class CRCLSocket implements AutoCloseable {
         this((Socket) null, ((Schema) null), ((Schema) null), ((Schema) null));
     }
 
+    private @Nullable CRCLServerSocket<?> localServer = null;
+
     /**
      * Create a new CRCL socket wrapped around the given java.net.Socket and
      * cmd,stat and program schemas.
@@ -2429,7 +2466,45 @@ public class CRCLSocket implements AutoCloseable {
      * @throws IOException host or port invalid or network unavailable
      */
     private CRCLSocket(String hostname, int port, Schema cmdSchema, Schema statSchema, Schema programSchema) throws CRCLException, IOException {
-        this(new Socket(hostname, port), cmdSchema, statSchema, programSchema);
+        this(newSocket(hostname, port), cmdSchema, statSchema, programSchema);
+        if (isLocalHost(hostname)) {
+            localServer = CRCLServerSocket.getByPort(port);
+            if (null != localServer && localServer.isAllowDirectCommands()) {
+                localServerLoopBackSocket = new CRCLSocket();
+                clientState = localServer.generateNewPureLocalClientState(localServerLoopBackSocket);
+            }
+        }
+    }
+
+    private static Socket newSocket(String hostname, int port) throws IOException {
+        if (isLocalHost(hostname)) {
+            CRCLServerSocket localServerTmp = CRCLServerSocket.getByPort(port);
+            if (null != localServerTmp && localServerTmp.isAllowDirectCommands()) {
+                return new Socket();
+            }
+        }
+        return new Socket(hostname, port);
+    }
+
+    private @Nullable CRCLSocket localServerLoopBackSocket = null;
+    private @Nullable CRCLServerClientState clientState = null;
+
+    private static boolean isLocalHost(String hostname) {
+        if (hostname.equals("localhost")) {
+            return true;
+        }
+        try {
+            InetAddress addr = InetAddress.getByName(hostname);
+            // Check if the address is a valid special local or loop back
+            if (addr.isAnyLocalAddress() || addr.isLoopbackAddress()) {
+                return true;
+            }
+
+            // Check if the address is defined on any interface
+            return NetworkInterface.getByInetAddress(addr) != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

@@ -199,7 +199,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
             return 1.0;
         }
     }
-    
+
     private static final String CRCLUTILSSERVER_CRCL_SERVER_SOCKETGLOBAL_SPEE = "crcl.utils.server.CRCLServerSocket.globalSpeedOverride";
 
     public static void setGlobalSpeedOverride(double newGlobalSpeedOverride) {
@@ -484,6 +484,11 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         portMap.put(port, this);
     }
 
+    public static @Nullable
+    CRCLServerSocket getByPort(int port) {
+        return portMap.get(port);
+    }
+
     private @MonotonicNonNull
     ExecutorService callbackService = null;
 
@@ -759,7 +764,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     public void setCommandStateEnum(CommandStateEnumType newCommandStateEnum) {
 
         if (newCommandStateEnum == CommandStateEnumType.CRCL_ERROR
-                && initialized 
+                && initialized
                 && this.commandStateEnum != CommandStateEnumType.CRCL_ERROR) {
             System.out.println("");
             System.err.println("");
@@ -915,6 +920,9 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                             }
                             finishWriteStatus(state, suppliedStatus, source, event, commandStatus);
                         });
+                        if (state.pureLocal) {
+                            state.directReturnedStatusSupplierFuture = supplierAcceptedFuture;
+                        }
                         this.lastUpdateSupplierAcceptedFuture = supplierAcceptedFuture;
                     } else {
                         finishWriteStatus(state, localServerSideStatus, source, event, commandStatus);
@@ -1477,8 +1485,14 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
                 statusToSend.getCommandStatus().setCommandState(getCommandStateEnum());
                 statusToSend.getCommandStatus().setStateDescription(getStateDescription());
             }
-            synchronized (source) {
-                source.writeStatus(statusToSend);
+            if (state.pureLocal) {
+                state.setDirectReturnedStatus(statusToSend);
+                state.directReturnedStatusSupplierFuture = null;
+                return;
+            } else {
+                synchronized (source) {
+                    source.writeStatus(statusToSend);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(CRCLServerSocket.class
@@ -2219,6 +2233,24 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         return startingSocketChannel;
     }
 
+    private static final boolean ALLOW_DIRECT_COMMANDS_DEFAULT
+            = true; // Boolean.getBoolean("crcl.utils.server.allowDirectCommands");
+    private boolean allowDirectCommands = ALLOW_DIRECT_COMMANDS_DEFAULT;
+
+    public boolean isAllowDirectCommands() {
+        return allowDirectCommands;
+    }
+
+    public void handleDirectCommand(CRCLServerClientState state, CRCLCommandInstanceType instance) throws Exception {
+        if (!isAllowDirectCommands()) {
+            throw new Exception("allowDirectCommands=false");
+        }
+        if (!(stateClass.isInstance(state))) {
+            throw new Exception("!(stateTypeClass.isInstance(state) stateTypeClass=" + stateClass + ", state=" + state);
+        }
+        handleEvent(CRCLServerSocketEvent.commandRecieved(stateClass.cast(state), instance));
+    }
+
     private void runSingleThreaded() throws Exception {
         StackTraceElement initBindTrace @Nullable []  = this.bindTrace;
         @Nullable
@@ -2581,6 +2613,13 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     private STATE_TYPE generateNewClientState(final CRCLSocket crclSocket) {
         STATE_TYPE state = stateGenerator.generate(crclSocket);
         setupNewClientState(state);
+        return state;
+    }
+
+    public STATE_TYPE generateNewPureLocalClientState(final CRCLSocket crclSocket) {
+        STATE_TYPE state = stateGenerator.generate(crclSocket);
+        setupNewClientState(state);
+        state.pureLocal = true;
         return state;
     }
 
