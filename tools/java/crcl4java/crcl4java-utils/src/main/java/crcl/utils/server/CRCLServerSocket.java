@@ -2462,15 +2462,16 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     }
 
     private void setupNewClientState(STATE_TYPE state) {
-        if (null != updateStatusSupplier) {
-            XFuture<CRCLStatusType> supplierFuture = updateStatusSupplier.get();
-            supplierFuture.thenAccept((CRCLStatusType suppliedStatus) -> completeSetupNewClientState(state, suppliedStatus));
-        } else {
-            if (null == lastUpdateServerSideStatusCopy) {
-                throw new NullPointerException("lastUpdateServerSideStatusCopy");
-            }
-            completeSetupNewClientState(state, lastUpdateServerSideStatusCopy);
-        }
+//        if (null != updateStatusSupplier) {
+//            XFuture<CRCLStatusType> supplierFuture = updateStatusSupplier.get();
+//            supplierFuture.thenAccept((CRCLStatusType suppliedStatus) -> completeSetupNewClientState(state, suppliedStatus));
+//        } else {
+//            if (null == lastUpdateServerSideStatusCopy) {
+//                throw new NullPointerException("lastUpdateServerSideStatusCopy");
+//            }
+//            completeSetupNewClientState(state, lastUpdateServerSideStatusCopy);
+//        }
+        completeSetupNewClientState(state, lastUpdateServerSideStatusCopy);
     }
 
     private synchronized void completeSetupNewClientState(STATE_TYPE state, CRCLStatusType suppliedStatus) {

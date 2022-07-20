@@ -249,6 +249,14 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         jFrame.setVisible(true);
         jFrame.toFront();
     }
+    
+    public static void closeNotifications() {
+        if(jFrame != null) {
+            jFrame.setVisible(false);
+            jFrame = null;
+        }
+        notificationsJPanel=null;
+    }
 
     
     public static volatile boolean disableShowText = Boolean.parseBoolean("crcl.ui.misc.MultiLineString.disableShowText");

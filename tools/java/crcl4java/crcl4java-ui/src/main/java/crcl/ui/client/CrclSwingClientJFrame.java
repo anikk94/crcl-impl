@@ -29,6 +29,7 @@ import crcl.ui.misc.PropertiesJPanel;
 import crcl.ui.server.SimServerJFrame;
 import crcl.ui.misc.TransformSetupJFrame;
 import static crcl.ui.IconImages.DISCONNECTED_IMAGE;
+import crcl.ui.misc.NotificationsJPanel;
 import crcl.utils.XFutureVoid;
 import crcl.utils.CRCLSocket;
 import crcl.utils.CRCLException;
@@ -304,6 +305,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CRCL Client");
+        addWindowListener(formListener);
 
         jMenu1.setText("File");
 
@@ -474,7 +476,7 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
 
     // Code for dispatching events from components to event handlers.
 
-    private class FormListener implements java.awt.event.ActionListener {
+    private class FormListener implements java.awt.event.ActionListener, java.awt.event.WindowListener {
         FormListener() {}
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             if (evt.getSource() == jMenuItemOpenXmlCommandInstance) {
@@ -546,6 +548,33 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
             else if (evt.getSource() == jMenuItemAbout) {
                 CrclSwingClientJFrame.this.jMenuItemAboutActionPerformed(evt);
             }
+        }
+
+        public void windowActivated(java.awt.event.WindowEvent evt) {
+        }
+
+        public void windowClosed(java.awt.event.WindowEvent evt) {
+            if (evt.getSource() == CrclSwingClientJFrame.this) {
+                CrclSwingClientJFrame.this.formWindowClosed(evt);
+            }
+        }
+
+        public void windowClosing(java.awt.event.WindowEvent evt) {
+            if (evt.getSource() == CrclSwingClientJFrame.this) {
+                CrclSwingClientJFrame.this.formWindowClosing(evt);
+            }
+        }
+
+        public void windowDeactivated(java.awt.event.WindowEvent evt) {
+        }
+
+        public void windowDeiconified(java.awt.event.WindowEvent evt) {
+        }
+
+        public void windowIconified(java.awt.event.WindowEvent evt) {
+        }
+
+        public void windowOpened(java.awt.event.WindowEvent evt) {
         }
     }// </editor-fold>//GEN-END:initComponents
 
@@ -684,6 +713,14 @@ public class CrclSwingClientJFrame extends javax.swing.JFrame implements Pendant
     private void jCheckBoxMenuItemValidateXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItemValidateXmlActionPerformed
         pendantClientJPanel1.setValidateXmlSchema(jCheckBoxMenuItemValidateXml.isSelected());
     }//GEN-LAST:event_jCheckBoxMenuItemValidateXmlActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        NotificationsJPanel.closeNotifications();
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        NotificationsJPanel.closeNotifications();
+    }//GEN-LAST:event_formWindowClosing
 
     @Override
     public boolean isEXISelected() {
