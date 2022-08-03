@@ -2234,7 +2234,7 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
     }
 
     private static final boolean ALLOW_DIRECT_COMMANDS_DEFAULT
-            = true; // Boolean.getBoolean("crcl.utils.server.allowDirectCommands");
+            = false; // Boolean.getBoolean("crcl.utils.server.allowDirectCommands");
     private boolean allowDirectCommands = ALLOW_DIRECT_COMMANDS_DEFAULT;
 
     public boolean isAllowDirectCommands() {
@@ -2481,21 +2481,41 @@ public class CRCLServerSocket<STATE_TYPE extends CRCLServerClientState> implemen
         if (automaticallyConvertUnits && null != serverUnits) {
             state.filterSettings.setServerUserSet(serverUnits);
         }
-        if (sendAllJointPositionsByDefault && null != suppliedStatus) {
-            final JointStatusesType jointStatuses = suppliedStatus.getJointStatuses();
-            if (null != jointStatuses) {
-                final List<JointStatusType> jointStatusList
-                        = getNonNullFilteredList(jointStatuses.getJointStatus());
-                List<ConfigureJointReportType> cjrList = new ArrayList<>();
-                for (int j = 0; j < jointStatusList.size(); j++) {
-                    JointStatusType jst = jointStatusList.get(j);
+        if (sendAllJointPositionsByDefault) {
+            List<ConfigureJointReportType> cjrList = new ArrayList<>();
+            if (null != suppliedStatus) {
+                final JointStatusesType jointStatuses = suppliedStatus.getJointStatuses();
+                if (null != jointStatuses) {
+                    final List<JointStatusType> jointStatusList
+                            = getNonNullFilteredList(jointStatuses.getJointStatus());
+                    for (int j = 0; j < jointStatusList.size(); j++) {
+                        JointStatusType jst = jointStatusList.get(j);
+                        ConfigureJointReportType cjr = new ConfigureJointReportType();
+                        cjr.setJointNumber(jst.getJointNumber());
+                        cjr.setReportPosition(true);
+                        cjrList.add(cjr);
+                    }
+                } else {
+                    // We don't know which joints exist just configure 0 to 9.
+                    // It is better to configure joints that don't exist than to miss one.
+                    for (int j = 0; j < 9; j++) {
+                        ConfigureJointReportType cjr = new ConfigureJointReportType();
+                        cjr.setJointNumber(j);
+                        cjr.setReportPosition(true);
+                        cjrList.add(cjr);
+                    }
+                }
+            } else {
+                // We don't know which joints exist just configure 0 to 9.
+                // It is better to configure joints that don't exist than to miss one.
+                for (int j = 0; j < 9; j++) {
                     ConfigureJointReportType cjr = new ConfigureJointReportType();
-                    cjr.setJointNumber(jst.getJointNumber());
+                    cjr.setJointNumber(j);
                     cjr.setReportPosition(true);
                     cjrList.add(cjr);
                 }
-                state.filterSettings.configureJointReports(cjrList);
             }
+            state.filterSettings.configureJointReports(cjrList);
         }
     }
 

@@ -69,6 +69,7 @@ import crcl.base.SetLengthUnitsType;
 import crcl.base.SetTransSpeedType;
 import crcl.base.TransSpeedAbsoluteType;
 import crcl.ui.client.CrclSwingClientJFrame;
+import crcl.ui.misc.NotificationsJPanel;
 import crcl.utils.CRCLPosemath;
 import crcl.utils.CRCLSocket;
 import crcl.utils.CRCLUtils;
@@ -1661,8 +1662,15 @@ public class FanucCRCLServerJPanel extends javax.swing.JPanel {
         if (jCheckBoxEnableCRCLServer.isSelected()) {
             try {
                 main.startCrclServer();
-            } catch (IOException ex) {
+            } catch (Throwable ex) {
                 Logger.getLogger(FanucCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
+                NotificationsJPanel.showException(ex);
+                if(ex instanceof RuntimeException) {
+                    RuntimeException re = (RuntimeException) ex;
+                    throw re;
+                } else {
+                    throw new RuntimeException(ex);
+                }
             }
         } else {
             main.stopCrclServer();
