@@ -48,27 +48,11 @@ public class ThreadLockedHolder<T> implements Supplier<T> {
     }
 
     public ThreadLockedHolder(String name, T object) {
-        this.name = name;
-        this.object = object;
-        this.createTrace = Thread.currentThread().getStackTrace();
-        this.lockTrace = createTrace;
-        this.lockThread = Thread.currentThread();
-        this.unlockTrace = null;
-        this.disabled = false;
+       this(name,object,true,false);
     }
 
     public ThreadLockedHolder(String name, T object, boolean locked) {
-        this.name = name;
-        this.object = object;
-        this.createTrace = Thread.currentThread().getStackTrace();
-        if (locked) {
-            this.lockTrace = createTrace;
-            this.lockThread = Thread.currentThread();
-            this.unlockTrace = null;
-        } else {
-            this.lockThread = null;
-        }
-        this.disabled = false;
+        this(name,object,locked,false);
     }
 
     private final boolean disabled;
