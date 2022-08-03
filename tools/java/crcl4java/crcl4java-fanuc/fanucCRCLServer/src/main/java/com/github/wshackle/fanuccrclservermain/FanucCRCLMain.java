@@ -3033,7 +3033,7 @@ public class FanucCRCLMain {
         int startStartCrclServerCount = startCrclServerCount.incrementAndGet();
         try {
             startCrclServer(startCallerTrace);
-        } catch (IOException ex) {
+        } catch (Throwable ex) {
             getLocalLogger().log(Level.SEVERE, "", ex);
             System.err.println("localPort = " + localPort);
             System.err.println("startStartCrclServerCount = " + startStartCrclServerCount);
@@ -3048,25 +3048,6 @@ public class FanucCRCLMain {
 
 //    Future<?> crclServerFuture = null;
     public synchronized void startCrclServer(StackTraceElement startCallerTrace @Nullable []) throws IOException {
-//        stopCrclServer();
-//        es = Executors.newCachedThreadPool(daemonThreadFactory);
-//        ss = new ServerSocket(localPort);
-//        crclServerFuture = es.submit(() -> {
-//            while (!Thread.currentThread().isInterrupted()) {
-//                try {
-//                    Thread.currentThread().setName("FanucCRCL.acceptClients.ss=" + ss);
-//                    CRCLSocket cs = new CRCLSocket(ss.accept());
-//                    clients.add(cs);
-//                    es.submit(() -> {
-//                        Thread.currentThread().setName("FanucCRCL.handleClient.cs=" + cs);
-//                        handleClient(cs);
-//                    });
-//                } catch (IOException ex) {
-//                    Logger.getLogger(FanucCRCLMain.class.getName()).log(Level.SEVERE, "", ex);
-//                    return;
-//                }
-//            }
-//        });
         crclServerSocket.setPort(localPort);
         crclServerSocket.setThreadNamePrefix("FanucCRCLServer");
         this.status.releaseLockThread();

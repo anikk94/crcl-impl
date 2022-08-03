@@ -1072,7 +1072,7 @@ public class CRCLSocket implements AutoCloseable {
                 }
             }
 
-            assert false : "Thread.currentThread=" + Thread.currentThread() + ", clientState=" + clientState;
+//            assert false : "Thread.currentThread=" + Thread.currentThread() + ", clientState=" + clientState;
             this.lastStatusString = CRCLSocket.readUntilEndTag("CRCLStatus", getBufferedInputStream(soTimeout));
             if (null == this.lastStatusString) {
                 throw new EOFException("readUntilEndTag returned null");

@@ -35,6 +35,7 @@ import crcl.base.PointType;
 import crcl.base.PoseType;
 import crcl.base.SettingsStatusType;
 import crcl.base.TorqueUnitEnumType;
+import crcl.copier.CRCLCopier;
 import static crcl.copier.CRCLCopier.copy;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -369,9 +370,6 @@ public class CRCLStatusFilterSettings {
             } else if (jointStatusOutList.isEmpty()) {
                 statusOut.setJointStatuses(null);
 //                throw new RuntimeException("statusOutJointStatuses.getJointStatus().isEmpty()");
-            } else if (configJointsReportMap.isEmpty()) {
-                statusOut.setJointStatuses(null);
-//                throw new RuntimeException("no joints configJointsReportMap.isEmpty()");
             } else {
                 List<JointStatusType> jointsCopy = new ArrayList<>();
                 for (int i = 0; i < jointStatusOutList.size(); i++) {
@@ -391,6 +389,8 @@ public class CRCLStatusFilterSettings {
                             jstCopy.setJointVelocity(jst.getJointPosition());
                         }
                         jointsCopy.add(jstCopy);
+                    } else {
+                        jointsCopy.add(CRCLCopier.copy(jst));
                     }
                 }
                 jointsCopy.sort(jointStatusComparator);
