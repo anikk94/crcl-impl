@@ -65,7 +65,7 @@ public class CRCLUtils {
 
     private CRCLUtils() {
     }
-
+    
     /**
      * This is a work-around for missing annotations for some versions of the
      * JDK / CheckerFramework. It is just a copy of java.util.Objects.equals

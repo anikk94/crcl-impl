@@ -1507,6 +1507,27 @@ public class CRCLPosemath {
         }
     }
 
+    
+    /**
+     * Create a string representation of the point for logging/debug.
+     *
+     * @param point to convert
+     * @return new string representation
+     */
+    public static PointType stringToPoint(String in) {
+        try {
+            PmCartesian cart = rcs.posemath.PM_CARTESIAN.valueOf(in);
+            return toPointType(cart);
+        } catch (Exception exception) {
+            LOG.log(Level.SEVERE, "", exception);
+            if(exception instanceof RuntimeException) {
+                throw (RuntimeException) exception;
+            } else {
+                throw new RuntimeException(exception);
+            }
+        }
+    }
+    
     /**
      * Create a string representation of the pose for logging/debug.
      *
