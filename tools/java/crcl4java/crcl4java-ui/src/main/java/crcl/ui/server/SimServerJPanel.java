@@ -1312,6 +1312,8 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
     public void showMessage(final String s) {
         showDebugMessage(s);
         inner.setStateDescription(s);
+        final List<StackTraceElement[]> traceList = Arrays.asList(new StackTraceElement[][]{Thread.currentThread().getStackTrace()});
+        
         if (showing_message) {
             return;
         }
@@ -1325,10 +1327,10 @@ public class SimServerJPanel extends javax.swing.JPanel implements SimServerOute
                     last_message_show_time = System.currentTimeMillis();
                     final JFrame outerFrame1 = getOuterFrame();
                     if(null != outerFrame1) {
-                        NotificationsJPanel.addNotification(outerFrame1.getTitle(), s);
+                        NotificationsJPanel.addNotification(outerFrame1.getTitle(), s,traceList);
                     }
                     else {
-                        NotificationsJPanel.showText(s);
+                        NotificationsJPanel.showText(s,traceList);
                     }
                 }
                 last_message_show_time = System.currentTimeMillis();

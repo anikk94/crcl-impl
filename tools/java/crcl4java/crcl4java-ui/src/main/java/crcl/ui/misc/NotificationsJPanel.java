@@ -30,6 +30,7 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -64,7 +65,7 @@ public class NotificationsJPanel extends javax.swing.JPanel {
 //                System.out.println("list.size() = " + list.size());
                 if(index > 0 && index <= list.size()) {
                     Notification notification = list.get(index -1);
-                    final String notificationString = notification.toString();
+                    final String notificationString = notification.fullTextString();
                     System.out.println("");
                     System.out.println(notificationString);
                     System.out.println("");
@@ -144,14 +145,14 @@ public class NotificationsJPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -178,11 +179,30 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         LocalTime time;
         String title;
         String details;
-        StackTraceElement []trace;
+        final List<StackTraceElement []> traceList = new ArrayList<>();
 
+        public String traces() {
+            
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < traceList.size(); i++) {
+                final StackTraceElement[] traceI = traceList.get(i);
+                if(null == traceI || traceI.length < 1) {
+                    continue;
+                }
+                sb = sb
+                        .append("\r\n    trace[").append(i).append("] = \r\n")
+                        .append(XFuture.traceToString(traceI)).append("\r\n");
+            }
+            return sb.toString();
+        }
+        
+        public String fullTextString() {
+            return this.toString()+ "\n details=" + details + "\n traces=" +traces();
+        }
+        
         @Override
         public String toString() {
-            return  "time=" + time + "\n title=" + title + "\n details=" + details + "\n trace=" + XFuture.traceToString(trace);
+            return  "time=" + time + "\n title=" + title ;
         }
         
     }
@@ -220,7 +240,7 @@ public class NotificationsJPanel extends javax.swing.JPanel {
     private static @Nullable NotificationsJPanel notificationsJPanel = null;
     private static @Nullable JFrame jFrame = null;
     private static List<Notification> list = new ArrayList<>();
-    public static void addNotification(String title, String details) {
+    public static void addNotification(String title, String details, @Nullable List<StackTraceElement []> traceList) {
         if(null == notificationsJPanel) {
             notificationsJPanel = new NotificationsJPanel();
         }
@@ -233,7 +253,10 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         Notification notification = new Notification();
         notification.details = details;
         notification.time = LocalTime.now();
-        notification.trace = Thread.currentThread().getStackTrace();
+        if(null != traceList) {
+            notification.traceList.addAll(traceList);
+        }
+        notification.traceList.add(Thread.currentThread().getStackTrace());
         notification.title = title;
         list.add(notification);
         final TableModel model = notificationsJPanel.jTable1.getModel();
@@ -275,14 +298,16 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
             return;
         }
-        addNotification(throwable.getLocalizedMessage(), throwable.toString()+ "\n\n Thrown from:\r\n" + XFuture.traceToString(throwable.getStackTrace()) );
+        final List<StackTraceElement[]> traceList = Arrays.asList(new StackTraceElement[][]{throwable.getStackTrace()});
+        addNotification(throwable.getLocalizedMessage(), throwable.toString(), traceList);
     }
 
     public static void showException(Throwable throwable, StackTraceElement trace[]) {
         if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
             return;
         }
-        addNotification(throwable.getLocalizedMessage(), throwable.toString() + "\n\n Thrown from:\r\n" + XFuture.traceToString(throwable.getStackTrace()) + "\n\n Logged from:\r\n" + XFuture.traceToString(trace));
+        final List<StackTraceElement[]> traceList = Arrays.asList(new StackTraceElement[][]{trace,throwable.getStackTrace()});
+        addNotification(throwable.getLocalizedMessage(), throwable.toString(), traceList);
     }
 
     public static void showText(String init) {
@@ -291,9 +316,18 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         }
         final int newlineindex = init.indexOf("\n");
         final String title = init.substring(0, Math.min(40, Math.min(init.length(), newlineindex>0?newlineindex:init.length())));
-        addNotification(title,init);
+        addNotification(title,init,null);
     }
 
+    public static void showText(String init,List<StackTraceElement []> traceList) {
+        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+            return;
+        }
+        final int newlineindex = init.indexOf("\n");
+        final String title = init.substring(0, Math.min(40, Math.min(init.length(), newlineindex>0?newlineindex:init.length())));
+        addNotification(title,init,traceList);
+    }
+    
     public static void forceShowText(String init, JFrame parentJframe) {
         if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
             return;
@@ -301,7 +335,7 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         if (null == parentJframe) {
             throw new IllegalArgumentException("null == parentJframe");
         }
-        addNotification( "Message from " + parentJframe.getTitle(),init);
+        addNotification( "Message from " + parentJframe.getTitle(),init,null);
     }
 
    
