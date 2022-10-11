@@ -1511,7 +1511,7 @@ public class CRCLPosemath {
     /**
      * Create a string representation of the point for logging/debug.
      *
-     * @param point to convert
+     * @param in  string to convert
      * @return new string representation
      */
     public static PointType stringToPoint(String in) {
