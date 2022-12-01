@@ -736,6 +736,8 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
     private void jButtonStatusActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStatusActionPerformed
         long t0 = System.currentTimeMillis();
         final MotomanCRCLServer motomanCrclServerLocal = motomanCrclServer;
+        List<StackTraceElement[]> traces= new ArrayList<>();
+        traces.add(Thread.currentThread().getStackTrace());
         if (null == motomanCrclServerLocal) {
             JOptionPane.showMessageDialog(this.getParent(), "Motoman CRCL Server not initialized.");
             return;
@@ -752,7 +754,8 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                         appendLog("\njButtonStatusActionPerformed: \n" + text + "\nlastCommand=\n" + lastCommandText
                                 + "\nlastCheckMoveCommand=\n" + lastCheckMoveCommandText + "\timeSinceCheckMove="
                                 + timeSinceCheckMove + "\ntimeDiff=" + timeDiff + "\n");
-                        NotificationsJPanel.addNotification("Motoman Status", text);
+                        traces.add(Thread.currentThread().getStackTrace());
+                        NotificationsJPanel.addNotification("Motoman Status", text,traces);
                     } catch (Exception ex) {
                         Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
                     }
