@@ -309,6 +309,13 @@ public class NotificationsJPanel extends javax.swing.JPanel {
         final List<StackTraceElement[]> traceList = Arrays.asList(new StackTraceElement[][]{trace,throwable.getStackTrace()});
         addNotification(throwable.getLocalizedMessage(), throwable.toString(), traceList);
     }
+    
+    public static void showException(Throwable throwable, List<StackTraceElement[]> traceList) {
+        if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
+            return;
+        }
+        addNotification(throwable.getLocalizedMessage(), throwable.toString(), traceList);
+    }
 
     public static void showText(String init) {
         if(CRCLUtils.isGraphicsEnvironmentHeadless()) {
