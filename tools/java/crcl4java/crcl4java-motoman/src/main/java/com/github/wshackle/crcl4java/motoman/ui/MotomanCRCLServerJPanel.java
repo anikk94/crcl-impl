@@ -752,7 +752,7 @@ public class MotomanCRCLServerJPanel extends javax.swing.JPanel {
                         appendLog("\njButtonStatusActionPerformed: \n" + text + "\nlastCommand=\n" + lastCommandText
                                 + "\nlastCheckMoveCommand=\n" + lastCheckMoveCommandText + "\timeSinceCheckMove="
                                 + timeSinceCheckMove + "\ntimeDiff=" + timeDiff + "\n");
-                        NotificationsJPanel.addNotification("Motoman Status", text);
+                        NotificationsJPanel.addNotification("Motoman Status", text,null);
                     } catch (Exception ex) {
                         Logger.getLogger(MotomanCRCLServerJPanel.class.getName()).log(Level.SEVERE, "", ex);
                     }
