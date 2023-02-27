@@ -2861,8 +2861,9 @@ public class MotoPlusConnection implements AutoCloseable {
 //        } catch (InterruptedException ex) {
 //            Logger.getLogger(MotoPlusConnection.class.getName()).log(Level.SEVERE, "", ex);
 //        }
-        boolean c = clearToolChangerGripperIO();
-        return a && b && c;
+//        boolean c = clearToolChangerGripperIO();
+//        return a && b && c;
+         return a && b;
     }
 
     public byte[] readFullFileByName(String fname) throws IOException, MotoPlusConnectionException {
