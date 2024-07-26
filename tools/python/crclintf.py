@@ -11,6 +11,7 @@ RobotPort = 12301
 GripperPort = 12302
 
 def except_info():
+    print("\nexcept_info invoked\n")
     exc_type, exc_value = sys.exc_info()[:2]
     return str(exc_type.__name__) + ": " + str(exc_value)
 
@@ -67,12 +68,15 @@ class CRCLDevice(object):
     def handleSetEndEffectorType(self, child): pass
 
     def reader(self, conn):
+        print("\ncrclinf: server.reader starting\n")
         # message size to read; make this > max XML message length
         size = 1024
         # loop forever while a client is connected, blocking on its messages
         while True:
+            print ("crclDevice reader polling loop")
             try:
                 data = conn.recv(size)
+                print("robot_socket reader received:", data)
             except:
                 break
             if not data: break
@@ -116,9 +120,11 @@ class CRCLDevice(object):
 
         # recv failed, client disconnected
         if self.debug:  print self.name, ": reader done"
+        print("\ncrclinf: server.reader ending\n")
         conn.close()
 
     def writer(self, conn, period):
+        print("\ncrclinf: server.writer starting\n")
         count = 0
         # loop with a delay while a client is connected
         while True:
@@ -151,6 +157,8 @@ class CRCLDevice(object):
         self.socket.bind(("", int(port)))
         self.socket.listen(BACKLOG)
 
+
+        print("\ncrclintf: server starting. PORT {}\n".format(port))
         while True:
             if self.debug: print self.name, ": accepting connections on", port
             try: conn, addr = self.socket.accept()
@@ -162,6 +170,8 @@ class CRCLDevice(object):
             w = threading.Thread(target=self.writer, args=(conn,float(period)))
             w.daemon = True
             w.start()
+        print("\ncrclinf: server ending\n")
+            
 
     def startServer(self, port, period):
         self.serverThread = threading.Thread(target=self.server, args=(port, period))

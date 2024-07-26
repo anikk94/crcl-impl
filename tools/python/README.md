@@ -10,6 +10,7 @@ Run a simulator for a robot like this:
 
 ```
 ./crclsim.py -n HappyRobot -p 12301 -r  -d
+C:\Python27\python.exe crclsim.py -n HappyRobot -p 12301 -r  -d
 ```
 
 The arguments are the (optional) name of the robot, to help

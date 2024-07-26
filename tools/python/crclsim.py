@@ -201,6 +201,7 @@ if __name__ == "__main__":
 
     myDevice.setDebug(DEBUG)
 
+    print("crclsim: server starting. PORT {}".format(PORT))
     myDevice.server(PORT, PERIOD)
 
     sys.exit(0)
