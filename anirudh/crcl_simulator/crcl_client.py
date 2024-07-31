@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ### 2024-07-24
 ## doc
 # this is a crcl client to the crcl server that is part of a crcl python simulation
@@ -12,7 +12,7 @@ import socket
 import threading
 import xml.etree.ElementTree as ET
 
-from crcl.crcl3 import *
+from crcl_python3.crcl import *
 
 INIFILE = ""
 ROBOT_PORT = ""
@@ -73,13 +73,13 @@ def gripper_reader(conn):
             break
         if not data:
             break
-        try:
-            tree = ET.parse(StringIO(data.rstrip(' \t\n\r\0')))
-            root = tree.getroot()
-            if root.tag == "CRCLStatus":
-                for child in root:
-                    if child.tag == "CommandStatus":
-                    elif
+        # try:
+        #     tree = ET.parse(StringIO(data.rstrip(' \t\n\r\0')))
+        #     root = tree.getroot()
+        #     if root.tag == "CRCLStatus":
+        #         for child in root:
+        #             if child.tag == "CommandStatus":
+        #             elif
 
 
 if __name__ == "__main__":
@@ -111,9 +111,6 @@ if __name__ == "__main__":
             printHelp()
             sys.exit(0)
         
-
-
-
     INIFILE = ""
 
     if ROBOT_PORT == "":
@@ -192,18 +189,18 @@ if __name__ == "__main__":
 
         elif cmd == "init":
             print("user_input: init")
-            # gripper_cid += 1
-            # m = InitCanonType(gripper_cid)
-            # gripper_socket.send(str(m))
+            gripper_cid += 1
+            m = InitCanonType(gripper_cid)
+            gripper_socket.send(str(m).encode('utf-8'))
             robot_cid += 1
             m = InitCanonType(robot_cid)
             xmlPretty(m.tree())
             robot_socket.send(str(m).encode('utf-8'))
 
         elif cmd == "end":
-            # gripper_cid += 1
-            # m = EndCanonType(gripper_cid)
-            # gripper_socket.send(str(m).encode('utf-8'))
+            gripper_cid += 1
+            m = EndCanonType(gripper_cid)
+            gripper_socket.send(str(m).encode('utf-8'))
             robot_cid += 1
             m = EndCanonType(robot_cid)
             robot_socket.send(str(m).encode('utf-8'))
